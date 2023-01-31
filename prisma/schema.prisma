@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
+}
+
+model QuizMaster {
+    id        BigInt            @id @default(autoincrement())
+    title     String
+    questions QuizQuestion[]
+    createdAt DateTime       @default(now())
+    updatedAt DateTime       @updatedAt
+}
+
+model QuizQuestion {
+    id          BigInt                   @id @default(autoincrement())
+    masterId    BigInt
+    description String
+    candidates  QuizAnswerCandidate[]
+    master      QuizMaster            @relation(fields: [masterId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    createdAt   DateTime              @default(now())
+    updatedAt   DateTime              @updatedAt
+
+    @@index([masterId])
+}
+
+model QuizAnswerCandidate {
+    id          BigInt          @id @default(autoincrement())
+    questionId  BigInt
+    description String
+    isCorrect   Boolean
+    question    QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    createdAt   DateTime     @default(now())
+    updatedAt   DateTime     @updatedAt
+
+    @@index([questionId])
+}
