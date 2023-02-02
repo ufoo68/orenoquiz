@@ -12,33 +12,97 @@ datasource db {
 }
 
 model QuizMaster {
-    id        BigInt            @id @default(autoincrement())
+    id        BigInt         @id @default(autoincrement())
     title     String
     questions QuizQuestion[]
     createdAt DateTime       @default(now())
     updatedAt DateTime       @updatedAt
 }
 
+enum QuestionType {
+    SELECT
+    SORT
+    INPUT
+}
+
 model QuizQuestion {
-    id          BigInt                   @id @default(autoincrement())
+    id          BigInt                @id @default(autoincrement())
     masterId    BigInt
+    type        QuestionType
     description String
-    candidates  QuizAnswerCandidate[]
     master      QuizMaster            @relation(fields: [masterId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    candidates  QuizAnswerCandidate[]
     createdAt   DateTime              @default(now())
     updatedAt   DateTime              @updatedAt
 
     @@index([masterId])
 }
 
-model QuizAnswerCandidate {
-    id          BigInt          @id @default(autoincrement())
+model QuizAnswer {
+    id          BigInt      @id @default(autoincrement())
     questionId  BigInt
     description String
-    isCorrect   Boolean
-    question    QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    createdAt   DateTime     @default(now())
-    updatedAt   DateTime     @updatedAt
+    value       Json
+    question    QuizSession @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
 
     @@index([questionId])
+}
+
+model QuizAnswerCandidate {
+    id             BigInt        @id @default(autoincrement())
+    questionId     BigInt
+    description    String
+    createdAt      DateTime      @default(now())
+    updatedAt      DateTime      @updatedAt
+    QuizQuestion   QuizQuestion? @relation(fields: [quizQuestionId], references: [id])
+    quizQuestionId BigInt?
+
+    @@index([quizQuestionId])
+}
+
+model QuizSession {
+    id           BigInt        @id @default(autoincrement())
+    masterId     BigInt
+    state        Json
+    Participants Participant[]
+    createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @updatedAt
+    QuizAnswer   QuizAnswer[]
+}
+
+model Participant {
+    id        BigInt      @id @default(autoincrement())
+    session   QuizSession @relation(fields: [sessionId], references: [id])
+    sessionId BigInt
+    name      String
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+
+    @@index([sessionId])
+}
+
+model ParticipantSubimit {
+    id            BigInt   @id @default(autoincrement())
+    sessionId     BigInt
+    participantId BigInt
+    questionId    BigInt
+    value         Json
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+}
+
+enum ScoreResult {
+    WIN
+    LOSE
+}
+
+model ParticipantScore {
+    id         BigInt      @id @default(autoincrement())
+    questionId BigInt
+    sessionId  BigInt
+    result     ScoreResult
+    createdAt  DateTime    @default(now())
+    updatedAt  DateTime    @updatedAt
 }
