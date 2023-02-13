@@ -12,7 +12,7 @@ datasource db {
 }
 
 model QuizMaster {
-    id        String            @id @default(uuid())
+    id        String         @id @default(uuid())
     title     String
     questions QuizQuestion[]
     createdAt DateTime       @default(now())
@@ -26,7 +26,7 @@ enum QuestionType {
 }
 
 model QuizQuestion {
-    id          String                   @id @default(uuid())
+    id          String                @id @default(uuid())
     masterId    String
     type        QuestionType
     description String
@@ -39,7 +39,7 @@ model QuizQuestion {
 }
 
 model QuizAnswer {
-    id          String         @id @default(uuid())
+    id          String      @id @default(uuid())
     questionId  String
     description String
     value       Json
@@ -51,7 +51,7 @@ model QuizAnswer {
 }
 
 model QuizAnswerCandidate {
-    id             String           @id @default(uuid())
+    id             String        @id @default(uuid())
     questionId     String
     description    String
     createdAt      DateTime      @default(now())
@@ -63,7 +63,7 @@ model QuizAnswerCandidate {
 }
 
 model QuizSession {
-    id           String           @id @default(uuid())
+    id           String        @id @default(uuid())
     masterId     String
     state        Json
     Participants Participant[]
@@ -73,7 +73,7 @@ model QuizSession {
 }
 
 model Participant {
-    id        String         @id @default(uuid())
+    id        String      @id @default(uuid())
     session   QuizSession @relation(fields: [sessionId], references: [id])
     sessionId String
     name      String
@@ -84,7 +84,7 @@ model Participant {
 }
 
 model ParticipantSubimit {
-    id            String      @id @default(uuid())
+    id            String   @id @default(uuid())
     sessionId     String
     participantId String
     questionId    String
@@ -99,10 +99,37 @@ enum ScoreResult {
 }
 
 model ParticipantScore {
-    id         String         @id @default(uuid())
+    id         String      @id @default(uuid())
     questionId String
     sessionId  String
     result     ScoreResult
     createdAt  DateTime    @default(now())
     updatedAt  DateTime    @updatedAt
+}
+
+// 以心伝心ゲーム用
+
+enum IshinDenshinSessionState {
+    READY
+    WAIT
+    END
+}
+
+model IshinDenshinSession {
+    id           String                   @id @default(uuid())
+    answereCount Int
+    state        IshinDenshinSessionState @default(WAIT)
+    version      Int                      @default(0)
+    createdAt    DateTime                 @default(now())
+    updatedAt    DateTime                 @updatedAt
+}
+
+model IshinDenshinSubmit {
+    id               String   @id @default(uuid())
+    answereName      String   @unique
+    boardImageBuffer String
+    sessionId        String
+    version          Int
+    createdAt        DateTime @default(now())
+    updatedAt        DateTime @updatedAt
 }
