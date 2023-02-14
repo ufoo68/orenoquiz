@@ -125,11 +125,11 @@ model IshinDenshinSession {
 }
 
 model IshinDenshinSubmit {
-    id               String   @id @default(uuid())
-    answereName      String   @unique
-    boardImageBuffer String
-    sessionId        String
-    version          Int
-    createdAt        DateTime @default(now())
-    updatedAt        DateTime @updatedAt
+    id            String   @id @default(uuid())
+    answereName   String   @unique
+    boardImageUrl String
+    sessionId     String
+    version       Int
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
 }

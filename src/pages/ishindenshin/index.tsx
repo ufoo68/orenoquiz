@@ -18,7 +18,7 @@ const Ishindenshin: NextPage = () => {
   };
 
   if (!getAllIshindenshin?.data) {
-    return <progress className="progress w-56" />
+    return <progress className="progress" />
   }
 
   return (
