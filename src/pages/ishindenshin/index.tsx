@@ -4,20 +4,20 @@ import { api } from "../../utils/api";
 
 const Ishindenshin: NextPage = () => {
   const createIshindenshin = api.ishindenshin.create.useMutation();
-  const getAllIshindenshin = api.ishindenshin.getAll.useQuery();
+  const allIshindenshin = api.ishindenshin.getAll.useQuery();
   const deleteIshindenshin = api.ishindenshin.delete.useMutation();
 
   const handleCreateIshindenshin = async () => {
     await createIshindenshin.mutateAsync({ answereCount: 2 });
-    await getAllIshindenshin.refetch();
+    await allIshindenshin.refetch();
   };
 
   const handleDeleteIshindenshin = async (sessionId: string) => {
     await deleteIshindenshin.mutateAsync({ sessionId });
-    await getAllIshindenshin.refetch();
+    await allIshindenshin.refetch();
   };
 
-  if (!getAllIshindenshin?.data) {
+  if (!allIshindenshin.data) {
     return <progress className="progress" />
   }
 
@@ -36,7 +36,7 @@ const Ishindenshin: NextPage = () => {
           </tr>
         </thead>
         <tbody>
-          {getAllIshindenshin.data.map((q) =>
+          {allIshindenshin.data.map((q) =>
             <tr key={q.id}>
               <th>{q.id}</th>
               <th>{q.answereCount}</th>

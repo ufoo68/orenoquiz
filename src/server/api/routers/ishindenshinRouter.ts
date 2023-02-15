@@ -1,3 +1,4 @@
+import type { IshinDenshinSessionState } from "@prisma/client";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
@@ -23,7 +24,10 @@ export const ishindenshinRouter = createTRPCRouter({
   getStatus: publicProcedure.input(z.object({ sessionId: z.string() })).query(async ({ input, ctx }) => {
     const session = await ctx.prisma.ishinDenshinSession.findUnique({ where: { id: input.sessionId } });
     if (!session) {
-      return {};
+      return {
+        state: 'WAIT' as IshinDenshinSessionState,
+        version: 0,
+      };
     }
     const { state, version } = session;
     return {
@@ -42,8 +46,27 @@ export const ishindenshinRouter = createTRPCRouter({
       await ctx.prisma.ishinDenshinSubmit.create({
         data: {
           ...params,
-          boardImageBuffer: Buffer.from(boardImageUrl, 'base64'),
+          boardImageBuffer: Buffer.from(boardImageUrl, 'utf8'),
         }
       })
     }),
+  getAnswer: publicProcedure.input(z.object({
+    sessionId: z.string(),
+    version: z.number(),
+    answereName: z.string(),
+  })).query(async ({ input, ctx }) => {
+    const { sessionId, answereName, version } = input;
+    const answer = await ctx.prisma.ishinDenshinSubmit.findFirst({
+      where: {
+        sessionId,
+        answereName,
+        version,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      }
+    });
+    const boardImageUrl = answer?.boardImageBuffer?.toString('utf8');
+    return { boardImageUrl };
+  }),
 });
