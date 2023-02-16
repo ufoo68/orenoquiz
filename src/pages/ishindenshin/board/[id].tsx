@@ -13,12 +13,6 @@ type Props = {
 const Board: NextPage<Props> = ({ sessionId }) => {
   const [version, setVersion] = useState<number>(1);
   const [state, setState] = useState<IshinDenshinSessionState>('WAIT');
-  api.ishindenshin.getStatus.useQuery({ sessionId }, {
-    onSuccess: (res) => {
-      setVersion(res.version);
-      setState(res.state);
-    }
-  });
   const { width } = useWindowSize();
   const groomAnswer = api.ishindenshin.getAnswer.useQuery({
     sessionId,
@@ -29,6 +23,17 @@ const Board: NextPage<Props> = ({ sessionId }) => {
     sessionId,
     version,
     answereName: 'bride',
+  });
+  api.ishindenshin.getStatus.useQuery({ sessionId }, {
+    onSuccess: (res) => {
+      setVersion(res.version);
+      setState(res.state);
+      if (res.state === 'SHOW') {
+        groomAnswer.refetch().catch((e) => console.error(e));
+        brideAnswer.refetch().catch((e) => console.error(e));
+      }
+    },
+    refetchInterval: 5000,
   });
   return (
     <div className="w-screen h-screen bg-neutral-200 flex justify-center items-center space-x-10">

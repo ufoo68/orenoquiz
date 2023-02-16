@@ -55,7 +55,8 @@ const Host: NextPage<Props> = ({ sessionId }) => {
       setState(res.state);
       getGroomSubmited.refetch().catch((e) => console.error(e));
       getBrideSubmited.refetch().catch((e) => console.error(e));
-    }
+    },
+    refetchInterval: 5000,
   });
   const updateState = api.ishindenshin.updateState.useMutation();
   const handleDisplayAnswer = async () => {
