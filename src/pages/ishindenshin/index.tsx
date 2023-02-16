@@ -23,7 +23,6 @@ const Ishindenshin: NextPage = () => {
 
   return (
     <div className="w-screen h-screen bg-neutral-200 flex justify-center flex-col items-center space-y-5">
-
       {allIshindenshin.data.map((q) =>
         <div key={q.id} className="card bg-base-100 shadow-xl">
           <div className="card-body">
