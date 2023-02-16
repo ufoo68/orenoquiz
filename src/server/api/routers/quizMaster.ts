@@ -4,7 +4,7 @@ import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const quizMasterRouter = createTRPCRouter({
   get: publicProcedure
-    .input(z.object({ masterId: z.number() }))
+    .input(z.object({ masterId: z.string() }))
     .query(({ input, ctx }) => {
       return ctx.prisma.quizMaster.findUnique({
         where: {
