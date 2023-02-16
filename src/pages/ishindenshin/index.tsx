@@ -23,8 +23,8 @@ const Ishindenshin: NextPage = () => {
 
   return (
     <div className="p-10">
-      <button className="btn mb-5 float-right" onClick={() => { handleCreateIshindenshin().catch((e) => { console.error(e) }) }}>以心伝心ゲーム作成</button>
-      <table className="table w-full">
+      <button className="btn mb-5" onClick={() => { handleCreateIshindenshin().catch((e) => { console.error(e) }) }}>以心伝心ゲーム作成</button>
+      <table className="table w-full overflow-x-scroll">
         <thead>
           <tr>
             <th>セッションID</th>
