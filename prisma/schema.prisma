@@ -110,18 +110,16 @@ model ParticipantScore {
 // 以心伝心ゲーム用
 
 enum IshinDenshinSessionState {
-    READY
     WAIT
-    END
+    SHOW
 }
 
 model IshinDenshinSession {
-    id           String                   @id @default(uuid())
-    answereCount Int
-    state        IshinDenshinSessionState @default(WAIT)
-    version      Int                      @default(0)
-    createdAt    DateTime                 @default(now())
-    updatedAt    DateTime                 @updatedAt
+    id        String                   @id @default(uuid())
+    state     IshinDenshinSessionState
+    version   Int
+    createdAt DateTime                 @default(now())
+    updatedAt DateTime                 @updatedAt
 }
 
 model IshinDenshinSubmit {

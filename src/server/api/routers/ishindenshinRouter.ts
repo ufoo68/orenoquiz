@@ -6,13 +6,9 @@ import { createTRPCRouter, publicProcedure } from "../trpc";
 
 
 export const ishindenshinRouter = createTRPCRouter({
-  create: publicProcedure.input(z.object({ answereCount: z.number() }))
-    .mutation(async ({ input, ctx }) => {
-      await ctx.prisma.ishinDenshinSession.create({
-        data: {
-          answereCount: input.answereCount,
-        }
-      });
+  create: publicProcedure
+    .mutation(async ({ ctx }) => {
+      await ctx.prisma.ishinDenshinSession.create({ data: { state: 'WAIT', version: 1 } });
     }),
   getAll: publicProcedure
     .query(async ({ ctx }) => {
@@ -69,4 +65,42 @@ export const ishindenshinRouter = createTRPCRouter({
     const boardImageUrl = answer?.boardImageBuffer?.toString('utf8');
     return { boardImageUrl };
   }),
+  getSubmited: publicProcedure.input(z.object({
+    sessionId: z.string(),
+    version: z.number(),
+    answereName: z.string(),
+  })).query(async ({ input, ctx }) => {
+    const { sessionId, version, answereName } = input;
+    const count = await ctx.prisma.ishinDenshinSubmit.count({
+      where: {
+        sessionId,
+        version,
+        answereName,
+      }
+    });
+    return { submited: count > 0 };
+  }),
+  updateState: publicProcedure.input(z.object(
+    {
+      sessionId: z.string(),
+      state: z.enum(['SHOW', 'WAIT']),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const { sessionId, state } = input;
+      await ctx.prisma.ishinDenshinSession.update({
+        where: { id: sessionId },
+        data: { state },
+      });
+    }),
+  incrementVersion: publicProcedure.input(z.object(
+    {
+      sessionId: z.string(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const { sessionId } = input;
+      await ctx.prisma.ishinDenshinSession.update({
+        where: { id: sessionId },
+        data: { state: 'WAIT', version: { increment: 1 } },
+      });
+    }),
 });

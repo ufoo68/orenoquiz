@@ -8,7 +8,7 @@ const Ishindenshin: NextPage = () => {
   const deleteIshindenshin = api.ishindenshin.delete.useMutation();
 
   const handleCreateIshindenshin = async () => {
-    await createIshindenshin.mutateAsync({ answereCount: 2 });
+    await createIshindenshin.mutateAsync();
     await allIshindenshin.refetch();
   };
 
@@ -28,7 +28,6 @@ const Ishindenshin: NextPage = () => {
         <thead>
           <tr>
             <th>セッションID</th>
-            <th>参加人数</th>
             <th>バージョン</th>
             <th>ステータス</th>
             <th>リンク</th>
@@ -39,28 +38,27 @@ const Ishindenshin: NextPage = () => {
           {allIshindenshin.data.map((q) =>
             <tr key={q.id}>
               <th>{q.id}</th>
-              <th>{q.answereCount}</th>
               <th>{q.version}</th>
               <th>{q.state}</th>
               <th className="space-x-4">
-                <Link href={`/ishindenshin/answere/${q.id}?name=test1`} legacyBehavior passHref>
+                <Link href={`/ishindenshin/answere/${q.id}?name=groom`} legacyBehavior passHref>
                   <a target="_blank" rel="noopener noreferrer" className="link  link-primary">
-                    解答者１
+                    新郎
                   </a>
                 </Link>
-                <Link href={`/ishindenshin/answere/${q.id}?name=test2`} legacyBehavior passHref>
+                <Link href={`/ishindenshin/answere/${q.id}?name=bride`} legacyBehavior passHref>
                   <a target="_blank" rel="noopener noreferrer" className="link  link-primary">
-                    解答者２
+                    新婦
                   </a>
                 </Link>
                 <Link href={`/ishindenshin/host/${q.id}`} legacyBehavior passHref>
                   <a target="_blank" rel="noopener noreferrer" className="link  link-primary">
-                    司会者用
+                    司会者
                   </a>
                 </Link>
                 <Link href={`/ishindenshin/board/${q.id}`} legacyBehavior passHref>
                   <a target="_blank" rel="noopener noreferrer" className="link  link-primary">
-                    共有用
+                    会場
                   </a>
                 </Link>
               </th>
