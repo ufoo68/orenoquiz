@@ -1,10 +1,8 @@
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import Image from "next/image";
 import { type NextPage } from "next";
 import { api } from "../../../utils/api";
 import type { FC } from "react";
-import { Fragment, useState } from "react";
-import { useWindowSize } from "../../../hooks/useWindowSize";
+import { useState } from "react";
 import type { IshinDenshinSessionState } from "@prisma/client";
 
 type Props = {
