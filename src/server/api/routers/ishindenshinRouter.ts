@@ -1,4 +1,4 @@
-import type { IshinDenshinSessionState } from "@prisma/client";
+import type { IshinDenshinSessionState, IshinDenshinSessionResult } from "@prisma/client";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
@@ -23,12 +23,14 @@ export const ishindenshinRouter = createTRPCRouter({
       return {
         state: 'WAIT' as IshinDenshinSessionState,
         version: 0,
+        result: 'NONE' as IshinDenshinSessionResult,
       };
     }
-    const { state, version } = session;
+    const { state, version, result } = session;
     return {
       state,
       version,
+      result,
     }
   }),
   submitAnswer: publicProcedure.input(z.object(
@@ -83,13 +85,14 @@ export const ishindenshinRouter = createTRPCRouter({
   updateState: publicProcedure.input(z.object(
     {
       sessionId: z.string(),
-      state: z.enum(['SHOW', 'WAIT']),
+      state: z.enum(['SHOW', 'WAIT']).optional(),
+      result: z.enum(['MATCH', 'NOT_MATCH', 'NONE']).optional(),
     }))
     .mutation(async ({ input, ctx }) => {
-      const { sessionId, state } = input;
+      const { sessionId, state, result } = input;
       await ctx.prisma.ishinDenshinSession.update({
         where: { id: sessionId },
-        data: { state },
+        data: { state, result },
       });
     }),
   incrementVersion: publicProcedure.input(z.object(
@@ -100,7 +103,7 @@ export const ishindenshinRouter = createTRPCRouter({
       const { sessionId } = input;
       await ctx.prisma.ishinDenshinSession.update({
         where: { id: sessionId },
-        data: { state: 'WAIT', version: { increment: 1 } },
+        data: { state: 'WAIT', result: 'NONE', version: { increment: 1 } },
       });
     }),
 });

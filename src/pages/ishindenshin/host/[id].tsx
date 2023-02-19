@@ -2,8 +2,9 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { type NextPage } from "next";
 import { api } from "../../../utils/api";
 import type { FC } from "react";
+import { Fragment } from "react";
 import { useState } from "react";
-import type { IshinDenshinSessionState } from "@prisma/client";
+import type { IshinDenshinSessionResult, IshinDenshinSessionState } from "@prisma/client";
 
 type Props = {
   sessionId: string;
@@ -31,42 +32,95 @@ const Host: NextPage<Props> = ({ sessionId }) => {
   const [brideSubmited, setBrideSubmited] = useState<boolean>(false);
   const [version, setVersion] = useState<number>(1);
   const [state, setState] = useState<IshinDenshinSessionState>('WAIT');
-  const getGroomSubmited = api.ishindenshin.getSubmited.useQuery({
+  const [result, setResult] = useState<IshinDenshinSessionResult>('NONE');
+  api.ishindenshin.getSubmited.useQuery({
     sessionId,
     version,
     answereName: 'groom',
   }, {
     onSuccess: (res) => {
       setGroomSubmited(res.submited);
-    }
+    },
+    refetchInterval: process.env.NODE_ENV === 'development' ? false : 5000,
   });
-  const getBrideSubmited = api.ishindenshin.getSubmited.useQuery({
+  api.ishindenshin.getSubmited.useQuery({
     sessionId,
     version,
     answereName: 'bride',
   }, {
     onSuccess: (res) => {
       setBrideSubmited(res.submited);
-    }
+    },
+    refetchInterval: process.env.NODE_ENV === 'development' ? false : 5000,
   });
   const getStatus = api.ishindenshin.getStatus.useQuery({ sessionId }, {
     onSuccess: (res) => {
       setVersion(res.version);
       setState(res.state);
-      getGroomSubmited.refetch().catch((e) => console.error(e));
-      getBrideSubmited.refetch().catch((e) => console.error(e));
+      setResult(res.result);
     },
-    refetchInterval: 5000,
+    refetchInterval: process.env.NODE_ENV === 'development' ? false : 5000,
   });
   const updateState = api.ishindenshin.updateState.useMutation();
   const handleDisplayAnswer = async () => {
     await updateState.mutateAsync({ sessionId, state: 'SHOW' });
     await getStatus.refetch();
   }
+  const handleEvaluateAnswer = async (r: IshinDenshinSessionResult) => {
+    await updateState.mutateAsync({ sessionId, result: r });
+    await getStatus.refetch();
+  }
   const incrementVersion = api.ishindenshin.incrementVersion.useMutation();
   const handleNextVersion = async () => {
     await incrementVersion.mutateAsync({ sessionId });
     await getStatus.refetch();
+  }
+
+  const DisplayButton: FC = () => {
+    return (
+      <button className="btn" disabled={!groomSubmited || !brideSubmited} onClick={() => { handleDisplayAnswer().catch((e) => console.error(e)) }}>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" />
+        </svg>
+      </button>
+    )
+  }
+
+  const NextButton: FC = () => {
+    return (
+      <button className="btn" onClick={() => { handleNextVersion().catch((e) => console.error(e)) }}>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 8.688c0-.864.933-1.405 1.683-.977l7.108 4.062a1.125 1.125 0 010 1.953l-7.108 4.062A1.125 1.125 0 013 16.81V8.688zM12.75 8.688c0-.864.933-1.405 1.683-.977l7.108 4.062a1.125 1.125 0 010 1.953l-7.108 4.062a1.125 1.125 0 01-1.683-.977V8.688z" />
+        </svg>
+      </button>
+    )
+  }
+
+  const EvaluateButton: FC = () => {
+    return (
+      <Fragment>
+        <button className="btn" onClick={() => { handleEvaluateAnswer('MATCH').catch((e) => console.error(e)) }}>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" className="w-6 h-6">
+            <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clipRule="evenodd" />
+          </svg>
+        </button>
+        <button className="btn" onClick={() => { handleEvaluateAnswer('NOT_MATCH').catch((e) => console.error(e)) }}>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red" className="w-6 h-6">
+            <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clipRule="evenodd" />
+          </svg>
+
+        </button>
+      </Fragment>
+    )
+  }
+
+  const ActionButton: FC = () => {
+    if (state === 'WAIT') {
+      return <DisplayButton />
+    } else if (state === 'SHOW' && result === 'NONE') {
+      return <EvaluateButton />
+    }
+    return <NextButton />
   }
 
   return (
@@ -84,16 +138,7 @@ const Host: NextPage<Props> = ({ sessionId }) => {
         </div>
       </div>
       <div className="flex space-x-10">
-        <button className="btn" disabled={!groomSubmited || !brideSubmited || state === 'SHOW'} onClick={() => { handleDisplayAnswer().catch((e) => console.error(e)) }}>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" />
-          </svg>
-        </button>
-        <button className="btn" disabled={!groomSubmited || !brideSubmited || state !== 'SHOW'} onClick={() => { handleNextVersion().catch((e) => console.error(e)) }}>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 8.688c0-.864.933-1.405 1.683-.977l7.108 4.062a1.125 1.125 0 010 1.953l-7.108 4.062A1.125 1.125 0 013 16.81V8.688zM12.75 8.688c0-.864.933-1.405 1.683-.977l7.108 4.062a1.125 1.125 0 010 1.953l-7.108 4.062a1.125 1.125 0 01-1.683-.977V8.688z" />
-          </svg>
-        </button>
+        <ActionButton />
       </div>
     </div>
   );
