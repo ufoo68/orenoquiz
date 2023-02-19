@@ -22,7 +22,7 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
       setSubmited(res.submited);
     }
   });
-  const getStatus= api.ishindenshin.getStatus.useQuery({ sessionId }, {
+  const getStatus = api.ishindenshin.getStatus.useQuery({ sessionId }, {
     onSuccess: (res) => {
       setVersion(res.version);
       setState(res.state);
@@ -47,8 +47,8 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
   }
   return (
     <div className="w-screen h-screen bg-neutral-200 flex justify-center flex-col items-center space-y-5">
-      <SignatureCanvas penColor='black'
-        canvasProps={{ className: `artboard artboard-demo w-10/12 h-5/6 ${disabled ? 'pointer-events-none' : 'pointer-events-auto'}` }}
+      <SignatureCanvas penColor='rgb(0,0,0)'
+        canvasProps={{ className: `artboard artboard-demo w-3/4 h-2/3 ${disabled ? 'pointer-events-none' : 'pointer-events-auto'}` }}
         ref={ref}
       />
       <div className="flex flex-row space-x-52">
@@ -57,8 +57,7 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
           </svg>
         </button>
-        {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-        <button className="btn btn-wide" onClick={handleSubmitAnser} disabled={disabled}>
+        <button className="btn btn-wide" onClick={() => { handleSubmitAnser().catch((e) => console.error(e)) }} disabled={disabled}>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
           </svg>
