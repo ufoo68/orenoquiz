@@ -36,7 +36,7 @@ const Board: NextPage<Props> = ({ sessionId }) => {
         brideAnswer.refetch().catch((e) => console.error(e));
       }
     },
-    refetchInterval: process.env.NODE_ENV === 'development' ? false : 5000,
+    refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
   });
   const AnswerResult: FC = () => {
     return <div className="absolute">

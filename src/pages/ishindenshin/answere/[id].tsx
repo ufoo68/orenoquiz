@@ -30,7 +30,7 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
         getSubmited.refetch().catch((e) => console.error(e));
       }
     },
-    refetchInterval: process.env.NODE_ENV === 'development' ? false : 5000,
+    refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
   });
   const submitAnswer = api.ishindenshin.submitAnswer.useMutation();
 

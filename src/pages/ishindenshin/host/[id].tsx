@@ -41,7 +41,7 @@ const Host: NextPage<Props> = ({ sessionId }) => {
     onSuccess: (res) => {
       setGroomSubmited(res.submited);
     },
-    refetchInterval: process.env.NODE_ENV === 'development' ? false : 5000,
+    refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
   });
   api.ishindenshin.getSubmited.useQuery({
     sessionId,
@@ -51,7 +51,7 @@ const Host: NextPage<Props> = ({ sessionId }) => {
     onSuccess: (res) => {
       setBrideSubmited(res.submited);
     },
-    refetchInterval: process.env.NODE_ENV === 'development' ? false : 5000,
+    refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
   });
   const getStatus = api.ishindenshin.getStatus.useQuery({ sessionId }, {
     onSuccess: (res) => {
@@ -59,7 +59,7 @@ const Host: NextPage<Props> = ({ sessionId }) => {
       setState(res.state);
       setResult(res.result);
     },
-    refetchInterval: process.env.NODE_ENV === 'development' ? false : 5000,
+    refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
   });
   const updateState = api.ishindenshin.updateState.useMutation();
   const handleDisplayAnswer = async () => {
