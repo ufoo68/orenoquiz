@@ -29,7 +29,7 @@ const Question: NextPage<Props> = ({ masterId }) => {
   const handleSaveSelectedQuestion = async () => {
     const { id, title, order, contents } = selectedQuestion as QuizQuestion;
     await updateQuestion.mutateAsync({
-      id, 
+      id,
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       title,
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -60,6 +60,7 @@ const Question: NextPage<Props> = ({ masterId }) => {
           </svg>
         </button>
       </div>
+      {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
       <QuestionForm question={selectedQuestion} handleChangeSelectedQuestion={handleChangeSelectedQuestion} handleSaveSelectedQuestion={handleSaveSelectedQuestion} />
     </div>
   );

@@ -31,7 +31,7 @@ const Quiz: NextPage = () => {
 
   return (
     <div className="w-screen h-screen bg-neutral-200 flex justify-center flex-col items-center space-y-5">
-      {quizzes.map((q, i) =>
+      {quizzes.map((q) =>
         <div key={q.id} className="card bg-base-100 shadow-xl">
           <div className="card-body">
             <h2 className="card-title flex justify-between">
