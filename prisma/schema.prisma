@@ -12,75 +12,36 @@ datasource db {
 }
 
 model QuizMaster {
-    id        String         @id @default(uuid())
+    id        String   @id @default(uuid())
     title     String
-    questions QuizQuestion[]
-    createdAt DateTime       @default(now())
-    updatedAt DateTime       @updatedAt
-}
-
-enum QuestionType {
-    SELECT
-    SORT
-    INPUT
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model QuizQuestion {
-    id          String                @id @default(uuid())
-    masterId    String
-    type        QuestionType
-    description String
-    master      QuizMaster            @relation(fields: [masterId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    candidates  QuizAnswerCandidate[]
-    createdAt   DateTime              @default(now())
-    updatedAt   DateTime              @updatedAt
-
-    @@index([masterId])
-}
-
-model QuizAnswer {
-    id          String      @id @default(uuid())
-    questionId  String
-    description String
-    value       Json
-    question    QuizSession @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    createdAt   DateTime    @default(now())
-    updatedAt   DateTime    @updatedAt
-
-    @@index([questionId])
-}
-
-model QuizAnswerCandidate {
-    id             String        @id @default(uuid())
-    questionId     String
-    description    String
-    createdAt      DateTime      @default(now())
-    updatedAt      DateTime      @updatedAt
-    QuizQuestion   QuizQuestion? @relation(fields: [quizQuestionId], references: [id])
-    quizQuestionId String?
-
-    @@index([quizQuestionId])
+    id        String   @id @default(uuid())
+    masterId  String
+    title     String
+    contents  Json
+    order     Int      @default(1)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model QuizSession {
-    id           String        @id @default(uuid())
-    masterId     String
-    state        Json
-    Participants Participant[]
-    createdAt    DateTime      @default(now())
-    updatedAt    DateTime      @updatedAt
-    QuizAnswer   QuizAnswer[]
+    id        String   @id @default(uuid())
+    masterId  String
+    state     Json
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model Participant {
-    id        String      @id @default(uuid())
-    session   QuizSession @relation(fields: [sessionId], references: [id])
+    id        String   @id @default(uuid())
     sessionId String
     name      String
-    createdAt DateTime    @default(now())
-    updatedAt DateTime    @updatedAt
-
-    @@index([sessionId])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model ParticipantSubimit {
