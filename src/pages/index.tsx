@@ -1,4 +1,5 @@
 import { type NextPage } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -28,11 +29,15 @@ const Home: NextPage = () => {
   const [cardIndex, setCardIndex] = useState<number>(0)
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center space-y-5 bg-neutral-200">
-      <div className="h-1/2">
+      <div className="h-2/3 flex items-center">
         <div className="card w-80 bg-base-100 shadow-xl">
           <figure>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={selectCards[cardIndex]?.imageUrl} alt="ishindenshin" />
+            <Image
+              width={400}
+              height={200}
+              src={selectCards[cardIndex]?.imageUrl ?? ''}
+              alt="ishindenshin"
+            />
           </figure>
           <div className="card-body">
             <h2 className="card-title">{selectCards[cardIndex]?.title}</h2>
