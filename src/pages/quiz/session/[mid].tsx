@@ -1,48 +1,56 @@
-import type { QuizMaster } from '@prisma/client'
+import type { QuizSession } from '@prisma/client'
 import { type NextPage } from 'next'
 import Link from 'next/link'
 import { useState } from 'react'
-import { api } from '../../utils/api'
+import { api } from '../../../utils/api'
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
 
-const Quiz: NextPage = () => {
-  const [quizzes, setQuizzes] = useState<QuizMaster[]>([])
+type Props = {
+  masterId: string
+}
 
-  const createQuiz = api.quizMaster.create.useMutation()
-  const getAllQuiz = api.quizMaster.getAll.useQuery(undefined, {
-    onSuccess: (res) => {
-      setQuizzes(res)
-    },
-  })
-  const deleteQuiz = api.quizMaster.delete.useMutation()
+const Session: NextPage<Props> = ({ masterId }) => {
+  const [sessions, setSessions] = useState<QuizSession[]>([])
 
-  const handleCreateQuiz = async () => {
-    await createQuiz.mutateAsync()
-    await getAllQuiz.refetch()
+  const createSession = api.quizSession.create.useMutation()
+  const getAllSession = api.quizSession.getAll.useQuery(
+    { masterId },
+    {
+      onSuccess: (res) => {
+        setSessions(res)
+      },
+    }
+  )
+  const deleteQuiz = api.quizSession.delete.useMutation()
+
+  const handleCreateSession = async () => {
+    await createSession.mutateAsync({masterId})
+    await getAllSession.refetch()
   }
 
-  const handleDeleteQuiz = async (masterId: string) => {
-    await deleteQuiz.mutateAsync({ masterId })
-    await getAllQuiz.refetch()
+  const handleDeleteSession = async (sessionId: string) => {
+    await deleteQuiz.mutateAsync({ sessionId })
+    await getAllSession.refetch()
   }
 
-  if (getAllQuiz.isLoading) {
+  if (getAllSession.isLoading) {
     return <progress className="progress" />
   }
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center space-y-5 bg-neutral-200">
-      {quizzes.map((q) => (
-        <div key={q.id} className="card bg-base-100 shadow-xl">
+      {sessions.map((session) => (
+        <div key={session.id} className="card bg-base-100 shadow-xl">
           <div className="card-body">
             <h2 className="card-title flex justify-between">
-              {q.title}
+              {session.id}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
                 className="h-8 w-8 cursor-pointer"
                 onClick={() => {
-                  handleDeleteQuiz(q.id).catch((e) => console.error(e))
+                  handleDeleteSession(session.id).catch((e) => console.error(e))
                 }}
               >
                 <path
@@ -52,24 +60,32 @@ const Quiz: NextPage = () => {
                 />
               </svg>
             </h2>
-            <p>{q.id}</p>
+            <p>{JSON.stringify(session.state)}</p>
             <div className="card-actions justify-end">
-              <Link href={`/quiz/question/${q.id}`} legacyBehavior passHref>
+              <Link
+                href={`/quiz/question/participant/${session.id}`}
+                legacyBehavior
+                passHref
+              >
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
                   className="link-primary  link"
                 >
-                  <button className="btn btn-primary">問題</button>
+                  <button className="btn btn-primary">参加者</button>
                 </a>
               </Link>
-              <Link href={`/quiz/session/${q.id}`} legacyBehavior passHref>
+              <Link
+                href={`/quiz/question/host/${session.id}`}
+                legacyBehavior
+                passHref
+              >
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
                   className="link-primary  link"
                 >
-                  <button className="btn btn-primary">セッション</button>
+                  <button className="btn btn-primary">会場</button>
                 </a>
               </Link>
             </div>
@@ -79,7 +95,7 @@ const Quiz: NextPage = () => {
       <button
         className="btn btn-secondary"
         onClick={() => {
-          handleCreateQuiz().catch((e) => {
+          handleCreateSession().catch((e) => {
             console.error(e)
           })
         }}
@@ -101,4 +117,14 @@ const Quiz: NextPage = () => {
   )
 }
 
-export default Quiz
+export const getServerSideProps = (
+  context: GetServerSidePropsContext
+): GetServerSidePropsResult<Props> => {
+  const { mid } = context.query
+  if (typeof mid !== 'string') {
+    return { notFound: true }
+  }
+  return { props: { masterId: mid } }
+}
+
+export default Session

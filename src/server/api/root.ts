@@ -2,6 +2,7 @@ import { createTRPCRouter } from './trpc'
 import { quizMasterRouter } from './routers/quizMaster'
 import { ishindenshinRouter } from './routers/ishindenshinRouter'
 import { quizQuestionRouter } from './routers/quizQuestion'
+import { quizSessionRouter } from './routers/quizSessionRouter'
 
 /**
  * This is the primary router for your server.
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   quizMaster: quizMasterRouter,
   ishindenshin: ishindenshinRouter,
   quizQuestion: quizQuestionRouter,
+  quizSession: quizSessionRouter,
 })
 
 // export type definition of API
