@@ -14,7 +14,7 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
         <ul className="menu rounded-box border bg-base-100 p-2">
           {sortBy(contents.questions, 'id').map((question) => (
             <li key={question.id}>
-              <a className="cursor-default">
+              <div className="cursor-default">
                 <input
                   className="input-bordered input w-full"
                   value={question.label}
@@ -87,7 +87,7 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
                     clipRule="evenodd"
                   />
                 </svg>
-              </a>
+              </div>
             </li>
           ))}
         </ul>
@@ -125,7 +125,7 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
         <ul className="menu rounded-box border bg-base-100 p-2">
           {sortBy(contents.questions, 'id').map((question) => (
             <li key={question.id}>
-              <a className="cursor-default">
+              <div className="cursor-default">
                 <input
                   className="input-bordered input w-full"
                   value={question.label}
@@ -145,6 +145,42 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
                     })
                   }}
                 />
+                <select
+                  className="select-bordered select"
+                  value={question.order}
+                  onChange={(e) => {
+                    const previousOrder = question.order
+                    const currentOrder = Number(e.target.value)
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    const replaceQuestion = contents.questions.find(
+                      (q) => q.order === currentOrder
+                    )!
+                    const otherQuestions = contents.questions.filter(
+                      (q) =>
+                        q.order !== previousOrder && q.order !== currentOrder
+                    )
+                    handleSave({
+                      ...contents,
+                      questions: [
+                        ...otherQuestions,
+                        {
+                          ...question,
+                          order: currentOrder,
+                        },
+                        { 
+                          ...replaceQuestion,
+                          order: previousOrder,
+                        }
+                      ],
+                    })
+                  }}
+                >
+                  {[...Array(contents.questions.length).keys()].map((order) => (
+                    <option key={order} value={order + 1}>
+                      {order + 1}番
+                    </option>
+                  ))}
+                </select>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -165,7 +201,7 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
                     clipRule="evenodd"
                   />
                 </svg>
-              </a>
+              </div>
             </li>
           ))}
         </ul>
@@ -182,7 +218,9 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
                   ...contents.questions,
                   {
                     id: Math.max(...contents.questions.map((q) => q.id)) + 1,
-                    label: '選択肢',
+                    label: '要素',
+                    order:
+                      Math.max(...contents.questions.map((q) => q.order)) + 1,
                   },
                 ],
               })

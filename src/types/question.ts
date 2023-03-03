@@ -15,9 +15,9 @@ export type SortTypeQuestion = {
   questions: {
     id: number
     label: string
+    order: number
     thumbnailUrl?: string
   }[]
-  answerIds: number[]
 }
 
 export const getSelectTypeInit = (): SelectTypeQuestion => ({
@@ -37,7 +37,7 @@ export const getSortTypeInit = (): SortTypeQuestion => ({
     {
       id: 1,
       label: '要素',
+      order: 1,
     },
-  ],
-  answerIds: [1],
+  ]
 })
