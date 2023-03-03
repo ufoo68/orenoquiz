@@ -1,8 +1,8 @@
-import type { QuizMaster } from "@prisma/client"
-import { type NextPage } from "next"
-import Link from "next/link"
-import { useState } from "react"
-import { api } from "../../utils/api"
+import type { QuizMaster } from '@prisma/client'
+import { type NextPage } from 'next'
+import Link from 'next/link'
+import { useState } from 'react'
+import { api } from '../../utils/api'
 
 const Quiz: NextPage = () => {
   const [quizzes, setQuizzes] = useState<QuizMaster[]>([])

@@ -1,7 +1,7 @@
-import { z } from "zod"
-import { getSelectTypeInit } from "../../../types/question"
+import { z } from 'zod'
+import { getSelectTypeInit } from '../../../types/question'
 
-import { createTRPCRouter, publicProcedure } from "../trpc"
+import { createTRPCRouter, publicProcedure } from '../trpc'
 
 export const quizMasterRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
@@ -9,12 +9,12 @@ export const quizMasterRouter = createTRPCRouter({
   }),
   create: publicProcedure.mutation(async ({ ctx }) => {
     const { id } = await ctx.prisma.quizMaster.create({
-      data: { title: "新しいクイズ" },
+      data: { title: '新しいクイズ' },
     })
     await ctx.prisma.quizQuestion.create({
       data: {
         masterId: id,
-        title: "新しい問題",
+        title: '新しい問題',
         contents: getSelectTypeInit(),
       },
     })

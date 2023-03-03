@@ -1,10 +1,10 @@
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next"
-import { type NextPage } from "next"
-import { useRef, useState } from "react"
-import SignatureCanvas from "react-signature-canvas"
-import type ReactSignatureCanvas from "react-signature-canvas"
-import { api } from "../../../utils/api"
-import type { IshinDenshinSessionState } from "@prisma/client"
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
+import { type NextPage } from 'next'
+import { useRef, useState } from 'react'
+import SignatureCanvas from 'react-signature-canvas'
+import type ReactSignatureCanvas from 'react-signature-canvas'
+import { api } from '../../../utils/api'
+import type { IshinDenshinSessionState } from '@prisma/client'
 
 type Props = {
   sessionId: string
@@ -15,8 +15,8 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
   const ref = useRef<ReactSignatureCanvas>(null)
   const [version, setVersion] = useState<number>(1)
   const [submited, setSubmited] = useState<boolean>(false)
-  const [state, setState] = useState<IshinDenshinSessionState>("WAIT")
-  const disabled = submited || state === "SHOW"
+  const [state, setState] = useState<IshinDenshinSessionState>('WAIT')
+  const disabled = submited || state === 'SHOW'
   const getSubmited = api.ishindenshin.getSubmited.useQuery(
     { sessionId, answereName, version },
     {
@@ -31,11 +31,11 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
       onSuccess: (res) => {
         setVersion(res.version)
         setState(res.state)
-        if (res.state === "WAIT") {
+        if (res.state === 'WAIT') {
           getSubmited.refetch().catch((e) => console.error(e))
         }
       },
-      refetchInterval: process.env.NODE_ENV === "development" ? false : 1000,
+      refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
   )
   const submitAnswer = api.ishindenshin.submitAnswer.useMutation()
@@ -57,7 +57,7 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
         penColor="rgb(0,0,0)"
         canvasProps={{
           className: `artboard artboard-demo w-3/4 h-2/3 ${
-            disabled ? "pointer-events-none" : "pointer-events-auto"
+            disabled ? 'pointer-events-none' : 'pointer-events-auto'
           }`,
         }}
         ref={ref}
@@ -114,7 +114,7 @@ export const getServerSideProps = (
   context: GetServerSidePropsContext
 ): GetServerSidePropsResult<Props> => {
   const { id, name } = context.query
-  if (typeof id !== "string" || typeof name !== "string") {
+  if (typeof id !== 'string' || typeof name !== 'string') {
     return { notFound: true }
   }
   return { props: { sessionId: id, answereName: name } }

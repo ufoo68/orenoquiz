@@ -1,15 +1,15 @@
 import type {
   IshinDenshinSessionState,
   IshinDenshinSessionResult,
-} from "@prisma/client"
-import { z } from "zod"
+} from '@prisma/client'
+import { z } from 'zod'
 
-import { createTRPCRouter, publicProcedure } from "../trpc"
+import { createTRPCRouter, publicProcedure } from '../trpc'
 
 export const ishindenshinRouter = createTRPCRouter({
   create: publicProcedure.mutation(async ({ ctx }) => {
     await ctx.prisma.ishinDenshinSession.create({
-      data: { state: "WAIT", version: 1 },
+      data: { state: 'WAIT', version: 1 },
     })
   }),
   getAll: publicProcedure.query(async ({ ctx }) => {
@@ -30,9 +30,9 @@ export const ishindenshinRouter = createTRPCRouter({
       })
       if (!session) {
         return {
-          state: "WAIT" as IshinDenshinSessionState,
+          state: 'WAIT' as IshinDenshinSessionState,
           version: 0,
-          result: "NONE" as IshinDenshinSessionResult,
+          result: 'NONE' as IshinDenshinSessionResult,
         }
       }
       const { state, version, result } = session
@@ -56,7 +56,7 @@ export const ishindenshinRouter = createTRPCRouter({
       await ctx.prisma.ishinDenshinSubmit.create({
         data: {
           ...params,
-          boardImageBuffer: Buffer.from(boardImageUrl, "utf8"),
+          boardImageBuffer: Buffer.from(boardImageUrl, 'utf8'),
         },
       })
     }),
@@ -77,10 +77,10 @@ export const ishindenshinRouter = createTRPCRouter({
           version,
         },
         orderBy: {
-          createdAt: "desc",
+          createdAt: 'desc',
         },
       })
-      const boardImageUrl = answer?.boardImageBuffer?.toString("utf8")
+      const boardImageUrl = answer?.boardImageBuffer?.toString('utf8')
       return { boardImageUrl }
     }),
   getSubmited: publicProcedure
@@ -106,8 +106,8 @@ export const ishindenshinRouter = createTRPCRouter({
     .input(
       z.object({
         sessionId: z.string(),
-        state: z.enum(["SHOW", "WAIT"]).optional(),
-        result: z.enum(["MATCH", "NOT_MATCH", "NONE"]).optional(),
+        state: z.enum(['SHOW', 'WAIT']).optional(),
+        result: z.enum(['MATCH', 'NOT_MATCH', 'NONE']).optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -127,7 +127,7 @@ export const ishindenshinRouter = createTRPCRouter({
       const { sessionId } = input
       await ctx.prisma.ishinDenshinSession.update({
         where: { id: sessionId },
-        data: { state: "WAIT", result: "NONE", version: { increment: 1 } },
+        data: { state: 'WAIT', result: 'NONE', version: { increment: 1 } },
       })
     }),
 })

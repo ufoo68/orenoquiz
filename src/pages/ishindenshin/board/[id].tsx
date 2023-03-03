@@ -1,14 +1,14 @@
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next"
-import Image from "next/image"
-import { type NextPage } from "next"
-import { api } from "../../../utils/api"
-import type { FC } from "react"
-import { Fragment, useState } from "react"
-import { useWindowSize } from "../../../hooks/useWindowSize"
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
+import Image from 'next/image'
+import { type NextPage } from 'next'
+import { api } from '../../../utils/api'
+import type { FC } from 'react'
+import { Fragment, useState } from 'react'
+import { useWindowSize } from '../../../hooks/useWindowSize'
 import type {
   IshinDenshinSessionState,
   IshinDenshinSessionResult,
-} from "@prisma/client"
+} from '@prisma/client'
 
 type Props = {
   sessionId: string
@@ -16,18 +16,18 @@ type Props = {
 
 const Board: NextPage<Props> = ({ sessionId }) => {
   const [version, setVersion] = useState<number>(1)
-  const [state, setState] = useState<IshinDenshinSessionState>("WAIT")
-  const [result, setResult] = useState<IshinDenshinSessionResult>("NONE")
+  const [state, setState] = useState<IshinDenshinSessionState>('WAIT')
+  const [result, setResult] = useState<IshinDenshinSessionResult>('NONE')
   const { width } = useWindowSize()
   const groomAnswer = api.ishindenshin.getAnswer.useQuery({
     sessionId,
     version,
-    answereName: "groom",
+    answereName: 'groom',
   })
   const brideAnswer = api.ishindenshin.getAnswer.useQuery({
     sessionId,
     version,
-    answereName: "bride",
+    answereName: 'bride',
   })
   api.ishindenshin.getStatus.useQuery(
     { sessionId },
@@ -36,12 +36,12 @@ const Board: NextPage<Props> = ({ sessionId }) => {
         setVersion(res.version)
         setState(res.state)
         setResult(res.result)
-        if (res.state === "SHOW") {
+        if (res.state === 'SHOW') {
           groomAnswer.refetch().catch((e) => console.error(e))
           brideAnswer.refetch().catch((e) => console.error(e))
         }
       },
-      refetchInterval: process.env.NODE_ENV === "development" ? false : 1000,
+      refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
   )
   const AnswerResult: FC = () => {
@@ -49,7 +49,7 @@ const Board: NextPage<Props> = ({ sessionId }) => {
       <div className="absolute">
         {(() => {
           switch (result) {
-            case "MATCH":
+            case 'MATCH':
               return (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -66,7 +66,7 @@ const Board: NextPage<Props> = ({ sessionId }) => {
                   />
                 </svg>
               )
-            case "NOT_MATCH":
+            case 'NOT_MATCH':
               return (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +83,7 @@ const Board: NextPage<Props> = ({ sessionId }) => {
                   />
                 </svg>
               )
-            case "NONE":
+            case 'NONE':
               return null
           }
         })()}
@@ -95,7 +95,7 @@ const Board: NextPage<Props> = ({ sessionId }) => {
       <AnswerResult />
       {groomAnswer.data?.boardImageUrl &&
       brideAnswer.data?.boardImageUrl &&
-      state === "SHOW" ? (
+      state === 'SHOW' ? (
         <Fragment>
           {/* NOTE: heightが特に意味ない */}
           <Image
@@ -131,7 +131,7 @@ export const getServerSideProps = (
   context: GetServerSidePropsContext
 ): GetServerSidePropsResult<Props> => {
   const { id } = context.query
-  if (typeof id !== "string") {
+  if (typeof id !== 'string') {
     return { notFound: true }
   }
   return { props: { sessionId: id } }

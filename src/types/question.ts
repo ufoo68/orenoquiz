@@ -1,7 +1,7 @@
 export type QuestionContents = SelectTypeQuestion | SortTypeQuestion
 
 export type SelectTypeQuestion = {
-  type: "select"
+  type: 'select'
   questions: {
     id: number
     label: string
@@ -11,7 +11,7 @@ export type SelectTypeQuestion = {
 }
 
 export type SortTypeQuestion = {
-  type: "sort"
+  type: 'sort'
   questions: {
     id: number
     label: string
@@ -21,22 +21,22 @@ export type SortTypeQuestion = {
 }
 
 export const getSelectTypeInit = (): SelectTypeQuestion => ({
-  type: "select",
+  type: 'select',
   questions: [
     {
       id: 1,
-      label: "選択肢",
+      label: '選択肢',
     },
   ],
   answerId: 1,
 })
 
 export const getSortTypeInit = (): SortTypeQuestion => ({
-  type: "sort",
+  type: 'sort',
   questions: [
     {
       id: 1,
-      label: "要素",
+      label: '要素',
     },
   ],
   answerIds: [1],

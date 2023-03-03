@@ -1,9 +1,9 @@
-import type { QuizQuestion } from "@prisma/client"
+import type { QuizQuestion } from '@prisma/client'
 
-import type { FC } from "react"
-import type { QuestionContents } from "../../types/question"
-import { getSelectTypeInit, getSortTypeInit } from "../../types/question"
-import { QuestionFormContents } from "./QuestionFormContents"
+import type { FC } from 'react'
+import type { QuestionContents } from '../../types/question'
+import { getSelectTypeInit, getSortTypeInit } from '../../types/question'
+import { QuestionFormContents } from './QuestionFormContents'
 
 type Props = {
   question: QuizQuestion | undefined
@@ -50,9 +50,9 @@ export const QuestionForm: FC<Props> = ({
           value={contents.type}
           onChange={(e) => {
             const type = e.target.value
-            if (type === "select") {
+            if (type === 'select') {
               handleChangeSelectedQuestion({ contents: getSelectTypeInit() })
-            } else if (type === "sort") {
+            } else if (type === 'sort') {
               handleChangeSelectedQuestion({ contents: getSortTypeInit() })
             }
           }}

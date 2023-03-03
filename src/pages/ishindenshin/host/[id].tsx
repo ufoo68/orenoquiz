@@ -1,13 +1,13 @@
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next"
-import { type NextPage } from "next"
-import { api } from "../../../utils/api"
-import type { FC } from "react"
-import { Fragment } from "react"
-import { useState } from "react"
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
+import { type NextPage } from 'next'
+import { api } from '../../../utils/api'
+import type { FC } from 'react'
+import { Fragment } from 'react'
+import { useState } from 'react'
 import type {
   IshinDenshinSessionResult,
   IshinDenshinSessionState,
-} from "@prisma/client"
+} from '@prisma/client'
 
 type Props = {
   sessionId: string
@@ -57,32 +57,32 @@ const Host: NextPage<Props> = ({ sessionId }) => {
   const [groomSubmited, setGroomSubmited] = useState<boolean>(false)
   const [brideSubmited, setBrideSubmited] = useState<boolean>(false)
   const [version, setVersion] = useState<number>(1)
-  const [state, setState] = useState<IshinDenshinSessionState>("WAIT")
-  const [result, setResult] = useState<IshinDenshinSessionResult>("NONE")
+  const [state, setState] = useState<IshinDenshinSessionState>('WAIT')
+  const [result, setResult] = useState<IshinDenshinSessionResult>('NONE')
   api.ishindenshin.getSubmited.useQuery(
     {
       sessionId,
       version,
-      answereName: "groom",
+      answereName: 'groom',
     },
     {
       onSuccess: (res) => {
         setGroomSubmited(res.submited)
       },
-      refetchInterval: process.env.NODE_ENV === "development" ? false : 1000,
+      refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
   )
   api.ishindenshin.getSubmited.useQuery(
     {
       sessionId,
       version,
-      answereName: "bride",
+      answereName: 'bride',
     },
     {
       onSuccess: (res) => {
         setBrideSubmited(res.submited)
       },
-      refetchInterval: process.env.NODE_ENV === "development" ? false : 1000,
+      refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
   )
   const getStatus = api.ishindenshin.getStatus.useQuery(
@@ -93,12 +93,12 @@ const Host: NextPage<Props> = ({ sessionId }) => {
         setState(res.state)
         setResult(res.result)
       },
-      refetchInterval: process.env.NODE_ENV === "development" ? false : 1000,
+      refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
   )
   const updateState = api.ishindenshin.updateState.useMutation()
   const handleDisplayAnswer = async () => {
-    await updateState.mutateAsync({ sessionId, state: "SHOW" })
+    await updateState.mutateAsync({ sessionId, state: 'SHOW' })
     await getStatus.refetch()
   }
   const handleEvaluateAnswer = async (r: IshinDenshinSessionResult) => {
@@ -170,7 +170,7 @@ const Host: NextPage<Props> = ({ sessionId }) => {
         <button
           className="btn"
           onClick={() => {
-            handleEvaluateAnswer("MATCH").catch((e) => console.error(e))
+            handleEvaluateAnswer('MATCH').catch((e) => console.error(e))
           }}
         >
           <svg
@@ -189,7 +189,7 @@ const Host: NextPage<Props> = ({ sessionId }) => {
         <button
           className="btn"
           onClick={() => {
-            handleEvaluateAnswer("NOT_MATCH").catch((e) => console.error(e))
+            handleEvaluateAnswer('NOT_MATCH').catch((e) => console.error(e))
           }}
         >
           <svg
@@ -210,9 +210,9 @@ const Host: NextPage<Props> = ({ sessionId }) => {
   }
 
   const ActionButton: FC = () => {
-    if (state === "WAIT") {
+    if (state === 'WAIT') {
       return <DisplayButton />
-    } else if (state === "SHOW" && result === "NONE") {
+    } else if (state === 'SHOW' && result === 'NONE') {
       return <EvaluateButton />
     }
     return <NextButton />
@@ -220,13 +220,13 @@ const Host: NextPage<Props> = ({ sessionId }) => {
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center space-y-20 bg-base-300">
-      <div className="tooltip" data-tip={groomSubmited ? "回答済み" : "回答中"}>
+      <div className="tooltip" data-tip={groomSubmited ? '回答済み' : '回答中'}>
         <div className="card rounded-box flex h-20 w-80 flex-row items-center justify-center space-x-10 bg-white text-3xl">
           <div>新郎🤵🏻‍♂️</div>
           {groomSubmited ? <Check /> : <Loding />}
         </div>
       </div>
-      <div className="tooltip" data-tip={brideSubmited ? "回答済み" : "回答中"}>
+      <div className="tooltip" data-tip={brideSubmited ? '回答済み' : '回答中'}>
         <div className="card rounded-box flex h-20 w-80 flex-row items-center justify-center space-x-10 bg-white text-3xl">
           <div>新婦👰🏻‍♀️</div>
           {brideSubmited ? <Check /> : <Loding />}
@@ -243,7 +243,7 @@ export const getServerSideProps = (
   context: GetServerSidePropsContext
 ): GetServerSidePropsResult<Props> => {
   const { id } = context.query
-  if (typeof id !== "string") {
+  if (typeof id !== 'string') {
     return { notFound: true }
   }
   return { props: { sessionId: id } }

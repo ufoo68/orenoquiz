@@ -1,10 +1,10 @@
-import type { QuizQuestion } from "@prisma/client"
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next"
-import { type NextPage } from "next"
-import { useState } from "react"
-import { QuestionForm } from "../../../components/quizQuestion/QuestionForm"
-import { api } from "../../../utils/api"
-import { sortBy } from "lodash"
+import type { QuizQuestion } from '@prisma/client'
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
+import { type NextPage } from 'next'
+import { useState } from 'react'
+import { QuestionForm } from '../../../components/quizQuestion/QuestionForm'
+import { api } from '../../../utils/api'
+import { sortBy } from 'lodash'
 
 type Props = {
   masterId: string
@@ -46,7 +46,7 @@ const Question: NextPage<Props> = ({ masterId }) => {
   }
   const handleDeleteQuestion = async () => {
     await deleteQuestion.mutateAsync({
-      questionId: selectedQuestion?.id ?? "",
+      questionId: selectedQuestion?.id ?? '',
     })
     await getAllQuestion.refetch()
   }
@@ -58,7 +58,7 @@ const Question: NextPage<Props> = ({ masterId }) => {
     <div className="grid h-screen w-screen grid-flow-col grid-cols-3 bg-neutral-200">
       <div className="flex h-screen flex-col items-center justify-center space-y-5">
         <ul className="menu rounded-box w-56 bg-base-100 p-2">
-          {sortBy(questions, "order").map((question) => (
+          {sortBy(questions, 'order').map((question) => (
             <li key={question.id}>
               <a onClick={() => setSelectedQestion(question)}>
                 {question.title}
@@ -97,7 +97,7 @@ export const getServerSideProps = (
   context: GetServerSidePropsContext
 ): GetServerSidePropsResult<Props> => {
   const { mid } = context.query
-  if (typeof mid !== "string") {
+  if (typeof mid !== 'string') {
     return { notFound: true }
   }
   return { props: { masterId: mid } }
