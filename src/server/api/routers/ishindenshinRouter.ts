@@ -18,8 +18,12 @@ export const ishindenshinRouter = createTRPCRouter({
   delete: publicProcedure
     .input(z.object({ sessionId: z.string() }))
     .mutation(async ({ input, ctx }) => {
+      const { sessionId } = input
       await ctx.prisma.ishinDenshinSession.delete({
-        where: { id: input.sessionId },
+        where: { id: sessionId },
+      })
+      await ctx.prisma.ishinDenshinSubmit.deleteMany({
+        where: { sessionId },
       })
     }),
   getStatus: publicProcedure
