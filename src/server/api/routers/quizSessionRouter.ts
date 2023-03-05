@@ -1,17 +1,21 @@
 import { z } from 'zod'
+import type { QuizSessionState } from '../../../types/quizSession'
+import { getQuizSessionStateQuestion } from '../../../types/quizSession'
+import { getQuizSessionStateEntry } from '../../../types/quizSession'
 
 import { createTRPCRouter, publicProcedure } from '../trpc'
 
 export const quizSessionRouter = createTRPCRouter({
-  get: publicProcedure
-    .input(z.object({ questionId: z.string() }))
-    .query(({ input, ctx }) => {
-      const { questionId } = input
-      return ctx.prisma.quizSession.findUnique({
+  getState: publicProcedure
+    .input(z.object({ sessionId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const { sessionId } = input
+      const session = await ctx.prisma.quizSession.findUnique({
         where: {
-          id: questionId,
+          id: sessionId,
         },
       })
+      return session?.state as QuizSessionState
     }),
   getAll: publicProcedure
     .input(z.object({ masterId: z.string() }))
@@ -24,28 +28,41 @@ export const quizSessionRouter = createTRPCRouter({
   create: publicProcedure
     .input(z.object({ masterId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const { masterId} = input
+      const { masterId } = input
       await ctx.prisma.quizSession.create({
         data: {
           masterId,
-          state: {},
+          state: getQuizSessionStateEntry(),
         },
       })
     }),
-  update: publicProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        state: z.any(),
-      })
-    )
+  updateStateStart: publicProcedure
+    .input(z.object({ sessionId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const { id, state } = input
+      const { sessionId } = input
+      const session = await ctx.prisma.quizSession.findUnique({
+        where: { id: sessionId },
+      })
+      if (!session) {
+        return
+      }
+      const quiz = await ctx.prisma.quizMaster.findUnique({
+        where: { id: session.masterId },
+      })
+      if (!quiz) {
+        return
+      }
+      const question = await ctx.prisma.quizQuestion.findFirst({
+        where: { masterId: quiz.id, order: 1 },
+      })
+      if (!question) {
+        return
+      }
       await ctx.prisma.quizSession.update({
-        where: { id },
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        data: { state },
+        where: { id: sessionId },
+        data: {
+          state: getQuizSessionStateQuestion(question.id),
+        },
       })
     }),
   delete: publicProcedure
@@ -54,6 +71,15 @@ export const quizSessionRouter = createTRPCRouter({
       const { sessionId } = input
       await ctx.prisma.quizSession.delete({
         where: { id: sessionId },
+      })
+      await ctx.prisma.participant.deleteMany({
+        where: { sessionId },
+      })
+      await ctx.prisma.participantScore.deleteMany({
+        where: { sessionId },
+      })
+      await ctx.prisma.participantSubimit.deleteMany({
+        where: { sessionId },
       })
     }),
 })

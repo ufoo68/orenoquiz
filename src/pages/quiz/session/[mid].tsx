@@ -63,7 +63,7 @@ const Session: NextPage<Props> = ({ masterId }) => {
             <p>{JSON.stringify(session.state)}</p>
             <div className="card-actions justify-end">
               <Link
-                href={`/quiz/question/participant/${session.id}`}
+                href={`/quiz/participant/${session.id}`}
                 legacyBehavior
                 passHref
               >
@@ -76,7 +76,7 @@ const Session: NextPage<Props> = ({ masterId }) => {
                 </a>
               </Link>
               <Link
-                href={`/quiz/question/host/${session.id}`}
+                href={`/quiz/host/${session.id}`}
                 legacyBehavior
                 passHref
               >
@@ -85,7 +85,7 @@ const Session: NextPage<Props> = ({ masterId }) => {
                   rel="noopener noreferrer"
                   className="link-primary  link"
                 >
-                  <button className="btn btn-primary">会場</button>
+                  <button className="btn btn-primary">司会</button>
                 </a>
               </Link>
             </div>
