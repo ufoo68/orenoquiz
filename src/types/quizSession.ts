@@ -1,4 +1,7 @@
-export type QuizSessionState = QuizSessionStateEntry | QuizSessonStateQuestion
+export type QuizSessionState =
+  | QuizSessionStateEntry
+  | QuizSessonStateQuestion
+  | QuizSessionStateAnswer
 
 export type QuizSessionStateEntry = {
   type: 'entry'
@@ -23,7 +26,7 @@ export type QuizSessionStateAnswer = {
   questionId: string
 }
 
-export const QuizSessionStateAnswer = (
+export const getQuizSessionStateAnswer = (
   questionId: string
 ): QuizSessionStateAnswer => ({
   type: 'answer',

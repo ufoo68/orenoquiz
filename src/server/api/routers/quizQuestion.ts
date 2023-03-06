@@ -14,6 +14,26 @@ export const quizQuestionRouter = createTRPCRouter({
         },
       })
     }),
+  getNextQuestionId: publicProcedure
+    .input(z.object({ questionId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const { questionId } = input
+      const question = await ctx.prisma.quizQuestion.findUnique({
+        where: {
+          id: questionId,
+        },
+      })
+      if (!question) {
+        return ''
+      }
+      const nextQuestion = await ctx.prisma.quizQuestion.findFirst({
+        where: {
+          masterId: question.masterId,
+          order: question.order + 1,
+        }
+      })
+      return nextQuestion?.id ?? ''
+    }),
   getAll: publicProcedure
     .input(z.object({ masterId: z.string() }))
     .query(({ ctx, input }) => {

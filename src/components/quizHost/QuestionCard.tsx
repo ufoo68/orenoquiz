@@ -7,9 +7,14 @@ import { api } from '../../utils/api'
 type Props = {
   sessionId: string
   questionId: string
+  handleQuizAnswer: (questionId: string) => void
 }
 
-export const QuestionCard: FC<Props> = ({ questionId, sessionId }) => {
+export const QuestionCard: FC<Props> = ({
+  questionId,
+  sessionId,
+  handleQuizAnswer,
+}) => {
   const [question, setQuestion] = useState<QuizQuestion | null>()
   const [entriesCount, setEntriesCount] = useState<number>(0)
   const [submitCount, setSubmitCount] = useState<number>(0)
@@ -41,27 +46,39 @@ export const QuestionCard: FC<Props> = ({ questionId, sessionId }) => {
     return <progress className="progress" />
   }
   const contents = question.contents as QuestionContents
-  return (
-    <div className="card w-96 bg-base-100 shadow-xl">
-      <figure>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={contents.thumbnailUrl} alt="Shoes" />
-      </figure>
-      <div className="card-body">
-        <h2 className="card-title">Q{question.order}.</h2>
-        <p>{question.title}</p>
-        <div>
-          回答数({submitCount}/{entriesCount})
-        </div>
-        <progress
-          className="progress progress-primary w-full"
-          value={submitCount}
-          max={entriesCount}
-        ></progress>
-        <div className="card-actions justify-end">
-          <button className="btn-primary btn">回答へ</button>
+  if (contents.type === 'select') {
+    return (
+      <div className="card w-96 bg-base-100 shadow-xl">
+        {contents.thumbnailUrl ? (
+          <figure>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={contents.thumbnailUrl} alt="Shoes" />
+          </figure>
+        ) : null}
+        <div className="card-body">
+          <h2 className="card-title">Q{question.order}.</h2>
+          <p>{question.title}</p>
+          <div>
+            回答数({submitCount}/{entriesCount})
+          </div>
+          <progress
+            className="progress progress-primary w-full"
+            value={submitCount}
+            max={entriesCount}
+          ></progress>
+          <div className="card-actions justify-end">
+            <button
+              className="btn-primary btn"
+              onClick={() => {
+                handleQuizAnswer(questionId)
+              }}
+            >
+              回答へ
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  )
+    )
+  }
+  return null
 }

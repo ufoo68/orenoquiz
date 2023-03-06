@@ -76,6 +76,19 @@ export const quizParticipantRouter = createTRPCRouter({
         where: { participantId, sessionId, result: 'WIN' },
       })
     }),
+  getQuestionWinCount: publicProcedure
+    .input(
+      z.object({
+        sessionId: z.string(),
+        questionId: z.string(),
+      })
+    )
+    .query(({ ctx, input }) => {
+      const { questionId, sessionId } = input
+      return ctx.prisma.participantScore.count({
+        where: { questionId, sessionId, result: 'WIN' },
+      })
+    }),
   create: publicProcedure
     .input(z.object({ sessionId: z.string(), name: z.string() }))
     .mutation(async ({ ctx, input }) => {

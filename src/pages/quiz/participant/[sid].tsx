@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import type { QuizSessionState } from '../../../types/quizSession'
 import { getQuizSessionStateEntry } from '../../../types/quizSession'
 import { AnswerForm } from '../../../components/quizParticipant/AnswerForm'
+import { ResultCard } from '../../../components/quizParticipant/ResultCard'
 
 type Props = {
   sessionId: string
@@ -50,6 +51,14 @@ const Participant: NextPage<Props> = ({
           )
         } else if (state.type === 'question') {
           return <AnswerForm sessionId={sessionId} participantId={participantId} questionId={state.questionId} />
+        } else if (state.type === 'answer') {
+          return (
+            <ResultCard
+              sessionId={sessionId}
+              participantId={participantId}
+              questionId={state.questionId}
+            />
+          )
         }
       })()}
     </div>

@@ -9,7 +9,7 @@ type Props = {
 export const EntryForm: FC<Props> = ({ participantId, handleSubmitName }) => {
   const [name, setName] = useState<string>('')
   return (
-    <form className=" w-3/4 rounded bg-white p-8 shadow-md">
+    <form className="w-3/4 rounded bg-white p-8 shadow-md">
       <div className="mb-4">
         <label className="mb-2 block text-sm font-bold text-gray-700">
           参加者名
