@@ -35,7 +35,7 @@ const Host: NextPage<Props> = ({ sessionId }) => {
             className="scale-75 border border-black"
             width="393px"
             height="100%"
-            src={`/quiz/participant/${sessionId}`}
+            src={`/quiz/participant/${sessionId}?pid=demo`}
           />
         </div>
       </div>

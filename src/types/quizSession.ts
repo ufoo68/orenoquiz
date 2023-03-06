@@ -17,3 +17,15 @@ export const getQuizSessionStateQuestion = (questionId: string): QuizSessonState
   type: 'question',
   questionId,
 })
+
+export type QuizSessionStateAnswer = {
+  type: 'answer'
+  questionId: string
+}
+
+export const QuizSessionStateAnswer = (
+  questionId: string
+): QuizSessionStateAnswer => ({
+  type: 'answer',
+  questionId,
+})

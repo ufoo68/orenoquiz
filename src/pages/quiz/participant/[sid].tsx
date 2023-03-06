@@ -18,7 +18,6 @@ const Participant: NextPage<Props> = ({
   participantId: initailParticipantId,
 }) => {
   const router = useRouter()
-  const [name, setName] = useState<string>('')
   const [participantId, setParticipantId] =
     useState<string>(initailParticipantId)
   const [state, setState] = useState<QuizSessionState>(
@@ -33,7 +32,7 @@ const Participant: NextPage<Props> = ({
     }
   )
   const createParticipant = api.quizParticipant.create.useMutation()
-  const handleSubmitName = async () => {
+  const handleSubmitName = async (name: string) => {
     const pid = await createParticipant.mutateAsync({ sessionId, name })
     await router.push(`/quiz/participant/${sessionId}?pid=${pid}`)
     setParticipantId(pid)
@@ -42,17 +41,15 @@ const Participant: NextPage<Props> = ({
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-neutral-200">
       {(() => {
-        if (state.type === 'entry') {
+        if (state.type === 'entry' || !participantId) {
           return (
             <EntryForm
-              name={name}
               participantId={participantId}
-              handleChangeName={(n) => setName(n)}
               handleSubmitName={handleSubmitName}
             />
           )
         } else if (state.type === 'question') {
-          return <AnswerForm participantId={participantId} />
+          return <AnswerForm sessionId={sessionId} participantId={participantId} questionId={state.questionId} />
         }
       })()}
     </div>

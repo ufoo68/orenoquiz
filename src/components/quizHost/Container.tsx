@@ -4,6 +4,7 @@ import type { QuizSessionState } from '../../types/quizSession'
 import { getQuizSessionStateEntry } from '../../types/quizSession'
 import { api } from '../../utils/api'
 import { EntriesCard } from './EntriesCard'
+import { QuestionCard } from './QuestionCard'
 
 type Props = {
   sessionId: string
@@ -31,7 +32,7 @@ export const Container: FC<Props> = ({ sessionId }) => {
       <EntriesCard sessionId={sessionId} handleQuizStart={handleQuizStart} />
     )
   } else if (state.type === 'question') {
-    return <div>問題表示画面</div>
+    return <QuestionCard sessionId={sessionId} questionId={state.questionId} />
   }
   return null
 }

@@ -63,6 +63,7 @@ model ParticipantScore {
     id         String      @id @default(uuid())
     questionId String
     sessionId  String
+    participantId String
     result     ScoreResult
     createdAt  DateTime    @default(now())
     updatedAt  DateTime    @updatedAt

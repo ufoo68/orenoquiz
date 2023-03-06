@@ -1,18 +1,13 @@
 import type { FC } from 'react'
+import { useState } from 'react'
 
 type Props = {
-  name: string
   participantId: string
-  handleChangeName: (name: string) => void
-  handleSubmitName: () => void
+  handleSubmitName: (name: string) => void
 }
 
-export const EntryForm: FC<Props> = ({
-  name,
-  participantId,
-  handleChangeName,
-  handleSubmitName,
-}) => {
+export const EntryForm: FC<Props> = ({ participantId, handleSubmitName }) => {
+  const [name, setName] = useState<string>('')
   return (
     <form className=" w-3/4 rounded bg-white p-8 shadow-md">
       <div className="mb-4">
@@ -24,7 +19,7 @@ export const EntryForm: FC<Props> = ({
           type="text"
           value={name}
           onChange={(e) => {
-            handleChangeName(e.target.value)
+            setName(e.target.value)
           }}
           disabled={Boolean(participantId)}
         />
@@ -33,7 +28,7 @@ export const EntryForm: FC<Props> = ({
         <button
           className="btn-primary btn"
           type="button"
-          onClick={handleSubmitName}
+          onClick={() => handleSubmitName(name)}
           disabled={Boolean(participantId)}
         >
           参加する
