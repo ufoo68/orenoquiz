@@ -11,6 +11,18 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
   if (contents.type === 'select') {
     return (
       <div className="flex flex-col space-y-5">
+        <input
+          className="input-bordered input w-full"
+          placeholder="サムネイル画像URL"
+          value={contents.thumbnailUrl}
+          type="text"
+          onChange={(e) =>
+            handleSave({
+              ...contents,
+              thumbnailUrl: e.target.value,
+            })
+          }
+        />
         <ul className="menu rounded-box border bg-base-100 p-2">
           {sortBy(contents.questions, 'id').map((question) => (
             <li key={question.id}>
@@ -122,6 +134,18 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
   } else if (contents.type === 'sort') {
     return (
       <div className="flex flex-col space-y-5">
+        <input
+          className="input-bordered input w-full"
+          placeholder="サムネイル画像URL"
+          value={contents.thumbnailUrl}
+          type="text"
+          onChange={(e) =>
+            handleSave({
+              ...contents,
+              thumbnailUrl: e.target.value,
+            })
+          }
+        />
         <ul className="menu rounded-box border bg-base-100 p-2">
           {sortBy(contents.questions, 'id').map((question) => (
             <li key={question.id}>
@@ -167,10 +191,10 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
                           ...question,
                           order: currentOrder,
                         },
-                        { 
+                        {
                           ...replaceQuestion,
                           order: previousOrder,
-                        }
+                        },
                       ],
                     })
                   }}

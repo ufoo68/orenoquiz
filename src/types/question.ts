@@ -5,9 +5,9 @@ export type SelectTypeQuestion = {
   questions: {
     id: number
     label: string
-    thumbnailUrl?: string
   }[]
   answerId: number
+  thumbnailUrl?: string
 }
 
 export type SortTypeQuestion = {
@@ -16,8 +16,8 @@ export type SortTypeQuestion = {
     id: number
     label: string
     order: number
-    thumbnailUrl?: string
   }[]
+  thumbnailUrl?: string
 }
 
 export const getSelectTypeInit = (): SelectTypeQuestion => ({
