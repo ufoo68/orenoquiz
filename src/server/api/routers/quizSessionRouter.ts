@@ -77,6 +77,17 @@ export const quizSessionRouter = createTRPCRouter({
         },
       })
     }),
+    updateStateNextQuestion: publicProcedure
+    .input(z.object({ sessionId: z.string(), questionId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { sessionId, questionId } = input
+      await ctx.prisma.quizSession.update({
+        where: { id: sessionId },
+        data: {
+          state: getQuizSessionStateQuestion(questionId),
+        },
+      })
+    }),
   delete: publicProcedure
     .input(z.object({ sessionId: z.string() }))
     .mutation(async ({ ctx, input }) => {

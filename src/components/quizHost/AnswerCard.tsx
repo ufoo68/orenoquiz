@@ -7,9 +7,14 @@ import { api } from '../../utils/api'
 type Props = {
   sessionId: string
   questionId: string
+  handleNextQuestion: (questionId: string) => void
 }
 
-export const AnswerCard: FC<Props> = ({ questionId, sessionId }) => {
+export const AnswerCard: FC<Props> = ({
+  questionId,
+  sessionId,
+  handleNextQuestion,
+}) => {
   const [question, setQuestion] = useState<QuizQuestion | null>()
   const [entriesCount, setEntriesCount] = useState<number>(0)
   const [winCount, setWinCount] = useState<number>(0)
@@ -76,7 +81,14 @@ export const AnswerCard: FC<Props> = ({ questionId, sessionId }) => {
           ></progress>
           <div className="card-actions justify-end">
             {nextQuestionId ? (
-              <button className="btn-primary btn">次の問題へ</button>
+              <button
+                className="btn-primary btn"
+                onClick={() => {
+                  handleNextQuestion(nextQuestionId)
+                }}
+              >
+                次の問題へ
+              </button>
             ) : (
               <button className="btn-primary btn">結果発表へ</button>
             )}

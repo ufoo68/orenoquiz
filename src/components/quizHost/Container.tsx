@@ -25,12 +25,18 @@ export const Container: FC<Props> = ({ sessionId }) => {
   )
   const updateStateStart = api.quizSession.updateStateStart.useMutation()
   const updateStateAnswer = api.quizSession.updateStateAnswer.useMutation()
+  const updateStateNextQuestion =
+    api.quizSession.updateStateNextQuestion.useMutation()
   const handleQuizStart = async () => {
     await updateStateStart.mutateAsync({ sessionId })
     await getState.refetch()
   }
   const handleQuizAnswer = async (questionId: string) => {
     await updateStateAnswer.mutateAsync({ sessionId, questionId })
+    await getState.refetch()
+  }
+  const handleNextQuestion = async (questionId: string) => {
+    await updateStateNextQuestion.mutateAsync({ sessionId, questionId })
     await getState.refetch()
   }
   if (state.type === 'entry') {
@@ -46,7 +52,13 @@ export const Container: FC<Props> = ({ sessionId }) => {
       />
     )
   } else if (state.type === 'answer') {
-    return <AnswerCard sessionId={sessionId} questionId={state.questionId} />
+    return (
+      <AnswerCard
+        sessionId={sessionId}
+        questionId={state.questionId}
+        handleNextQuestion={handleNextQuestion}
+      />
+    )
   }
   return null
 }
