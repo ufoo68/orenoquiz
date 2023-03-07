@@ -38,7 +38,7 @@ export const ResultCard: FC<Props> = ({
     }
   })
   return (
-    <div className="card w-3/4 bg-base-100 shadow-xl">
+    <div className="card w-96 bg-base-100 shadow-xl">
       <div className="card-body flex flex-col items-center">
         <h2 className="card-title">
           {name}さん、{isWin ? '正解😄' : '残念😅'}

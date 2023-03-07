@@ -47,9 +47,9 @@ export const QuestionCard: FC<Props> = ({
   }
   const contents = question.contents as QuestionContents
   return (
-    <div className="card bg-base-100 shadow-xl">
+    <div className="card w-96 bg-base-100 shadow-xl">
       {contents.thumbnailUrl ? (
-        <figure>
+        <figure className="h-40">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={contents.thumbnailUrl} alt="Shoes" />
         </figure>
@@ -57,9 +57,14 @@ export const QuestionCard: FC<Props> = ({
       <div className="card-body">
         <h2 className="card-title">Q{question.order}.</h2>
         <p>{question.title}</p>
-        <ul tabIndex={0} className="rounded-box bg-base-100 p-2 shadow divide-y">
+        <ul
+          tabIndex={0}
+          className="rounded-box divide-y bg-base-100 p-2 shadow"
+        >
           {contents.questions.map((q) => (
-            <li key={q.id} className="p-3">{q.label}</li>
+            <li key={q.id} className="p-3">
+              {q.label}
+            </li>
           ))}
         </ul>
         <div>

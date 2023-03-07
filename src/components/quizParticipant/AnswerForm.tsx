@@ -4,7 +4,8 @@ import { useState } from 'react'
 import type { QuestionContents } from '../../types/question'
 import type { QuizParticipantAnswer } from '../../types/quizParticipant'
 import { api } from '../../utils/api'
-import { sortBy } from 'lodash'
+import { SelectItems } from './item/SelectItems'
+import { SortItems } from './item/SortItems'
 
 type Props = {
   sessionId: string
@@ -27,18 +28,18 @@ export const AnswerForm: FC<Props> = ({
       onSuccess: (res) => {
         setQuestion(res)
         const contents = res?.contents as QuestionContents
-        if (contents.type === 'select') {
+        if (contents.type === 'select' && !answer) {
           setAnswer({
             type: 'select',
             answerId: Math.min(...contents.questions.map((q) => q.id)),
           })
-        } else if (contents.type === 'sort') {
+        } else if (contents.type === 'sort' && !answer) {
           setAnswer({
             type: 'sort',
             answers: contents.questions.map((q, i) => ({
               id: q.id,
               label: q.label,
-              order: i,
+              order: i + 1,
             })),
           })
         }
@@ -79,95 +80,51 @@ export const AnswerForm: FC<Props> = ({
     return <progress className="progress" />
   }
   const contents = question.contents as QuestionContents
-  if (contents.type === 'select' && answer?.type === 'select') {
-    return (
-      <div className="w-full">
-        <div className="card rounded-box m-5 flex items-center bg-white text-2xl">
-          {name}
-        </div>
-        <form className="mx-5 rounded bg-white p-8 shadow-md">
-          <label className="mb-2 block text-sm font-bold text-gray-700">
-            問題
-          </label>
-          <p className="mb-2">{question.title}</p>
-          <label className="mb-2 block text-sm font-bold text-gray-700">
-            回答
-          </label>
-          <ul className="mb-2 w-full rounded-lg border">
-            {contents.questions.map((q) => (
-              <li
-                key={q.id}
-                className="w-full cursor-pointer rounded-t-lg border-b border-gray-200"
-                onClick={() => {
-                  if (!isSubmit) {
-                    setAnswer({
-                      type: 'select',
-                      answerId: q.id,
-                    })
-                  }
-                }}
-              >
-                <div className="flex items-center p-3">
-                  <input
-                    type="radio"
-                    name="radio-1"
-                    className="radio"
-                    checked={q.id === answer.answerId}
-                    disabled={isSubmit}
-                    readOnly
-                  />
-                  <label className="ml-2 w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                    {q.label}
-                  </label>
-                </div>
-              </li>
-            ))}
-          </ul>
-          <div className="flex justify-end space-x-5">
-            <button
-              className="btn-primary btn"
-              type="button"
-              disabled={isSubmit}
-              onClick={handleSubmitAnswer}
-            >
-              回答する
-            </button>
-          </div>
-        </form>
+  return (
+    <div className="w-96">
+      <div className="card rounded-box m-5 flex items-center bg-white text-2xl">
+        {name}
       </div>
-    )
-  } else if (contents.type === 'sort' && answer?.type === 'sort') {
-    return (
-      <div className="w-full">
-        <div className="card rounded-box m-5 flex items-center bg-white text-2xl">
-          {name}
+      <form className="mx-5 rounded bg-white p-8 shadow-md">
+        <label className="mb-2 block text-sm font-bold text-gray-700">
+          問題
+        </label>
+        <p className="mb-2">{question.title}</p>
+        <label className="mb-2 block text-sm font-bold text-gray-700">
+          回答
+        </label>
+        {(() => {
+          if (contents.type === 'select' && answer?.type === 'select') {
+            return (
+              <SelectItems
+                answer={answer}
+                contents={contents}
+                setAnswer={setAnswer}
+                isSubmit={isSubmit}
+              />
+            )
+          } else if (contents.type === 'sort' && answer?.type === 'sort') {
+            return (
+              <SortItems
+                answer={answer}
+                contents={contents}
+                setAnswer={setAnswer}
+                isSubmit={isSubmit}
+              />
+            )
+          }
+        })()}
+        <div className="flex justify-end space-x-5">
+          <button
+            className="btn-primary btn"
+            type="button"
+            disabled={isSubmit}
+            onClick={handleSubmitAnswer}
+          >
+            回答する
+          </button>
         </div>
-        <form className="mx-5 rounded bg-white p-8 shadow-md">
-          <label className="mb-2 block text-sm font-bold text-gray-700">
-            問題
-          </label>
-          <p className="mb-2">{question.title}</p>
-          <label className="mb-2 block text-sm font-bold text-gray-700">
-            回答
-          </label>
-          <ul className="mb-2 w-full rounded-lg border">
-            {contents.questions.map((q) => (
-              <div key={q.id} className="flex items-center p-3">{q.label}</div>
-            ))}
-          </ul>
-          <div className="flex justify-end space-x-5">
-            <button
-              className="btn-primary btn"
-              type="button"
-              disabled={isSubmit}
-              onClick={handleSubmitAnswer}
-            >
-              回答する
-            </button>
-          </div>
-        </form>
-      </div>
-    )
-  }
-  return null
+      </form>
+    </div>
+  )
 }
