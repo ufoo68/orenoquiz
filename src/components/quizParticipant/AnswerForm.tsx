@@ -32,6 +32,15 @@ export const AnswerForm: FC<Props> = ({
             type: 'select',
             answerId: Math.min(...contents.questions.map((q) => q.id)),
           })
+        } else if (contents.type === 'sort') {
+          setAnswer({
+            type: 'sort',
+            answers: contents.questions.map((q, i) => ({
+              id: q.id,
+              label: q.label,
+              order: i,
+            })),
+          })
         }
       },
     }
@@ -80,14 +89,12 @@ export const AnswerForm: FC<Props> = ({
           <label className="mb-2 block text-sm font-bold text-gray-700">
             問題
           </label>
-          <p className="mb-2">
-            {question.title}
-          </p>
+          <p className="mb-2">{question.title}</p>
           <label className="mb-2 block text-sm font-bold text-gray-700">
             回答
           </label>
           <ul className="mb-2 w-full rounded-lg border">
-            {sortBy(contents.questions, 'id').map((q) => (
+            {contents.questions.map((q) => (
               <li
                 key={q.id}
                 className="w-full cursor-pointer rounded-t-lg border-b border-gray-200"
@@ -114,6 +121,38 @@ export const AnswerForm: FC<Props> = ({
                   </label>
                 </div>
               </li>
+            ))}
+          </ul>
+          <div className="flex justify-end space-x-5">
+            <button
+              className="btn-primary btn"
+              type="button"
+              disabled={isSubmit}
+              onClick={handleSubmitAnswer}
+            >
+              回答する
+            </button>
+          </div>
+        </form>
+      </div>
+    )
+  } else if (contents.type === 'sort' && answer?.type === 'sort') {
+    return (
+      <div className="w-full">
+        <div className="card rounded-box m-5 flex items-center bg-white text-2xl">
+          {name}
+        </div>
+        <form className="mx-5 rounded bg-white p-8 shadow-md">
+          <label className="mb-2 block text-sm font-bold text-gray-700">
+            問題
+          </label>
+          <p className="mb-2">{question.title}</p>
+          <label className="mb-2 block text-sm font-bold text-gray-700">
+            回答
+          </label>
+          <ul className="mb-2 w-full rounded-lg border">
+            {contents.questions.map((q) => (
+              <div key={q.id} className="flex items-center p-3">{q.label}</div>
             ))}
           </ul>
           <div className="flex justify-end space-x-5">

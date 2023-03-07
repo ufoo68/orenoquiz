@@ -10,5 +10,6 @@ export type QuizParticipantAnswerSort = {
   answers: {
     id: number
     order: number
+    label: string
   }[]
 }

@@ -12,6 +12,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.0.8",
     "@prisma/client": "^4.11.0",
     "@tanstack/react-query": "^4.20.0",
     "@trpc/client": "^10.9.0",
