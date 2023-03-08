@@ -41,7 +41,7 @@ const Participant: NextPage<Props> = ({
   }
 
   return (
-    <div className="flex h-[99vh] w-screen items-center justify-center bg-neutral-200 overflow-y-hidden">
+    <div className="flex h-[99vh] w-screen m-0 items-center justify-center bg-neutral-200 overflow-y-hidden">
       {(() => {
         if (state.type === 'entry' || !participantId) {
           return (
