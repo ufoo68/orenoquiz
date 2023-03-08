@@ -22,6 +22,7 @@ export type SortTypeQuestion = {
 
 export const getSelectTypeInit = (): SelectTypeQuestion => ({
   type: 'select',
+  thumbnailUrl: '',
   questions: [
     {
       id: 1,
@@ -33,11 +34,12 @@ export const getSelectTypeInit = (): SelectTypeQuestion => ({
 
 export const getSortTypeInit = (): SortTypeQuestion => ({
   type: 'sort',
+  thumbnailUrl: '',
   questions: [
     {
       id: 1,
       label: '要素',
       order: 1,
     },
-  ]
+  ],
 })
