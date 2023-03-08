@@ -5,7 +5,6 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
 import type { DragEndEvent } from '@dnd-kit/core'
-import { TouchSensor } from '@dnd-kit/core'
 import {
   DndContext,
   closestCenter,
@@ -25,7 +24,7 @@ type Props = {
 }
 
 export const SortItems: FC<Props> = ({ answer, setAnswer, isSubmit }) => {
-  const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor))
+  const sensors = useSensors(useSensor(PointerSensor))
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event

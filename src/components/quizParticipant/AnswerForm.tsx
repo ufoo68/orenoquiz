@@ -81,7 +81,7 @@ export const AnswerForm: FC<Props> = ({
   }
   const contents = question.contents as QuestionContents
   return (
-    <div className="w-96 fixed">
+    <div className="w-96">
       <div className="card rounded-box m-5 flex items-center bg-white text-2xl">
         {name}
       </div>
