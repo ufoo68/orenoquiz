@@ -5,15 +5,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
 import type { DragEndEvent } from '@dnd-kit/core'
-import {
-  DndContext,
-  closestCenter,
-  PointerSensor,
-  TouchSensor,
-  MouseSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core'
+import { DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { sortBy } from 'lodash'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
@@ -26,16 +18,7 @@ type Props = {
 }
 
 export const SortItems: FC<Props> = ({ answer, setAnswer, isSubmit }) => {
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(MouseSensor, { activationConstraint: { distance: 10 } }),
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 250,
-        tolerance: 5,
-      },
-    })
-  )
+  const sensors = useSensors(useSensor(PointerSensor))
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
@@ -72,11 +55,10 @@ export const SortItems: FC<Props> = ({ answer, setAnswer, isSubmit }) => {
     <div
       className={`${
         isSubmit ? 'pointer-events-none' : ''
-      } mb-2 w-full rounded-lg border select-none`}
+      } mb-2 w-full rounded-lg border`}
     >
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
         modifiers={[restrictToVerticalAxis]}
       >
@@ -110,7 +92,7 @@ const SortableItem: FC<ItemProps> = ({ id, label }) => {
   return (
     <div
       ref={setNodeRef}
-      className="flex space-x-2 border p-3"
+      className="flex touch-none space-x-2 border p-3"
       style={style}
       {...attributes}
       {...listeners}
