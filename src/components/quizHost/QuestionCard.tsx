@@ -40,6 +40,7 @@ export const QuestionCard: FC<Props> = ({
       onSuccess: (res) => {
         setSubmitCount(res)
       },
+      refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
   )
   if (!question) {

@@ -17,6 +17,7 @@ export const EntriesCard: FC<Props> = ({ sessionId, handleQuizStart }) => {
       onSuccess: (res) => {
         setEntriesCount(res)
       },
+      refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
   )
   return (
