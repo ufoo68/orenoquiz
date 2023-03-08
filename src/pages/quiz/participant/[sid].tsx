@@ -30,6 +30,7 @@ const Participant: NextPage<Props> = ({
       onSuccess: (res) => {
         setState(res)
       },
+      refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
   )
   const createParticipant = api.quizParticipant.create.useMutation()

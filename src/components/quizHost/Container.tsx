@@ -21,6 +21,7 @@ export const Container: FC<Props> = ({ sessionId }) => {
       onSuccess: (res) => {
         setState(res)
       },
+      refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
   )
   const updateStateStart = api.quizSession.updateStateStart.useMutation()
