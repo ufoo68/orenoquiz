@@ -57,7 +57,7 @@ const Question: NextPage<Props> = ({ masterId }) => {
   return (
     <div className="grid h-screen w-screen grid-flow-col grid-cols-3 bg-neutral-200">
       <div className="flex h-screen flex-col items-center justify-center space-y-5">
-        <ul className="menu rounded-box w-56 bg-base-100 p-2">
+        <ul className="menu rounded-box w-96 bg-base-100 p-2">
           {sortBy(questions, 'order').map((question) => (
             <li key={question.id}>
               <a onClick={() => setSelectedQestion(question)}>
