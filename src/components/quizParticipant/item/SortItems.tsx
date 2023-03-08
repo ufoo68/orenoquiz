@@ -72,7 +72,7 @@ export const SortItems: FC<Props> = ({ answer, setAnswer, isSubmit }) => {
     <div
       className={`${
         isSubmit ? 'pointer-events-none' : ''
-      } mb-2 w-full rounded-lg border`}
+      } mb-2 w-full rounded-lg border select-none`}
     >
       <DndContext
         sensors={sensors}
@@ -129,7 +129,7 @@ const SortableItem: FC<ItemProps> = ({ id, label }) => {
           d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
         />
       </svg>
-      <div className="select-none">{label}</div>
+      <div>{label}</div>
     </div>
   )
 }
