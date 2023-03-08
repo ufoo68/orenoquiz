@@ -9,6 +9,8 @@ import {
   DndContext,
   closestCenter,
   PointerSensor,
+  TouchSensor,
+  MouseSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
@@ -24,7 +26,16 @@ type Props = {
 }
 
 export const SortItems: FC<Props> = ({ answer, setAnswer, isSubmit }) => {
-  const sensors = useSensors(useSensor(PointerSensor))
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(MouseSensor, { activationConstraint: { distance: 10 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    })
+  )
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
@@ -99,7 +110,7 @@ const SortableItem: FC<ItemProps> = ({ id, label }) => {
   return (
     <div
       ref={setNodeRef}
-      className="border p-3 flex space-x-2"
+      className="flex space-x-2 border p-3"
       style={style}
       {...attributes}
       {...listeners}
