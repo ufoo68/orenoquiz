@@ -15,7 +15,7 @@ class MyDocument extends Document {
           <meta name="application-name" content="orenoquiz" />
           <meta name="theme-color" content="#000" />
           <meta name="description" content="quiz application for party" />
-          <link rel="icon" sizes="192x192" href="/icon.jpg" />
+          <link rel="icon" sizes="192x192" href="/icon.png" />
           <link rel="icon" href="/favicon.ico" />
           <link rel="manifest" href="/manifest.json" />
         </Head>
