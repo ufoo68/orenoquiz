@@ -125,6 +125,11 @@ export const quizParticipantRouter = createTRPCRouter({
       const question = await ctx.prisma.quizQuestion.findUnique({
         where: { id: questionId },
       })
+      const session = await ctx.prisma.quizSession.findUnique({
+        where: { id: sessionId },
+      })
+      const startSec = session?.updatedAt.getTime() ?? 0
+      const currentSec = Date.now()
       const contents = question?.contents as QuestionContents
       if (contents.type === 'select') {
         const selectAnswer = answer as QuizParticipantAnswerSelect
@@ -135,6 +140,7 @@ export const quizParticipantRouter = createTRPCRouter({
             questionId,
             result:
               selectAnswer.answerId === contents.answerId ? 'WIN' : 'LOSE',
+            duration: currentSec - startSec
           },
         })
       } else if (contents.type === 'sort') {
@@ -152,6 +158,7 @@ export const quizParticipantRouter = createTRPCRouter({
             participantId,
             questionId,
             result: isWin ? 'WIN' : 'LOSE',
+            duration: currentSec - startSec,
           },
         })
       }

@@ -8,6 +8,8 @@ import type { QuizSessionState } from '../../../types/quizSession'
 import { getQuizSessionStateEntry } from '../../../types/quizSession'
 import { AnswerForm } from '../../../components/quizParticipant/AnswerForm'
 import { ResultCard } from '../../../components/quizParticipant/ResultCard'
+import { ScoreCard } from '../../../components/quizParticipant/ScoreCard'
+import { EndCard } from '../../../components/common/EndCard'
 
 type Props = {
   sessionId: string
@@ -28,7 +30,9 @@ const Participant: NextPage<Props> = ({
     { sessionId },
     {
       onSuccess: (res) => {
-        setState(res)
+        if (res) {
+          setState(res)
+        }
       },
       refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
@@ -41,7 +45,7 @@ const Participant: NextPage<Props> = ({
   }
 
   return (
-    <div className="flex h-[99vh] w-screen m-0 items-center justify-center bg-neutral-200 overflow-y-hidden">
+    <div className="m-0 flex h-[99vh] w-screen items-center justify-center overflow-y-hidden bg-neutral-200">
       {(() => {
         if (state.type === 'entry' || !participantId) {
           return (
@@ -51,7 +55,13 @@ const Participant: NextPage<Props> = ({
             />
           )
         } else if (state.type === 'question') {
-          return <AnswerForm sessionId={sessionId} participantId={participantId} questionId={state.questionId} />
+          return (
+            <AnswerForm
+              sessionId={sessionId}
+              participantId={participantId}
+              questionId={state.questionId}
+            />
+          )
         } else if (state.type === 'answer') {
           return (
             <ResultCard
@@ -60,7 +70,14 @@ const Participant: NextPage<Props> = ({
               questionId={state.questionId}
             />
           )
+        } else if (state.type === 'rank') {
+          return (
+            <ScoreCard sessionId={sessionId} participantId={participantId} />
+          )
+        } else if (state.type === 'end') {
+          return <EndCard />
         }
+        return <>error</>
       })()}
     </div>
   )

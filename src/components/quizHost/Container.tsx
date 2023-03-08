@@ -3,9 +3,11 @@ import { useState } from 'react'
 import type { QuizSessionState } from '../../types/quizSession'
 import { getQuizSessionStateEntry } from '../../types/quizSession'
 import { api } from '../../utils/api'
+import { EndCard } from '../common/EndCard'
 import { AnswerCard } from './AnswerCard'
 import { EntriesCard } from './EntriesCard'
 import { QuestionCard } from './QuestionCard'
+import { RankCard } from './RankCard'
 
 type Props = {
   sessionId: string
@@ -28,6 +30,7 @@ export const Container: FC<Props> = ({ sessionId }) => {
   const updateStateAnswer = api.quizSession.updateStateAnswer.useMutation()
   const updateStateNextQuestion =
     api.quizSession.updateStateNextQuestion.useMutation()
+  const updateStateRank = api.quizSession.updateStateRank.useMutation()
   const handleQuizStart = async () => {
     await updateStateStart.mutateAsync({ sessionId })
     await getState.refetch()
@@ -38,6 +41,10 @@ export const Container: FC<Props> = ({ sessionId }) => {
   }
   const handleNextQuestion = async (questionId: string) => {
     await updateStateNextQuestion.mutateAsync({ sessionId, questionId })
+    await getState.refetch()
+  }
+  const handleShowRank = async () => {
+    await updateStateRank.mutateAsync({sessionId})
     await getState.refetch()
   }
   if (state.type === 'entry') {
@@ -58,8 +65,13 @@ export const Container: FC<Props> = ({ sessionId }) => {
         sessionId={sessionId}
         questionId={state.questionId}
         handleNextQuestion={handleNextQuestion}
+        handleShowRank={handleShowRank}
       />
     )
+  } else if (state.type === 'rank') {
+    return <RankCard sessionId={sessionId} />
+  } else if (state.type === 'end') {
+    return <EndCard />
   }
-  return null
+  return <>error</>
 }

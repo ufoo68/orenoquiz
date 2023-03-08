@@ -21,7 +21,7 @@ export const EntriesCard: FC<Props> = ({ sessionId, handleQuizStart }) => {
     }
   )
   return (
-    <div className="card flex w-1/2 flex-col bg-base-100 shadow-xl">
+    <div className="card flex w-96 flex-col bg-base-100 shadow-xl">
       <div className="flex w-full justify-center">
         <Canvas
           text={`https://orenoquiz.vercel.app/quiz/participant/${sessionId}`}

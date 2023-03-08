@@ -9,12 +9,14 @@ type Props = {
   sessionId: string
   questionId: string
   handleNextQuestion: (questionId: string) => void
+  handleShowRank: () => void
 }
 
 export const AnswerCard: FC<Props> = ({
   questionId,
   sessionId,
   handleNextQuestion,
+  handleShowRank
 }) => {
   const [question, setQuestion] = useState<QuizQuestion | null>()
   const [entriesCount, setEntriesCount] = useState<number>(0)
@@ -142,7 +144,7 @@ export const AnswerCard: FC<Props> = ({
               次の問題へ
             </button>
           ) : (
-            <button className="btn-primary btn">結果発表へ</button>
+            <button className="btn-primary btn" onClick={handleShowRank}>結果発表へ</button>
           )}
         </div>
       </div>

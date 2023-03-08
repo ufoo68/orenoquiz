@@ -65,6 +65,7 @@ model ParticipantScore {
     sessionId  String
     participantId String
     result     ScoreResult
+    duration    Int
     createdAt  DateTime    @default(now())
     updatedAt  DateTime    @updatedAt
 }

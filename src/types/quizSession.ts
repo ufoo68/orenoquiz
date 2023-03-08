@@ -2,6 +2,8 @@ export type QuizSessionState =
   | QuizSessionStateEntry
   | QuizSessonStateQuestion
   | QuizSessionStateAnswer
+  | QuizSessionStateRank
+  | QuizSessionStateEnd
 
 export type QuizSessionStateEntry = {
   type: 'entry'
@@ -31,4 +33,20 @@ export const getQuizSessionStateAnswer = (
 ): QuizSessionStateAnswer => ({
   type: 'answer',
   questionId,
+})
+
+export type QuizSessionStateRank = {
+  type: 'rank'
+}
+
+export const getQuizSessionStateRank = (): QuizSessionStateRank => ({
+  type: 'rank',
+})
+
+export type QuizSessionStateEnd = {
+  type: 'end'
+}
+
+export const getQuizSessionStateEnd = (): QuizSessionStateEnd => ({
+  type: 'end'
 })

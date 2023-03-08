@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import type { QuizSessionState } from '../../../types/quizSession'
+import { getQuizSessionStateRank } from '../../../types/quizSession'
 import { getQuizSessionStateAnswer } from '../../../types/quizSession'
 import { getQuizSessionStateQuestion } from '../../../types/quizSession'
 import { getQuizSessionStateEntry } from '../../../types/quizSession'
@@ -16,7 +17,7 @@ export const quizSessionRouter = createTRPCRouter({
           id: sessionId,
         },
       })
-      return session?.state as QuizSessionState
+      return (session?.state ?? ({ type: 'end' })) as QuizSessionState
     }),
   getAll: publicProcedure
     .input(z.object({ masterId: z.string() }))
@@ -25,6 +26,62 @@ export const quizSessionRouter = createTRPCRouter({
       return ctx.prisma.quizSession.findMany({
         where: { masterId },
       })
+    }),
+  getTotalScore: publicProcedure
+    .input(z.object({ sessionId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { sessionId } = input
+      const scores = await ctx.prisma.participantScore.groupBy({
+        by: ['participantId'],
+        where: {
+          sessionId,
+          result: 'WIN',
+        },
+        _count: {
+          participantId: true,
+        },
+        _sum: {
+          duration: true,
+        },
+        orderBy: [
+          {
+            _count: {
+              participantId: 'desc',
+            },
+          },
+          {
+            _sum: {
+              duration: 'asc',
+            },
+          },
+        ],
+      })
+      const rankScores = scores.map((score, i) => ({
+        id: score.participantId,
+        rank: i + 1,
+        winCount: score._count.participantId,
+      }))
+      const participants = await ctx.prisma.participant.findMany({
+        where: {
+          sessionId,
+        },
+      })
+      const outRankScores = participants
+        .filter(
+          (participant) =>
+            !rankScores.map((score) => score.id).includes(participant.id)
+        )
+        .map((participant) => ({
+          id: participant.id,
+          rank: rankScores.length + 1,
+          winCount: 0,
+        }))
+      return [...rankScores, ...outRankScores].map((score) => ({
+        name:
+          participants.find((participant) => participant.id === score.id)
+            ?.name ?? '',
+        ...score,
+      }))
     }),
   create: publicProcedure
     .input(z.object({ masterId: z.string() }))
@@ -77,7 +134,7 @@ export const quizSessionRouter = createTRPCRouter({
         },
       })
     }),
-    updateStateNextQuestion: publicProcedure
+  updateStateNextQuestion: publicProcedure
     .input(z.object({ sessionId: z.string(), questionId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { sessionId, questionId } = input
@@ -85,6 +142,17 @@ export const quizSessionRouter = createTRPCRouter({
         where: { id: sessionId },
         data: {
           state: getQuizSessionStateQuestion(questionId),
+        },
+      })
+    }),
+  updateStateRank: publicProcedure
+    .input(z.object({ sessionId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { sessionId } = input
+      await ctx.prisma.quizSession.update({
+        where: { id: sessionId },
+        data: {
+          state: getQuizSessionStateRank(),
         },
       })
     }),
