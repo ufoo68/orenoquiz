@@ -1,0 +1,17 @@
+{
+	"name":				"orenoquiz",
+	"short_name":		"orenoquiz",
+	"description":		"quiz application for party",
+	"start_url":		"/",
+	"display":			"standalone",
+	"orientation":		"any",
+	"background_color":	"#fff",
+	"theme_color":		"#fff",
+	"icons": [
+		{
+			"src": "/logo.jpg",
+			"sizes": "384x384",
+			"type": "image/jpg"
+		}
+	]
+}
