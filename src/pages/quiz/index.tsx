@@ -1,10 +1,17 @@
 import type { QuizMaster } from '@prisma/client'
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
 import { type NextPage } from 'next'
 import Link from 'next/link'
 import { useState } from 'react'
 import { api } from '../../utils/api'
 
-const Quiz: NextPage = () => {
+type Role = 'admin' | 'operator'
+
+type Props = {
+  role: Role
+}
+
+const Quiz: NextPage<Props> = ({ role }) => {
   const [quizzes, setQuizzes] = useState<QuizMaster[]>([])
 
   const createQuiz = api.quizMaster.create.useMutation()
@@ -40,7 +47,9 @@ const Quiz: NextPage = () => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="h-8 w-8 cursor-pointer"
+                className={`h-8 w-8 cursor-pointer ${
+                  role === 'admin' ? '' : 'hidden'
+                }`}
                 onClick={() => {
                   handleDeleteQuiz(q.id).catch((e) => console.error(e))
                 }}
@@ -60,7 +69,7 @@ const Quiz: NextPage = () => {
                   rel="noopener noreferrer"
                   className="link-primary  link"
                 >
-                  <button className="btn btn-primary">問題</button>
+                  <button className="btn-primary btn">問題</button>
                 </a>
               </Link>
               <Link href={`/quiz/session/${q.id}`} legacyBehavior passHref>
@@ -69,7 +78,7 @@ const Quiz: NextPage = () => {
                   rel="noopener noreferrer"
                   className="link-primary  link"
                 >
-                  <button className="btn btn-primary">セッション</button>
+                  <button className="btn-primary btn">セッション</button>
                 </a>
               </Link>
             </div>
@@ -77,7 +86,7 @@ const Quiz: NextPage = () => {
         </div>
       ))}
       <button
-        className="btn btn-secondary"
+        className="btn-secondary btn"
         onClick={() => {
           handleCreateQuiz().catch((e) => {
             console.error(e)
@@ -99,6 +108,17 @@ const Quiz: NextPage = () => {
       </button>
     </div>
   )
+}
+
+export const getServerSideProps = (
+  context: GetServerSidePropsContext
+): GetServerSidePropsResult<Props> => {
+  const { role } = context.query
+  return {
+    props: {
+      role: (role as Role) ?? 'operator',
+    },
+  }
 }
 
 export default Quiz
