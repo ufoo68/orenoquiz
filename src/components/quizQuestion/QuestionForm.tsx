@@ -20,7 +20,7 @@ export const QuestionForm: FC<Props> = ({
 }) => {
   if (!question) {
     return (
-      <div className="w-full">
+      <div className="w-11/12">
         <progress className="progress" />
       </div>
     )
@@ -29,7 +29,7 @@ export const QuestionForm: FC<Props> = ({
   const contents = question.contents as QuestionContents
 
   return (
-    <form className=" w-3/4 rounded bg-white p-8 shadow-md">
+    <form className="w-3/4 rounded bg-white p-8 shadow-md">
       <div className="mb-4">
         <label className="mb-2 block text-sm font-bold text-gray-700">
           問題文

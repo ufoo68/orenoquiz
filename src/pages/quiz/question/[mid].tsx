@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { QuestionForm } from '../../../components/quizQuestion/QuestionForm'
 import { api } from '../../../utils/api'
 import { sortBy } from 'lodash'
+import { QuestionMenu } from '../../../components/quizQuestion/QuestionMenu'
 
 type Props = {
   masterId: string
@@ -24,6 +25,7 @@ const Question: NextPage<Props> = ({ masterId }) => {
   const updateQuestion = api.quizQuestion.update.useMutation()
   const createQuestion = api.quizQuestion.create.useMutation()
   const deleteQuestion = api.quizQuestion.delete.useMutation()
+  const changeQuestionOrder = api.quizQuestion.changeOrder.useMutation()
   const handleChangeSelectedQuestion = (params: Partial<QuizQuestion>) => {
     setSelectedQestion({
       ...selectedQuestion,
@@ -50,6 +52,22 @@ const Question: NextPage<Props> = ({ masterId }) => {
     })
     await getAllQuestion.refetch()
   }
+  const handleChangeOrder = async (
+    active: QuizQuestion,
+    over: QuizQuestion
+  ) => {
+    await changeQuestionOrder.mutateAsync({
+      question1: {
+        id: active.id,
+        order: over.order,
+      },
+      question2: {
+        id: over.id,
+        order: active.order,
+      },
+    })
+    await getAllQuestion.refetch()
+  }
 
   if (getAllQuestion.isLoading) {
     return <progress className="progress" />
@@ -57,15 +75,11 @@ const Question: NextPage<Props> = ({ masterId }) => {
   return (
     <div className="grid h-screen w-screen grid-flow-col grid-cols-3 bg-neutral-200">
       <div className="flex h-screen flex-col items-center justify-center space-y-5">
-        <ul className="menu rounded-box w-96 bg-base-100 p-2">
-          {sortBy(questions, 'order').map((question) => (
-            <li key={question.id}>
-              <a onClick={() => setSelectedQestion(question)}>
-                {question.title}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <QuestionMenu
+          questions={questions}
+          handleSelectQuestion={(question) => setSelectedQestion(question)}
+          handleChangeOrder={handleChangeOrder}
+        />
         <button className="btn" onClick={handleCreateQuestion}>
           <svg
             xmlns="http://www.w3.org/2000/svg"

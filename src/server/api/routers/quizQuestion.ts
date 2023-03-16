@@ -30,7 +30,7 @@ export const quizQuestionRouter = createTRPCRouter({
         where: {
           masterId: question.masterId,
           order: question.order + 1,
-        }
+        },
       })
       return nextQuestion?.id ?? ''
     }),
@@ -40,6 +40,7 @@ export const quizQuestionRouter = createTRPCRouter({
       const { masterId } = input
       return ctx.prisma.quizQuestion.findMany({
         where: { masterId },
+        orderBy: { order: 'asc' },
       })
     }),
   create: publicProcedure
@@ -73,6 +74,26 @@ export const quizQuestionRouter = createTRPCRouter({
         data: { title, order, contents },
       })
     }),
+  changeOrder: publicProcedure.input(z.object({
+    question1: z.object({
+      id: z.string(),
+      order: z.number(),
+    }),
+    question2: z.object({
+      id: z.string(),
+      order: z.number(),
+    }),
+  })).mutation(async ({ ctx, input }) => {
+    const { question1, question2 } = input
+    await ctx.prisma.quizQuestion.update({
+      where: { id: question1.id },
+      data: { order: question1.order },
+    })
+    await ctx.prisma.quizQuestion.update({
+      where: { id: question2.id },
+      data: { order: question2.order },
+    })
+  }),
   delete: publicProcedure
     .input(z.object({ questionId: z.string() }))
     .mutation(async ({ ctx, input }) => {
