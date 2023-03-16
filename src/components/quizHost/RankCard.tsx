@@ -23,13 +23,13 @@ export const RankCard: FC<Props> = ({ sessionId }) => {
       },
     }
   )
-  
+
   return (
     <div className="card flex w-10/12 flex-col bg-base-100 shadow-xl">
       <div className="card-body">
         <div className="stat text-center">
           <div className="stat-title">結果発表</div>
-          <div className="overflow-x-auto">
+          <div className="overflow-y-auto max-h-[50vh]">
             <table className="table w-full">
               <thead>
                 <tr>
