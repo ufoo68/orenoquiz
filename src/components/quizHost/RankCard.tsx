@@ -29,7 +29,7 @@ export const RankCard: FC<Props> = ({ sessionId }) => {
       <div className="card-body">
         <div className="stat text-center">
           <div className="stat-title">結果発表</div>
-          <div className="overflow-y-auto max-h-[50vh]">
+          <div className="max-h-[50vh] overflow-y-auto">
             <table className="table w-full">
               <thead>
                 <tr>
@@ -38,7 +38,7 @@ export const RankCard: FC<Props> = ({ sessionId }) => {
                   <th>正解数</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="text-2xl">
                 {ranks.map((rank) => (
                   <tr key={rank.id}>
                     <th>{rank.rank}</th>
