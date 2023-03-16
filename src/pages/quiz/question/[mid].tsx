@@ -4,7 +4,6 @@ import { type NextPage } from 'next'
 import { useState } from 'react'
 import { QuestionForm } from '../../../components/quizQuestion/QuestionForm'
 import { api } from '../../../utils/api'
-import { sortBy } from 'lodash'
 import { QuestionMenu } from '../../../components/quizQuestion/QuestionMenu'
 
 type Props = {
@@ -57,14 +56,12 @@ const Question: NextPage<Props> = ({ masterId }) => {
     over: QuizQuestion
   ) => {
     await changeQuestionOrder.mutateAsync({
-      question1: {
-        id: active.id,
-        order: over.order,
-      },
-      question2: {
-        id: over.id,
-        order: active.order,
-      },
+      id: active.id,
+      order: over.order,
+    })
+    await changeQuestionOrder.mutateAsync({
+      id: over.id,
+      order: active.order,
     })
     await getAllQuestion.refetch()
   }

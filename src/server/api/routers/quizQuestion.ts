@@ -77,25 +77,15 @@ export const quizQuestionRouter = createTRPCRouter({
   changeOrder: publicProcedure
     .input(
       z.object({
-        question1: z.object({
-          id: z.string(),
-          order: z.number(),
-        }),
-        question2: z.object({
-          id: z.string(),
-          order: z.number(),
-        }),
+        id: z.string(),
+        order: z.number(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { question1, question2 } = input
+      const { id, order } = input
       await ctx.prisma.quizQuestion.update({
-        where: { id: question1.id },
-        data: { order: question1.order },
-      })
-      await ctx.prisma.quizQuestion.update({
-        where: { id: question2.id },
-        data: { order: question2.order },
+        where: { id },
+        data: { order },
       })
     }),
   delete: publicProcedure
