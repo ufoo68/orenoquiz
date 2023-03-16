@@ -38,5 +38,10 @@ export const quizMasterRouter = createTRPCRouter({
       await ctx.prisma.quizQuestion.deleteMany({
         where: { masterId },
       })
+      const sessions = await ctx.prisma.quizSession.findMany({ where: { masterId } })
+      await ctx.prisma.quizSession.deleteMany({ where: { masterId } })
+      await ctx.prisma.participant.deleteMany({ where: { sessionId: { in: sessions.map((s) => s.id) } } })
+      await ctx.prisma.participantScore.deleteMany({ where: { sessionId: { in: sessions.map((s) => s.id) } } })
+      await ctx.prisma.participantSubimit.deleteMany({ where: { sessionId: { in: sessions.map((s) => s.id) } } })
     }),
 })

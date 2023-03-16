@@ -74,30 +74,44 @@ export const quizQuestionRouter = createTRPCRouter({
         data: { title, order, contents },
       })
     }),
-  changeOrder: publicProcedure.input(z.object({
-    question1: z.object({
-      id: z.string(),
-      order: z.number(),
+  changeOrder: publicProcedure
+    .input(
+      z.object({
+        question1: z.object({
+          id: z.string(),
+          order: z.number(),
+        }),
+        question2: z.object({
+          id: z.string(),
+          order: z.number(),
+        }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { question1, question2 } = input
+      await ctx.prisma.quizQuestion.update({
+        where: { id: question1.id },
+        data: { order: question1.order },
+      })
+      await ctx.prisma.quizQuestion.update({
+        where: { id: question2.id },
+        data: { order: question2.order },
+      })
     }),
-    question2: z.object({
-      id: z.string(),
-      order: z.number(),
-    }),
-  })).mutation(async ({ ctx, input }) => {
-    const { question1, question2 } = input
-    await ctx.prisma.quizQuestion.update({
-      where: { id: question1.id },
-      data: { order: question1.order },
-    })
-    await ctx.prisma.quizQuestion.update({
-      where: { id: question2.id },
-      data: { order: question2.order },
-    })
-  }),
   delete: publicProcedure
     .input(z.object({ questionId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { questionId } = input
+      const question = await ctx.prisma.quizQuestion.findUnique({
+        where: { id: questionId },
+      })
+      if (!question) {
+        return
+      }
+      await ctx.prisma.quizQuestion.updateMany({
+        where: { masterId: question.masterId, order: { gt: question.order } },
+        data: { order: { decrement: 1 } },
+      })
       await ctx.prisma.quizQuestion.delete({
         where: { id: questionId },
       })
