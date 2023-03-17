@@ -15,7 +15,6 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
       return
     }
     const file = event.target.files[0]
-    console.log(file)
     const { url } = await uploadToS3(file)
     handleSave({
       ...contents,
