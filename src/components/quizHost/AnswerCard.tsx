@@ -61,10 +61,10 @@ export const AnswerCard: FC<Props> = ({
   }
   const contents = question.contents as QuestionContents
   return (
-    <div className="card w-96 bg-base-100 shadow-xl">
+    <div className="card w-[70vw] flex-row bg-base-100 p-5 shadow-xl">
       {contents.thumbnailUrl ? (
-        <figure className="h-40">
-          <img src={contents.thumbnailUrl} alt="Shoes" />
+        <figure className="max-w-[30vw]">
+          <img src={contents.thumbnailUrl} alt="thumbnail" />
         </figure>
       ) : null}
       <div className="card-body">
@@ -143,7 +143,9 @@ export const AnswerCard: FC<Props> = ({
               次の問題へ
             </button>
           ) : (
-            <button className="btn-primary btn" onClick={handleShowRank}>結果発表へ</button>
+            <button className="btn-primary btn" onClick={handleShowRank}>
+              結果発表へ
+            </button>
           )}
         </div>
       </div>

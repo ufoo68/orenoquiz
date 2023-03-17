@@ -26,7 +26,7 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
     return (
       <div className="flex flex-col space-y-5">
         {contents.thumbnailUrl ? (
-          <img src={contents.thumbnailUrl} alt="thumbnail" />
+          <img src={contents.thumbnailUrl} className="w-80" alt="thumbnail" />
         ) : <div>サムネイルをアップロードしてください</div>}
         <input
           type="file"
