@@ -3,7 +3,6 @@ import { type NextPage } from 'next'
 import { api } from '../../../utils/api'
 import type { FC } from 'react'
 import { Fragment, useState } from 'react'
-import { useWindowSize } from '../../../hooks/useWindowSize'
 import type {
   IshinDenshinSessionState,
   IshinDenshinSessionResult,
@@ -17,7 +16,6 @@ const Board: NextPage<Props> = ({ sessionId }) => {
   const [version, setVersion] = useState<number>(1)
   const [state, setState] = useState<IshinDenshinSessionState>('WAIT')
   const [result, setResult] = useState<IshinDenshinSessionResult>('NONE')
-  const { width } = useWindowSize()
   const groomAnswer = api.ishindenshin.getAnswer.useQuery({
     sessionId,
     version,
