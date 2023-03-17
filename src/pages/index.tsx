@@ -32,11 +32,10 @@ const Home: NextPage = () => {
       <div className="h-2/3 flex items-center">
         <div className="card w-80 bg-base-100 shadow-xl">
           <figure>
-            <Image
-              width={400}
-              height={200}
+            <img
+              className="w-full"
               src={selectCards[cardIndex]?.imageUrl ?? ''}
-              alt="ishindenshin"
+              alt={selectCards[cardIndex]?.title ?? ''}
             />
           </figure>
           <div className="card-body">

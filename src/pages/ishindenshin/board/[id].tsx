@@ -1,5 +1,4 @@
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
-import Image from 'next/image'
 import { type NextPage } from 'next'
 import { api } from '../../../utils/api'
 import type { FC } from 'react'
@@ -99,32 +98,28 @@ const Board: NextPage<Props> = ({ sessionId }) => {
       brideAnswer.data?.boardImageUrl &&
       state === 'SHOW' ? (
         <Fragment>
-          <div className="flex items-end justify-center">
-            <div className="card rounded-box flex w-40 flex-row items-center justify-center bg-white text-2xl">
+          <div className="flex items-center justify-center">
+            <div className="rounded-box flex w-80 flex-row items-center justify-center bg-white p-3 text-5xl">
               <div>新郎🤵🏻‍♂️</div>
             </div>
           </div>
-          <div className="flex items-end justify-center">
-            <div className="card rounded-box flex w-40 flex-row items-center justify-center bg-white text-2xl">
+          <div className="flex items-center justify-center">
+            <div className="rounded-box flex w-80 flex-row items-center justify-center bg-white p-3 text-5xl">
               <div>新婦👰🏻‍♀️</div>
             </div>
           </div>
           <div className="flex h-full w-full items-center justify-center">
-            <Image
-              className="bg-white"
+            <img
+              className="w-[90%] rounded-xl bg-white"
               src={groomAnswer.data.boardImageUrl}
               alt="groom answer"
-              width={width / 3}
-              height={0}
             />
           </div>
           <div className="flex h-full w-full items-center justify-center">
-            <Image
-              className="bg-white"
+            <img
+              className="w-[90%] rounded-xl bg-white"
               src={brideAnswer.data.boardImageUrl}
               alt="bride answer"
-              width={width / 3}
-              height={0}
             />
           </div>
         </Fragment>
