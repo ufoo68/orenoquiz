@@ -64,7 +64,6 @@ export const AnswerCard: FC<Props> = ({
     <div className="card w-96 bg-base-100 shadow-xl">
       {contents.thumbnailUrl ? (
         <figure className="h-40">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={contents.thumbnailUrl} alt="Shoes" />
         </figure>
       ) : null}

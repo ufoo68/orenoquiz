@@ -1,6 +1,7 @@
-import type { FC } from 'react'
+import type { ChangeEvent, FC } from 'react'
 import { sortBy } from 'lodash'
 import type { QuestionContents } from '../../types/question'
+import { useS3Upload } from 'next-s3-upload'
 
 type Props = {
   contents: QuestionContents
@@ -8,20 +9,29 @@ type Props = {
 }
 
 export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
+  const {uploadToS3 } = useS3Upload()
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    if (!event?.target?.files?.length || !event.target.files[0]) {
+      return
+    }
+    const file = event.target.files[0]
+    console.log(file)
+    const { url } = await uploadToS3(file)
+    handleSave({
+      ...contents,
+      thumbnailUrl: url,
+    })
+  }
   if (contents.type === 'select') {
     return (
       <div className="flex flex-col space-y-5">
+        {contents.thumbnailUrl ? (
+          <img src={contents.thumbnailUrl} alt="thumbnail" />
+        ) : <div>サムネイルをアップロードしてください</div>}
         <input
-          className="input-bordered input w-full"
-          placeholder="サムネイル画像URL"
-          value={contents.thumbnailUrl}
-          type="text"
-          onChange={(e) =>
-            handleSave({
-              ...contents,
-              thumbnailUrl: e.target.value,
-            })
-          }
+          type="file"
+          onChange={handleFileChange}
+          className="file-input w-full max-w-xs"
         />
         <ul className="menu rounded-box border bg-base-100 p-2">
           {sortBy(contents.questions, 'id').map((question) => (
@@ -134,17 +144,15 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
   } else if (contents.type === 'sort') {
     return (
       <div className="flex flex-col space-y-5">
+        {contents.thumbnailUrl ? (
+          <img src={contents.thumbnailUrl} alt="thumbnail" />
+        ) : (
+          <div>サムネイルをアップロードしてください</div>
+        )}
         <input
-          className="input-bordered input w-full"
-          placeholder="サムネイル画像URL"
-          value={contents.thumbnailUrl}
-          type="text"
-          onChange={(e) =>
-            handleSave({
-              ...contents,
-              thumbnailUrl: e.target.value,
-            })
-          }
+          type="file"
+          onChange={handleFileChange}
+          className="file-input w-full max-w-xs"
         />
         <ul className="menu rounded-box border bg-base-100 p-2">
           {sortBy(contents.questions, 'id').map((question) => (

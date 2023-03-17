@@ -36,6 +36,7 @@
         "caughtErrorsIgnorePattern": "^_",
         "destructuredArrayIgnorePattern": "^_"
       }
-    ]
+    ],
+    "@next/next/no-img-element": "off"
   }
 }

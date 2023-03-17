@@ -29,7 +29,7 @@ export const QuestionForm: FC<Props> = ({
   const contents = question.contents as QuestionContents
 
   return (
-    <form className="w-3/4 rounded bg-white p-8 shadow-md">
+    <form className="w-3/4 max-h-[90vh] rounded bg-white p-8 shadow-md overflow-y-scroll">
       <div className="mb-4">
         <label className="mb-2 block text-sm font-bold text-gray-700">
           問題文
