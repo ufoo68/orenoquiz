@@ -75,7 +75,7 @@ export const AnswerCard: FC<Props> = ({
               <ul className="menu rounded-box border bg-base-100 p-2">
                 {contents.questions.map((q) => (
                   <li key={q.id}>
-                    <div>
+                    <div className="text-2xl">
                       {q.id === contents.answerId ? (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -116,7 +116,7 @@ export const AnswerCard: FC<Props> = ({
                 className="rounded-box divide-y bg-base-100 p-2 shadow"
               >
                 {sortBy(contents.questions, 'order').map((q) => (
-                  <li key={q.id} className="p-3">
+                  <li key={q.id} className="p-3 text-2xl">
                     {`${q.order}. ${q.label}`}
                   </li>
                 ))}
@@ -124,7 +124,7 @@ export const AnswerCard: FC<Props> = ({
             )
           }
         })()}
-        <div>
+        <div className="text-2xl">
           正解数({winCount}/{entriesCount})
         </div>
         <progress

@@ -28,7 +28,7 @@ export const RankCard: FC<Props> = ({ sessionId }) => {
     <div className="card flex w-10/12 flex-col bg-base-100 shadow-xl">
       <div className="card-body">
         <div className="stat text-center">
-          <div className="stat-title">結果発表</div>
+          <div className="stat-title text-2xl">結果発表</div>
           <div className="max-h-[50vh] overflow-y-auto">
             <table className="table w-full">
               <thead>

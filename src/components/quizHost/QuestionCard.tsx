@@ -48,7 +48,7 @@ export const QuestionCard: FC<Props> = ({
   }
   const contents = question.contents as QuestionContents
   return (
-    <div className="card w-[70vw] bg-base-100 shadow-xl flex-row p-5">
+    <div className="card w-[70vw] flex-row bg-base-100 p-5 shadow-xl">
       {contents.thumbnailUrl ? (
         <figure className="max-w-[30vw]">
           <img src={contents.thumbnailUrl} alt="thumbnail" />
@@ -56,18 +56,18 @@ export const QuestionCard: FC<Props> = ({
       ) : null}
       <div className="card-body">
         <h2 className="card-title">Q{question.order}.</h2>
-        <p>{question.title}</p>
+        <p className="text-2xl">{question.title}</p>
         <ul
           tabIndex={0}
           className="rounded-box divide-y bg-base-100 p-2 shadow"
         >
           {contents.questions.map((q) => (
-            <li key={q.id} className="p-3">
+            <li key={q.id} className="p-3 text-2xl">
               {q.label}
             </li>
           ))}
         </ul>
-        <div>
+        <div className="text-2xl">
           回答数({submitCount}/{entriesCount})
         </div>
         <progress
