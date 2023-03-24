@@ -51,7 +51,12 @@ const Participant: NextPage<Props> = ({
     <div className="m-0 flex h-[99vh] w-screen items-center justify-center overflow-y-hidden bg-neutral-200">
       {(() => {
         if (state.type === 'entry' || !participantId) {
-          return <EntryForm handleSubmitName={handleSubmitName} />
+          return (
+            <EntryForm
+              participantId={participantId}
+              handleSubmitName={handleSubmitName}
+            />
+          )
         } else if (state.type === 'question') {
           return (
             <AnswerForm

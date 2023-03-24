@@ -1,13 +1,25 @@
 import type { FC } from 'react'
 import { useState } from 'react'
+import { api } from '../../utils/api'
 
 type Props = {
+  participantId: string
   handleSubmitName: (name: string) => void
 }
 
-export const EntryForm: FC<Props> = ({ handleSubmitName }) => {
+export const EntryForm: FC<Props> = ({ handleSubmitName, participantId }) => {
   const [name, setName] = useState<string>('')
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(
+    Boolean(participantId)
+  )
+  api.quizParticipant.getName.useQuery(
+    { participantId },
+    {
+      onSuccess: (res) => {
+        setName(res)
+      },
+    }
+  )
   return (
     <form className="w-96 rounded bg-white p-8 shadow-md">
       <div className="mb-4">
