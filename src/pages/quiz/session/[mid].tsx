@@ -5,11 +5,14 @@ import { useState } from 'react'
 import { api } from '../../../utils/api'
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
 
+type Role = 'admin' | 'operator'
+
 type Props = {
   masterId: string
+  role: Role
 }
 
-const Session: NextPage<Props> = ({ masterId }) => {
+const Session: NextPage<Props> = ({ masterId, role }) => {
   const [sessions, setSessions] = useState<QuizSession[]>([])
 
   const createSession = api.quizSession.create.useMutation()
@@ -24,7 +27,7 @@ const Session: NextPage<Props> = ({ masterId }) => {
   const deleteQuiz = api.quizSession.delete.useMutation()
 
   const handleCreateSession = async () => {
-    await createSession.mutateAsync({masterId})
+    await createSession.mutateAsync({ masterId })
     await getAllSession.refetch()
   }
 
@@ -48,7 +51,9 @@ const Session: NextPage<Props> = ({ masterId }) => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="h-8 w-8 cursor-pointer"
+                className={`h-8 w-8 cursor-pointer ${
+                  role === 'admin' ? '' : 'hidden'
+                }`}
                 onClick={() => {
                   handleDeleteSession(session.id).catch((e) => console.error(e))
                 }}
@@ -72,20 +77,16 @@ const Session: NextPage<Props> = ({ masterId }) => {
                   rel="noopener noreferrer"
                   className="link-primary  link"
                 >
-                  <button className="btn btn-primary">参加者</button>
+                  <button className="btn-primary btn">参加者</button>
                 </a>
               </Link>
-              <Link
-                href={`/quiz/host/${session.id}`}
-                legacyBehavior
-                passHref
-              >
+              <Link href={`/quiz/host/${session.id}`} legacyBehavior passHref>
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
                   className="link-primary  link"
                 >
-                  <button className="btn btn-primary">司会</button>
+                  <button className="btn-primary btn">司会</button>
                 </a>
               </Link>
             </div>
@@ -93,7 +94,7 @@ const Session: NextPage<Props> = ({ masterId }) => {
         </div>
       ))}
       <button
-        className="btn btn-secondary"
+        className="btn-secondary btn"
         onClick={() => {
           handleCreateSession().catch((e) => {
             console.error(e)
@@ -120,11 +121,11 @@ const Session: NextPage<Props> = ({ masterId }) => {
 export const getServerSideProps = (
   context: GetServerSidePropsContext
 ): GetServerSidePropsResult<Props> => {
-  const { mid } = context.query
+  const { mid, role } = context.query
   if (typeof mid !== 'string') {
     return { notFound: true }
   }
-  return { props: { masterId: mid } }
+  return { props: { masterId: mid, role: (role as Role) ?? 'operator' } }
 }
 
 export default Session

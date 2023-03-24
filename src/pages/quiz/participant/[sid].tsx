@@ -39,21 +39,19 @@ const Participant: NextPage<Props> = ({
   )
   const createParticipant = api.quizParticipant.create.useMutation()
   const handleSubmitName = async (name: string) => {
-    const pid = await createParticipant.mutateAsync({ sessionId, name })
-    await router.push(`/quiz/participant/${sessionId}?pid=${pid}`)
-    setParticipantId(pid)
+    if (!participantId) {
+      const pid = await createParticipant.mutateAsync({ sessionId, name })
+      await router.push(`/quiz/participant/${sessionId}?pid=${pid}`)
+      setParticipantId(pid)
+      window.confirm('参加しました。クイズ開始までお待ち下さい。')
+    }
   }
 
   return (
     <div className="m-0 flex h-[99vh] w-screen items-center justify-center overflow-y-hidden bg-neutral-200">
       {(() => {
         if (state.type === 'entry' || !participantId) {
-          return (
-            <EntryForm
-              participantId={participantId}
-              handleSubmitName={handleSubmitName}
-            />
-          )
+          return <EntryForm handleSubmitName={handleSubmitName} />
         } else if (state.type === 'question') {
           return (
             <AnswerForm

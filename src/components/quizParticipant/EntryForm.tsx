@@ -2,12 +2,12 @@ import type { FC } from 'react'
 import { useState } from 'react'
 
 type Props = {
-  participantId: string
   handleSubmitName: (name: string) => void
 }
 
-export const EntryForm: FC<Props> = ({ participantId, handleSubmitName }) => {
+export const EntryForm: FC<Props> = ({ handleSubmitName }) => {
   const [name, setName] = useState<string>('')
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   return (
     <form className="w-96 rounded bg-white p-8 shadow-md">
       <div className="mb-4">
@@ -21,15 +21,18 @@ export const EntryForm: FC<Props> = ({ participantId, handleSubmitName }) => {
           onChange={(e) => {
             setName(e.target.value)
           }}
-          disabled={Boolean(participantId)}
+          disabled={isSubmitting}
         />
       </div>
       <div className="flex justify-end space-x-5">
         <button
           className="btn-primary btn"
           type="button"
-          onClick={() => handleSubmitName(name)}
-          disabled={Boolean(participantId)}
+          onClick={() => {
+            handleSubmitName(name)
+            setIsSubmitting(true)
+          }}
+          disabled={isSubmitting || !Boolean(name)}
         >
           参加する
         </button>
