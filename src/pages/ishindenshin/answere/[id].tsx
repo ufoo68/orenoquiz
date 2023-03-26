@@ -1,6 +1,6 @@
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
 import { type NextPage } from 'next'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import SignatureCanvas from 'react-signature-canvas'
 import type ReactSignatureCanvas from 'react-signature-canvas'
 import { api } from '../../../utils/api'
@@ -39,6 +39,11 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
     }
   )
   const submitAnswer = api.ishindenshin.submitAnswer.useMutation()
+  useEffect(() => {
+    if (state === 'WAIT') {
+      ref.current?.clear()
+    }
+  }, [state])
 
   const handleSubmitAnser = async () => {
     const boardImageUrl = ref.current?.getCanvas().toDataURL() as string
@@ -48,7 +53,6 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
       answereName,
       boardImageUrl,
     })
-    ref.current?.clear()
     getStatus.refetch().catch((e) => console.error(e))
   }
   return (

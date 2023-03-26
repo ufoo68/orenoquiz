@@ -1,21 +1,27 @@
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
 import { type NextPage } from 'next'
 import { api } from '../../../utils/api'
-import type { FC } from 'react'
+import type { FC} from 'react';
+import { useEffect } from 'react'
 import { Fragment, useState } from 'react'
 import type {
   IshinDenshinSessionState,
   IshinDenshinSessionResult,
 } from '@prisma/client'
+import useSound from 'use-sound'
 
 type Props = {
   sessionId: string
 }
 
 const Board: NextPage<Props> = ({ sessionId }) => {
+  const [enableAutoPlay, setEnableAutoPlay] = useState<boolean>(false)
   const [version, setVersion] = useState<number>(1)
   const [state, setState] = useState<IshinDenshinSessionState>('WAIT')
   const [result, setResult] = useState<IshinDenshinSessionResult>('NONE')
+  const [playSoundShow] = useSound('/sound/show.mp3')
+  const [playSoundCorrect] = useSound('/sound/correct.mp3')
+  const [playSoundIncorrect] = useSound('/sound/incorrect.mp3')
   const groomAnswer = api.ishindenshin.getAnswer.useQuery({
     sessionId,
     version,
@@ -33,7 +39,7 @@ const Board: NextPage<Props> = ({ sessionId }) => {
         setVersion(res.version)
         setState(res.state)
         setResult(res.result)
-        if (res.state === 'SHOW') {
+        if (res.state === 'SHOW' && res.result === 'NONE') {
           groomAnswer.refetch().catch((e) => console.error(e))
           brideAnswer.refetch().catch((e) => console.error(e))
         }
@@ -41,10 +47,19 @@ const Board: NextPage<Props> = ({ sessionId }) => {
       refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
   )
+  useEffect(() => {
+    if (enableAutoPlay && state === 'SHOW' && result === 'NONE') {
+      playSoundShow()
+    } else if (enableAutoPlay && state === 'SHOW' && result === 'MATCH') {
+      playSoundCorrect()
+    } else if (enableAutoPlay && state === 'SHOW' && result === 'NOT_MATCH') {
+      playSoundIncorrect()
+    }
+  }, [state, enableAutoPlay, result])
   const AnswerResult: FC = () => {
     return (
       <div className="absolute w-full">
-        <div className="w-full flex justify-center">
+        <div className="flex w-full justify-center">
           {(() => {
             switch (result) {
               case 'MATCH':
@@ -122,17 +137,20 @@ const Board: NextPage<Props> = ({ sessionId }) => {
           </div>
         </Fragment>
       ) : (
-        <div className="col-span-2 row-span-3 flex items-center justify-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="pink"
-            className="h-1/3 w-1/3 animate-bounce"
-          >
-            <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
-          </svg>
+        <div className="col-span-2 row-span-3 flex items-end justify-center">
+          <img
+            className="mb-20 h-2/3 animate-bounce"
+            src="/noru.png"
+            alt="noru"
+          />
         </div>
       )}
+      <button
+        className={`btn absolute bottom-5 right-1/2 ${enableAutoPlay ? 'hidden' : ''}`}
+        onClick={() => setEnableAutoPlay(true)}
+      >
+        効果音の自動再生を許可
+      </button>
     </div>
   )
 }
