@@ -146,7 +146,7 @@ const Board: NextPage<Props> = ({ sessionId }) => {
         </div>
       )}
       <button
-        className={`btn absolute bottom-5 right-1/2 ${enableAutoPlay ? 'hidden' : ''}`}
+        className={`btn absolute bottom-5 right-1/2 translate-x-1/2 ${enableAutoPlay ? 'hidden' : ''}`}
         onClick={() => setEnableAutoPlay(true)}
       >
         効果音の自動再生を許可
