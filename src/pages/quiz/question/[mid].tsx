@@ -5,6 +5,8 @@ import { useState } from 'react'
 import { QuestionForm } from '../../../components/quizQuestion/QuestionForm'
 import { api } from '../../../utils/api'
 import { QuestionMenu } from '../../../components/quizQuestion/QuestionMenu'
+import { sortBy } from 'lodash'
+import type { QuestionContents } from '../../../types/question'
 
 type Props = {
   masterId: string
@@ -32,12 +34,16 @@ const Question: NextPage<Props> = ({ masterId }) => {
     } as QuizQuestion)
   }
   const handleSaveSelectedQuestion = async () => {
-    const { id, title, order, contents } = selectedQuestion as QuizQuestion
+    const { id, title, order } = selectedQuestion as QuizQuestion
+    const contents = selectedQuestion?.contents as QuestionContents
     await updateQuestion.mutateAsync({
       id,
       title,
       order,
-      contents,
+      contents: {
+        ...contents,
+        questions: sortBy(contents.questions, 'id'),
+      },
     })
     await getAllQuestion.refetch()
   }

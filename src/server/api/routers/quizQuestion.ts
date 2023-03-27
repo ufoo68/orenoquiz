@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import type { QuestionContents } from '../../../types/question'
 import { getSelectTypeInit } from '../../../types/question'
 
 import { createTRPCRouter, publicProcedure } from '../trpc'
@@ -13,6 +14,36 @@ export const quizQuestionRouter = createTRPCRouter({
           id: questionId,
         },
       })
+    }),
+  getWithoutAnswer: publicProcedure
+    .input(z.object({ questionId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const { questionId } = input
+      const question = await ctx.prisma.quizQuestion.findUnique({
+        where: {
+          id: questionId,
+        },
+      })
+      if (!question) {
+        return null
+      }
+      const contents = question.contents as QuestionContents
+      return {
+        ...question,
+        contents:
+          contents.type === 'select'
+            ? {
+                ...contents,
+                answerId: '',
+              }
+            : {
+                ...contents,
+                questions: contents.questions.map(({ id, label }) => ({
+                  id,
+                  label,
+                })),
+              },
+      }
     }),
   getNextQuestionId: publicProcedure
     .input(z.object({ questionId: z.string() }))

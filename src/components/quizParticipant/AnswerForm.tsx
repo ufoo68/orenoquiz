@@ -22,7 +22,7 @@ export const AnswerForm: FC<Props> = ({
   const [answer, setAnswer] = useState<QuizParticipantAnswer>()
   const [name, setName] = useState<string>('')
   const [isSubmit, setIsSubmit] = useState<boolean>(false)
-  api.quizQuestion.get.useQuery(
+  api.quizQuestion.getWithoutAnswer.useQuery(
     { questionId },
     {
       onSuccess: (res) => {
