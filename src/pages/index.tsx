@@ -13,13 +13,13 @@ const selectCards: SelectCard[] = [
   {
     title: 'シンプルクイズ',
     description: 'シンプルなクイズゲームです',
-    imageUrl: '/quiz.jpg',
+    imageUrl: '/image/quiz.jpg',
     link: '/quiz',
   },
   {
     title: '以心伝心ゲーム',
     description: 'ホワイトボードを使って二人の息を揃えるゲームです',
-    imageUrl: '/ishindenshin.jpg',
+    imageUrl: '/image/ishindenshin.jpg',
     link: '/ishindenshin',
   },
 ]

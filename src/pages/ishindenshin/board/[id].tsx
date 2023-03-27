@@ -140,7 +140,7 @@ const Board: NextPage<Props> = ({ sessionId }) => {
         <div className="col-span-2 row-span-3 flex items-end justify-center">
           <img
             className="mb-20 h-2/3 animate-bounce"
-            src="/noru.png"
+            src="/image/noru.png"
             alt="noru"
           />
         </div>
