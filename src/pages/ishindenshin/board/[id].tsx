@@ -112,12 +112,12 @@ const Board: NextPage<Props> = ({ sessionId }) => {
       state === 'SHOW' ? (
         <Fragment>
           <div className="flex items-center justify-center">
-            <div className="rounded-box flex w-80 flex-row items-center justify-center bg-white p-3 text-5xl">
+            <div className="flex w-80 flex-row items-center justify-center text-5xl">
               <div>新郎🤵🏻‍♂️</div>
             </div>
           </div>
           <div className="flex items-center justify-center">
-            <div className="rounded-box flex w-80 flex-row items-center justify-center bg-white p-3 text-5xl">
+            <div className="flex w-80 flex-row items-center justify-center text-5xl">
               <div>新婦👰🏻‍♀️</div>
             </div>
           </div>
