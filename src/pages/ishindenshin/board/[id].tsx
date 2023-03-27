@@ -1,7 +1,7 @@
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
 import { type NextPage } from 'next'
 import { api } from '../../../utils/api'
-import type { FC} from 'react';
+import type { FC } from 'react'
 import { useEffect } from 'react'
 import { Fragment, useState } from 'react'
 import type {
@@ -15,7 +15,7 @@ type Props = {
 }
 
 const Board: NextPage<Props> = ({ sessionId }) => {
-  const [enableAutoPlay, setEnableAutoPlay] = useState<boolean>(false)
+  const [enableSoundPlay, setEnableSoundPlay] = useState<boolean>(false)
   const [version, setVersion] = useState<number>(1)
   const [state, setState] = useState<IshinDenshinSessionState>('WAIT')
   const [result, setResult] = useState<IshinDenshinSessionResult>('NONE')
@@ -48,14 +48,14 @@ const Board: NextPage<Props> = ({ sessionId }) => {
     }
   )
   useEffect(() => {
-    if (enableAutoPlay && state === 'SHOW' && result === 'NONE') {
+    if (enableSoundPlay && state === 'SHOW' && result === 'NONE') {
       playSoundShow()
-    } else if (enableAutoPlay && state === 'SHOW' && result === 'MATCH') {
+    } else if (enableSoundPlay && state === 'SHOW' && result === 'MATCH') {
       playSoundCorrect()
-    } else if (enableAutoPlay && state === 'SHOW' && result === 'NOT_MATCH') {
+    } else if (enableSoundPlay && state === 'SHOW' && result === 'NOT_MATCH') {
       playSoundIncorrect()
     }
-  }, [state, enableAutoPlay, result])
+  }, [state, enableSoundPlay, result])
   const AnswerResult: FC = () => {
     return (
       <div className="absolute w-full">
@@ -146,12 +146,12 @@ const Board: NextPage<Props> = ({ sessionId }) => {
         </div>
       )}
       <div
-        className={`absolute bottom-0 h-20 w-full flex justify-center items-center ${
-          enableAutoPlay ? 'hidden' : ''
+        className={`absolute bottom-0 flex h-20 w-full items-center justify-center ${
+          enableSoundPlay ? 'hidden' : ''
         }`}
       >
-        <button className="btn" onClick={() => setEnableAutoPlay(true)}>
-          効果音の自動再生を許可
+        <button className="btn" onClick={() => setEnableSoundPlay(true)}>
+          効果音の再生を許可
         </button>
       </div>
     </div>
