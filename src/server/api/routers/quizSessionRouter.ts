@@ -17,7 +17,7 @@ export const quizSessionRouter = createTRPCRouter({
           id: sessionId,
         },
       })
-      return (session?.state ?? ({ type: 'end' })) as QuizSessionState
+      return (session?.state ?? { type: 'end' }) as QuizSessionState
     }),
   getAll: publicProcedure
     .input(z.object({ masterId: z.string() }))
@@ -120,6 +120,32 @@ export const quizSessionRouter = createTRPCRouter({
         where: { id: sessionId },
         data: {
           state: getQuizSessionStateQuestion(question.id),
+        },
+      })
+    }),
+  updateStateReset: publicProcedure
+    .input(z.object({ sessionId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { sessionId } = input
+      const session = await ctx.prisma.quizSession.findUnique({
+        where: { id: sessionId },
+      })
+      if (!session) {
+        return
+      }
+      await ctx.prisma.participant.deleteMany({
+        where: { sessionId },
+      })
+      await ctx.prisma.participantScore.deleteMany({
+        where: { sessionId },
+      })
+      await ctx.prisma.participantSubimit.deleteMany({
+        where: { sessionId },
+      })
+      await ctx.prisma.quizSession.update({
+        where: { id: sessionId },
+        data: {
+          state: getQuizSessionStateEntry(),
         },
       })
     }),

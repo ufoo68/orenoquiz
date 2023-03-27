@@ -25,6 +25,7 @@ const Session: NextPage<Props> = ({ masterId, role }) => {
     }
   )
   const deleteQuiz = api.quizSession.delete.useMutation()
+  const resetSession = api.quizSession.updateStateReset.useMutation()
 
   const handleCreateSession = async () => {
     await createSession.mutateAsync({ masterId })
@@ -33,6 +34,11 @@ const Session: NextPage<Props> = ({ masterId, role }) => {
 
   const handleDeleteSession = async (sessionId: string) => {
     await deleteQuiz.mutateAsync({ sessionId })
+    await getAllSession.refetch()
+  }
+
+  const handleResetSession = async (sessionId: string) => {
+    await resetSession.mutateAsync({ sessionId })
     await getAllSession.refetch()
   }
 
@@ -89,6 +95,14 @@ const Session: NextPage<Props> = ({ masterId, role }) => {
                   <button className="btn-primary btn">司会</button>
                 </a>
               </Link>
+              <button
+                className="btn-primary btn"
+                onClick={() => {
+                  handleResetSession(session.id).catch((e) => console.error(e))
+                }}
+              >
+                リセット
+              </button>
             </div>
           </div>
         </div>
