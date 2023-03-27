@@ -145,12 +145,15 @@ const Board: NextPage<Props> = ({ sessionId }) => {
           />
         </div>
       )}
-      <button
-        className={`btn absolute bottom-5 right-1/2 translate-x-1/2 ${enableAutoPlay ? 'hidden' : ''}`}
-        onClick={() => setEnableAutoPlay(true)}
+      <div
+        className={`absolute bottom-0 h-20 w-full flex justify-center items-center ${
+          enableAutoPlay ? 'hidden' : ''
+        }`}
       >
-        効果音の自動再生を許可
-      </button>
+        <button className="btn" onClick={() => setEnableAutoPlay(true)}>
+          効果音の自動再生を許可
+        </button>
+      </div>
     </div>
   )
 }

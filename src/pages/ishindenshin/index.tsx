@@ -6,6 +6,7 @@ const Ishindenshin: NextPage = () => {
   const createIshindenshin = api.ishindenshin.create.useMutation()
   const allIshindenshin = api.ishindenshin.getAll.useQuery()
   const deleteIshindenshin = api.ishindenshin.delete.useMutation()
+  const resetSession = api.ishindenshin.versionReset.useMutation()
 
   const handleCreateIshindenshin = async () => {
     await createIshindenshin.mutateAsync()
@@ -17,26 +18,31 @@ const Ishindenshin: NextPage = () => {
     await allIshindenshin.refetch()
   }
 
+  const handleResetSession = async (sessionId: string) => {
+    await resetSession.mutateAsync({ sessionId })
+    await allIshindenshin.refetch()
+  }
+
   if (!allIshindenshin.data) {
     return <progress className="progress" />
   }
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center space-y-5 bg-neutral-200">
-      {allIshindenshin.data.map((q) => (
-        <div key={q.id} className="card bg-base-100 shadow-xl">
+      {allIshindenshin.data.map((session) => (
+        <div key={session.id} className="card bg-base-100 shadow-xl">
           <div className="card-body">
             <h2 className="card-title">
-              {q.id}
-              <div className="badge-secondary badge">{q.state}</div>
-              <div className="badge">ver:{q.version}</div>
+              {session.id}
+              <div className="badge-secondary badge">{session.state}</div>
+              <div className="badge">ver:{session.version}</div>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
                 className="h-6 w-6 cursor-pointer"
                 onClick={() => {
-                  handleDeleteIshindenshin(q.id).catch((e) => console.error(e))
+                  handleDeleteIshindenshin(session.id).catch((e) => console.error(e))
                 }}
               >
                 <path
@@ -48,7 +54,7 @@ const Ishindenshin: NextPage = () => {
             </h2>
             <div className="card-actions justify-end">
               <Link
-                href={`/ishindenshin/answere/${q.id}?name=groom`}
+                href={`/ishindenshin/answere/${session.id}?name=groom`}
                 legacyBehavior
                 passHref
               >
@@ -61,7 +67,7 @@ const Ishindenshin: NextPage = () => {
                 </a>
               </Link>
               <Link
-                href={`/ishindenshin/answere/${q.id}?name=bride`}
+                href={`/ishindenshin/answere/${session.id}?name=bride`}
                 legacyBehavior
                 passHref
               >
@@ -73,7 +79,7 @@ const Ishindenshin: NextPage = () => {
                   <button className="btn-primary btn">新婦</button>
                 </a>
               </Link>
-              <Link href={`/ishindenshin/host/${q.id}`} legacyBehavior passHref>
+              <Link href={`/ishindenshin/host/${session.id}`} legacyBehavior passHref>
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
@@ -83,7 +89,7 @@ const Ishindenshin: NextPage = () => {
                 </a>
               </Link>
               <Link
-                href={`/ishindenshin/board/${q.id}`}
+                href={`/ishindenshin/board/${session.id}`}
                 legacyBehavior
                 passHref
               >
@@ -95,6 +101,9 @@ const Ishindenshin: NextPage = () => {
                   <button className="btn-primary btn">会場</button>
                 </a>
               </Link>
+              <button className="btn-primary btn" onClick={() => {
+                handleResetSession(session.id).catch((e) => console.error(e))
+              }}>リセット</button>
             </div>
           </div>
         </div>
