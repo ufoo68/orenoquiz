@@ -12,6 +12,10 @@ class MyDocument extends Document {
     return (
       <Html lang="ja-JP" dir="ltr">
         <Head>
+          <meta
+            name="viewport"
+            content="maximum-scale=1, initial-scale=1"
+          />
           <meta name="application-name" content="orenoquiz" />
           <meta name="theme-color" content="#000" />
           <meta name="description" content="quiz application for party" />

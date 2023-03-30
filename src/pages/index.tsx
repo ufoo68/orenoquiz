@@ -1,6 +1,7 @@
 import { type NextPage } from 'next'
 import Link from 'next/link'
 import { useState } from 'react'
+import { LoginButton } from '../components/auth/LoginButton'
 
 type SelectCard = {
   title: string
@@ -28,7 +29,8 @@ const Home: NextPage = () => {
   const [cardIndex, setCardIndex] = useState<number>(0)
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center space-y-5 bg-neutral-200">
-      <div className="h-2/3 flex items-center">
+      <LoginButton className="absolute top-10 right-10" />
+      <div className="flex h-2/3 items-center">
         <div className="card w-80 bg-base-100 shadow-xl">
           <figure>
             <img

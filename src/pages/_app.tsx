@@ -3,19 +3,17 @@ import { type AppType } from 'next/app'
 import { api } from '../utils/api'
 
 import '../styles/globals.css'
-import Head from 'next/head'
+import { SessionProvider } from 'next-auth/react'
+import type { Session } from 'next-auth'
 
-const MyApp: AppType = ({ Component, pageProps }) => {
+const MyApp: AppType<{session: Session}> = ({
+  Component,
+  pageProps: { session, ...pageProps },
+}) => {
   return (
-    <>
-      <Head>
-        <meta
-          name="viewport"
-          content="maximum-scale=1, initial-scale=1, width=device-width"
-        />
-      </Head>
+    <SessionProvider session={session}>
       <Component {...pageProps} />
-    </>
+    </SessionProvider>
   )
 }
 
