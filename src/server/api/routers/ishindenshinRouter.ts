@@ -4,18 +4,24 @@ import type {
 } from '@prisma/client'
 import { z } from 'zod'
 
-import { createTRPCRouter, publicProcedure } from '../trpc'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
 
 export const ishindenshinRouter = createTRPCRouter({
-  create: publicProcedure.mutation(async ({ ctx }) => {
+  create: protectedProcedure.mutation(async ({ ctx }) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+    const userId = (ctx.session.user as any)?.id as string
     await ctx.prisma.ishinDenshinSession.create({
-      data: { state: 'WAIT', version: 1 },
+      data: { userId, state: 'WAIT', version: 1 },
     })
   }),
-  getAll: publicProcedure.query(async ({ ctx }) => {
-    return ctx.prisma.ishinDenshinSession.findMany()
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+    const userId = (ctx.session.user as any)?.id as string
+    return ctx.prisma.ishinDenshinSession.findMany({
+      where: { userId },
+    })
   }),
-  delete: publicProcedure
+  delete: protectedProcedure
     .input(z.object({ sessionId: z.string() }))
     .mutation(async ({ input, ctx }) => {
       const { sessionId } = input

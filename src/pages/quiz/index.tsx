@@ -1,18 +1,14 @@
 import type { QuizMaster } from '@prisma/client'
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
 import { type NextPage } from 'next'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { api } from '../../utils/api'
+import { redirect } from 'next/navigation'
 
-type Role = 'admin' | 'operator'
-
-type Props = {
-  role: Role
-}
-
-const Quiz: NextPage<Props> = ({ role }) => {
+const Quiz: NextPage = () => {
   const [quizzes, setQuizzes] = useState<QuizMaster[]>([])
+  const { data: session } = useSession()
 
   const createQuiz = api.quizMaster.create.useMutation()
   const getAllQuiz = api.quizMaster.getAll.useQuery(undefined, {
@@ -36,6 +32,10 @@ const Quiz: NextPage<Props> = ({ role }) => {
     return <progress className="progress" />
   }
 
+  if (!session) {
+    redirect('/')
+  }
+
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center space-y-5 bg-neutral-200">
       {quizzes.map((q) => (
@@ -47,9 +47,7 @@ const Quiz: NextPage<Props> = ({ role }) => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className={`h-8 w-8 cursor-pointer ${
-                  role === 'admin' ? '' : 'hidden'
-                }`}
+                className="h-8 w-8 cursor-pointer"
                 onClick={() => {
                   handleDeleteQuiz(q.id).catch((e) => console.error(e))
                 }}
@@ -69,7 +67,7 @@ const Quiz: NextPage<Props> = ({ role }) => {
                   rel="noopener noreferrer"
                   className="link-primary  link"
                 >
-                  <button className="btn-primary btn">問題</button>
+                  <button className="btn btn-primary">問題</button>
                 </a>
               </Link>
               <Link href={`/quiz/session/${q.id}`} legacyBehavior passHref>
@@ -78,7 +76,7 @@ const Quiz: NextPage<Props> = ({ role }) => {
                   rel="noopener noreferrer"
                   className="link-primary  link"
                 >
-                  <button className="btn-primary btn">セッション</button>
+                  <button className="btn btn-primary">セッション</button>
                 </a>
               </Link>
             </div>
@@ -86,7 +84,7 @@ const Quiz: NextPage<Props> = ({ role }) => {
         </div>
       ))}
       <button
-        className="btn-secondary btn"
+        className="btn btn-secondary"
         onClick={() => {
           handleCreateQuiz().catch((e) => {
             console.error(e)
@@ -108,17 +106,6 @@ const Quiz: NextPage<Props> = ({ role }) => {
       </button>
     </div>
   )
-}
-
-export const getServerSideProps = (
-  context: GetServerSidePropsContext
-): GetServerSidePropsResult<Props> => {
-  const { role } = context.query
-  return {
-    props: {
-      role: (role as Role) ?? 'operator',
-    },
-  }
 }
 
 export default Quiz

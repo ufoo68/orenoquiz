@@ -1,7 +1,7 @@
 import { type NextPage } from 'next'
+import { signIn, signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useState } from 'react'
-import { LoginButton } from '../components/auth/LoginButton'
 
 type SelectCard = {
   title: string
@@ -27,9 +27,24 @@ const selectCards: SelectCard[] = [
 
 const Home: NextPage = () => {
   const [cardIndex, setCardIndex] = useState<number>(0)
+  const { data: session } = useSession()
+  if (!session) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-neutral-200">
+        <button className="btn" onClick={() => signIn()}>
+          ログイン
+        </button>
+      </div>
+    )
+  }
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center space-y-5 bg-neutral-200">
-      <LoginButton className="absolute top-10 right-10" />
+      <button
+        className="btn absolute top-10 right-10"
+        onClick={() => signOut()}
+      >
+        ログアウト
+      </button>
       <div className="flex h-2/3 items-center">
         <div className="card w-80 bg-base-100 shadow-xl">
           <figure>

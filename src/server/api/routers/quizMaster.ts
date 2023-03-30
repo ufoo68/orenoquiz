@@ -1,15 +1,21 @@
 import { z } from 'zod'
 import { getSelectTypeInit } from '../../../types/question'
 
-import { createTRPCRouter, publicProcedure } from '../trpc'
+import { createTRPCRouter, protectedProcedure } from '../trpc'
 
 export const quizMasterRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.quizMaster.findMany()
+  getAll: protectedProcedure.query(({ ctx }) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+    const userId = (ctx.session.user as any)?.id as string
+    return ctx.prisma.quizMaster.findMany({
+      where: { userId },
+    })
   }),
-  create: publicProcedure.mutation(async ({ ctx }) => {
+  create: protectedProcedure.mutation(async ({ ctx }) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+    const userId = (ctx.session.user as any)?.id as string
     const { id } = await ctx.prisma.quizMaster.create({
-      data: { title: '新しいクイズ' },
+      data: { title: '新しいクイズ', userId },
     })
     await ctx.prisma.quizQuestion.create({
       data: {
@@ -19,7 +25,7 @@ export const quizMasterRouter = createTRPCRouter({
       },
     })
   }),
-  updateTitle: publicProcedure
+  updateTitle: protectedProcedure
     .input(z.object({ masterId: z.string(), title: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { masterId, title } = input
@@ -28,7 +34,7 @@ export const quizMasterRouter = createTRPCRouter({
         data: { title },
       })
     }),
-  delete: publicProcedure
+  delete: protectedProcedure
     .input(z.object({ masterId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { masterId } = input
@@ -38,10 +44,18 @@ export const quizMasterRouter = createTRPCRouter({
       await ctx.prisma.quizQuestion.deleteMany({
         where: { masterId },
       })
-      const sessions = await ctx.prisma.quizSession.findMany({ where: { masterId } })
+      const sessions = await ctx.prisma.quizSession.findMany({
+        where: { masterId },
+      })
       await ctx.prisma.quizSession.deleteMany({ where: { masterId } })
-      await ctx.prisma.participant.deleteMany({ where: { sessionId: { in: sessions.map((s) => s.id) } } })
-      await ctx.prisma.participantScore.deleteMany({ where: { sessionId: { in: sessions.map((s) => s.id) } } })
-      await ctx.prisma.participantSubimit.deleteMany({ where: { sessionId: { in: sessions.map((s) => s.id) } } })
+      await ctx.prisma.participant.deleteMany({
+        where: { sessionId: { in: sessions.map((s) => s.id) } },
+      })
+      await ctx.prisma.participantScore.deleteMany({
+        where: { sessionId: { in: sessions.map((s) => s.id) } },
+      })
+      await ctx.prisma.participantSubimit.deleteMany({
+        where: { sessionId: { in: sessions.map((s) => s.id) } },
+      })
     }),
 })

@@ -13,6 +13,7 @@ datasource db {
 
 model QuizMaster {
     id        String   @id @default(uuid())
+    userId    String   @default("guest")
     title     String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -85,6 +86,7 @@ enum IshinDenshinSessionResult {
 
 model IshinDenshinSession {
     id        String                    @id @default(uuid())
+    userId    String                    @default("guest")
     state     IshinDenshinSessionState
     version   Int
     result    IshinDenshinSessionResult @default(NONE)

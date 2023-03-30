@@ -5,14 +5,11 @@ import { useState } from 'react'
 import { api } from '../../../utils/api'
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
 
-type Role = 'admin' | 'operator'
-
 type Props = {
   masterId: string
-  role: Role
 }
 
-const Session: NextPage<Props> = ({ masterId, role }) => {
+const Session: NextPage<Props> = ({ masterId }) => {
   const [sessions, setSessions] = useState<QuizSession[]>([])
 
   const createSession = api.quizSession.create.useMutation()
@@ -57,9 +54,7 @@ const Session: NextPage<Props> = ({ masterId, role }) => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className={`h-8 w-8 cursor-pointer ${
-                  role === 'admin' ? '' : 'hidden'
-                }`}
+                className="h-8 w-8 cursor-pointer"
                 onClick={() => {
                   handleDeleteSession(session.id).catch((e) => console.error(e))
                 }}
@@ -135,11 +130,11 @@ const Session: NextPage<Props> = ({ masterId, role }) => {
 export const getServerSideProps = (
   context: GetServerSidePropsContext
 ): GetServerSidePropsResult<Props> => {
-  const { mid, role } = context.query
+  const { mid } = context.query
   if (typeof mid !== 'string') {
     return { notFound: true }
   }
-  return { props: { masterId: mid, role: (role as Role) ?? 'operator' } }
+  return { props: { masterId: mid } }
 }
 
 export default Session
