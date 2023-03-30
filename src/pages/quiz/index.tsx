@@ -2,13 +2,14 @@ import type { QuizMaster } from '@prisma/client'
 import { type NextPage } from 'next'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { api } from '../../utils/api'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 const Quiz: NextPage = () => {
   const [quizzes, setQuizzes] = useState<QuizMaster[]>([])
   const { data: session } = useSession()
+  const router = useRouter()
 
   const createQuiz = api.quizMaster.create.useMutation()
   const getAllQuiz = api.quizMaster.getAll.useQuery(undefined, {
@@ -28,12 +29,14 @@ const Quiz: NextPage = () => {
     await getAllQuiz.refetch()
   }
 
+  useEffect(() => {
+    if (!session) {
+      router.push('/')
+    }
+  }, [])
+
   if (getAllQuiz.isLoading) {
     return <progress className="progress" />
-  }
-
-  if (!session) {
-    redirect('/')
   }
 
   return (

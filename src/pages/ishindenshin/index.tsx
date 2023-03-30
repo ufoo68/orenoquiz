@@ -1,8 +1,9 @@
 import { type NextPage } from 'next'
 import { useSession } from 'next-auth/react'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { api } from '../../utils/api'
+import { useEffect } from 'react'
 
 const Ishindenshin: NextPage = () => {
   const createIshindenshin = api.ishindenshin.create.useMutation()
@@ -10,6 +11,7 @@ const Ishindenshin: NextPage = () => {
   const deleteIshindenshin = api.ishindenshin.delete.useMutation()
   const resetSession = api.ishindenshin.versionReset.useMutation()
   const {data: session} = useSession()
+  const router = useRouter()
 
   const handleCreateIshindenshin = async () => {
     await createIshindenshin.mutateAsync()
@@ -26,13 +28,16 @@ const Ishindenshin: NextPage = () => {
     await allIshindenshin.refetch()
   }
 
+  useEffect(() => {
+    if (!session) {
+      router.push('/')
+    }
+  }, [])
+
   if (!allIshindenshin.data) {
     return <progress className="progress" />
   }
-
-  if (!session) {
-    redirect('/')
-  } 
+  
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center space-y-5 bg-neutral-200">
       {allIshindenshin.data.map((session) => (
