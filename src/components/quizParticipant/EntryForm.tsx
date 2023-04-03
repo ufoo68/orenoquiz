@@ -41,6 +41,8 @@ export const EntryForm: FC<Props> = ({ handleSubmitName, participantId }) => {
           className="btn-primary btn"
           type="button"
           onClick={() => {
+            const isOk = window.confirm('この名前で参加しますか？')
+            if (!isOk) return
             handleSubmitName(name)
             setIsSubmitting(true)
           }}

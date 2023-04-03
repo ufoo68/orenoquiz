@@ -68,6 +68,8 @@ export const AnswerForm: FC<Props> = ({
   )
   const submitAnswer = api.quizParticipant.submitAnswer.useMutation()
   const handleSubmitAnswer = async () => {
+    const isOk = window.confirm('この回答で送信しますか？')
+    if (!isOk) return
     await submitAnswer.mutateAsync({
       sessionId,
       questionId,
@@ -75,6 +77,7 @@ export const AnswerForm: FC<Props> = ({
       answer,
     })
     await getIsSubmit.refetch()
+    window.alert('回答を送信しました。')
   }
   if (!question) {
     return <progress className="progress" />

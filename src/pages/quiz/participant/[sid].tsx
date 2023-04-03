@@ -43,7 +43,7 @@ const Participant: NextPage<Props> = ({
       const pid = await createParticipant.mutateAsync({ sessionId, name })
       await router.push(`/quiz/participant/${sessionId}?pid=${pid}`)
       setParticipantId(pid)
-      window.confirm('参加しました。クイズ開始までお待ち下さい。')
+      window.alert('参加しました。クイズ開始までお待ち下さい。')
     }
   }
 
