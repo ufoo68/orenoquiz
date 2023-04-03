@@ -46,6 +46,10 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
   }, [state])
 
   const handleSubmitAnser = async () => {
+    const isOk = window.confirm('回答を送信しますか？')
+    if (!isOk) {
+      return
+    }
     const boardImageUrl = ref.current?.getCanvas().toDataURL() as string
     await submitAnswer.mutateAsync({
       sessionId,
