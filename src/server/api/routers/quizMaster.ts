@@ -15,12 +15,12 @@ export const quizMasterRouter = createTRPCRouter({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
     const userId = (ctx.session.user as any)?.id as string
     const { id } = await ctx.prisma.quizMaster.create({
-      data: { title: '新しいクイズ', userId },
+      data: { title: '', userId },
     })
     await ctx.prisma.quizQuestion.create({
       data: {
         masterId: id,
-        title: '新しい問題',
+        title: '',
         contents: getSelectTypeInit(),
       },
     })

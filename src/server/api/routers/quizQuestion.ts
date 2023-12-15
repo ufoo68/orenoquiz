@@ -81,7 +81,7 @@ export const quizQuestionRouter = createTRPCRouter({
       await ctx.prisma.quizQuestion.create({
         data: {
           masterId,
-          title: '新しい問題',
+          title: '',
           contents: getSelectTypeInit(),
           order,
         },

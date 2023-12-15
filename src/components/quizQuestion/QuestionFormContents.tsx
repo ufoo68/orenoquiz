@@ -127,7 +127,7 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
                   ...contents.questions,
                   {
                     id: Math.max(...contents.questions.map((q) => q.id)) + 1,
-                    label: '選択肢',
+                    label: '',
                   },
                 ],
               })
@@ -251,7 +251,7 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
                   ...contents.questions,
                   {
                     id: Math.max(...contents.questions.map((q) => q.id)) + 1,
-                    label: '要素',
+                    label: '',
                     order:
                       Math.max(...contents.questions.map((q) => q.order)) + 1,
                   },
