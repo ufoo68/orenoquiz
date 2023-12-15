@@ -38,7 +38,7 @@ export const getSortTypeInit = (): SortTypeQuestion => ({
   questions: [
     {
       id: 1,
-      label: '要素',
+      label: '',
       order: 1,
     },
   ],
