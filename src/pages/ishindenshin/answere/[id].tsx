@@ -72,7 +72,7 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
       />
       <div className="flex flex-row space-x-52">
         <button
-          className="btn-wide btn"
+          className="btn btn-wide"
           onClick={() => ref.current?.clear()}
           disabled={disabled}
         >
@@ -92,7 +92,7 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
           </svg>
         </button>
         <button
-          className="btn-wide btn"
+          className="btn btn-wide"
           onClick={() => {
             handleSubmitAnser().catch((e) => console.error(e))
           }}

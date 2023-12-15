@@ -1,8 +1,6 @@
 import type { FC } from 'react'
 import type { SelectTypeQuestion } from '../../../types/question'
-import type {
-  QuizParticipantAnswerSelect,
-} from '../../../types/quizParticipant'
+import type { QuizParticipantAnswerSelect } from '../../../types/quizParticipant'
 
 type Props = {
   contents: SelectTypeQuestion
@@ -11,7 +9,12 @@ type Props = {
   answer: QuizParticipantAnswerSelect
 }
 
-export const SelectItems: FC<Props> = ({ contents, setAnswer, isSubmit, answer }) => {
+export const SelectItems: FC<Props> = ({
+  contents,
+  setAnswer,
+  isSubmit,
+  answer,
+}) => {
   return (
     <ul className="mb-2 w-full rounded-lg border">
       {contents.questions.map((q) => (

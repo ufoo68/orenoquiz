@@ -9,7 +9,7 @@ type Props = {
 }
 
 export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
-  const {uploadToS3 } = useS3Upload()
+  const { uploadToS3 } = useS3Upload()
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event?.target?.files?.length || !event.target.files[0]) {
       return
@@ -26,7 +26,9 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
       <div className="flex flex-col space-y-5">
         {contents.thumbnailUrl ? (
           <img src={contents.thumbnailUrl} className="w-80" alt="thumbnail" />
-        ) : <div>サムネイルをアップロードしてください</div>}
+        ) : (
+          <div>サムネイルをアップロードしてください</div>
+        )}
         <input
           type="file"
           onChange={handleFileChange}

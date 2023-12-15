@@ -10,7 +10,7 @@ export type QuizSessionStateEntry = {
 }
 
 export const getQuizSessionStateEntry = (): QuizSessionStateEntry => ({
-  type: 'entry'
+  type: 'entry',
 })
 
 export type QuizSessonStateQuestion = {
@@ -18,7 +18,9 @@ export type QuizSessonStateQuestion = {
   questionId: string
 }
 
-export const getQuizSessionStateQuestion = (questionId: string): QuizSessonStateQuestion  => ({
+export const getQuizSessionStateQuestion = (
+  questionId: string
+): QuizSessonStateQuestion => ({
   type: 'question',
   questionId,
 })
@@ -48,5 +50,5 @@ export type QuizSessionStateEnd = {
 }
 
 export const getQuizSessionStateEnd = (): QuizSessionStateEnd => ({
-  type: 'end'
+  type: 'end',
 })

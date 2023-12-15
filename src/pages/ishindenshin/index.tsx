@@ -10,7 +10,7 @@ const Ishindenshin: NextPage = () => {
   const allIshindenshin = api.ishindenshin.getAll.useQuery()
   const deleteIshindenshin = api.ishindenshin.delete.useMutation()
   const resetSession = api.ishindenshin.versionReset.useMutation()
-  const {data: session} = useSession()
+  const { data: session } = useSession()
   const router = useRouter()
 
   const handleCreateIshindenshin = async () => {
@@ -37,7 +37,7 @@ const Ishindenshin: NextPage = () => {
   if (!allIshindenshin.data) {
     return <progress className="progress" />
   }
-  
+
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center space-y-5 bg-neutral-200">
       {allIshindenshin.data.map((session) => (
@@ -53,7 +53,9 @@ const Ishindenshin: NextPage = () => {
                 fill="currentColor"
                 className="h-6 w-6 cursor-pointer"
                 onClick={() => {
-                  handleDeleteIshindenshin(session.id).catch((e) => console.error(e))
+                  handleDeleteIshindenshin(session.id).catch((e) =>
+                    console.error(e)
+                  )
                 }}
               >
                 <path
@@ -74,7 +76,7 @@ const Ishindenshin: NextPage = () => {
                   rel="noopener noreferrer"
                   className="link-primary  link"
                 >
-                  <button className="btn-primary btn">新郎</button>
+                  <button className="btn btn-primary">新郎</button>
                 </a>
               </Link>
               <Link
@@ -87,16 +89,20 @@ const Ishindenshin: NextPage = () => {
                   rel="noopener noreferrer"
                   className="link-primary  link"
                 >
-                  <button className="btn-primary btn">新婦</button>
+                  <button className="btn btn-primary">新婦</button>
                 </a>
               </Link>
-              <Link href={`/ishindenshin/host/${session.id}`} legacyBehavior passHref>
+              <Link
+                href={`/ishindenshin/host/${session.id}`}
+                legacyBehavior
+                passHref
+              >
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
                   className="link-primary  link"
                 >
-                  <button className="btn-primary btn">司会</button>
+                  <button className="btn btn-primary">司会</button>
                 </a>
               </Link>
               <Link
@@ -109,18 +115,23 @@ const Ishindenshin: NextPage = () => {
                   rel="noopener noreferrer"
                   className="link-primary  link"
                 >
-                  <button className="btn-primary btn">会場</button>
+                  <button className="btn btn-primary">会場</button>
                 </a>
               </Link>
-              <button className="btn-primary btn" onClick={() => {
-                handleResetSession(session.id).catch((e) => console.error(e))
-              }}>リセット</button>
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  handleResetSession(session.id).catch((e) => console.error(e))
+                }}
+              >
+                リセット
+              </button>
             </div>
           </div>
         </div>
       ))}
       <button
-        className="btn-secondary btn"
+        className="btn btn-secondary"
         onClick={() => {
           handleCreateIshindenshin().catch((e) => {
             console.error(e)

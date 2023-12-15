@@ -140,7 +140,7 @@ export const quizParticipantRouter = createTRPCRouter({
             questionId,
             result:
               selectAnswer.answerId === contents.answerId ? 'WIN' : 'LOSE',
-            duration: currentSec - startSec
+            duration: currentSec - startSec,
           },
         })
       } else if (contents.type === 'sort') {

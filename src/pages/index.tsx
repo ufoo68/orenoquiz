@@ -31,7 +31,7 @@ const Home: NextPage = () => {
   if (!session) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-neutral-200">
-        <button className="btn" onClick={() => signIn()}>
+        <button className="btn" onClick={() => signIn('line')}>
           ログイン
         </button>
       </div>
@@ -59,7 +59,7 @@ const Home: NextPage = () => {
             <p>{selectCards[cardIndex]?.description}</p>
             <div className="card-actions justify-end">
               <Link href={selectCards[cardIndex]?.link ?? ''}>
-                <button className="btn btn-primary">このゲームを遊ぶ</button>
+                <button className="btn-primary btn">このゲームを遊ぶ</button>
               </Link>
             </div>
           </div>

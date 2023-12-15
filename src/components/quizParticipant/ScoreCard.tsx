@@ -7,10 +7,7 @@ type Props = {
   participantId: string
 }
 
-export const ScoreCard: FC<Props> = ({
-  sessionId,
-  participantId,
-}) => {
+export const ScoreCard: FC<Props> = ({ sessionId, participantId }) => {
   const [winCount, setWinCount] = useState<number>(0)
   const [name, setName] = useState<string>('')
   const [rank, setRank] = useState<number>(0)
@@ -30,11 +27,14 @@ export const ScoreCard: FC<Props> = ({
       },
     }
   )
-  api.quizSession.getTotalScore.useQuery({sessionId}, {
-    onSuccess: (res) => {
-      setRank(res.find((rank) => rank.id === participantId)?.rank ?? 0)
+  api.quizSession.getTotalScore.useQuery(
+    { sessionId },
+    {
+      onSuccess: (res) => {
+        setRank(res.find((rank) => rank.id === participantId)?.rank ?? 0)
+      },
     }
-  })
+  )
   return (
     <div className="card w-96 bg-base-100 shadow-xl">
       <div className="card-body flex flex-col items-center">

@@ -1,4 +1,6 @@
-export type QuizParticipantAnswer = QuizParticipantAnswerSelect | QuizParticipantAnswerSort
+export type QuizParticipantAnswer =
+  | QuizParticipantAnswerSelect
+  | QuizParticipantAnswerSort
 
 export type QuizParticipantAnswerSelect = {
   type: 'select'

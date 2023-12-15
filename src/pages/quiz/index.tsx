@@ -5,16 +5,18 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { api } from '../../utils/api'
 import { useRouter } from 'next/navigation'
+import { sortBy } from 'lodash'
 
 const Quiz: NextPage = () => {
-  const [quizzes, setQuizzes] = useState<QuizMaster[]>([])
+  const [quizzes, setQuizzes] = useState<(QuizMaster & { editing: boolean })[]>([])
   const { data: session } = useSession()
   const router = useRouter()
 
   const createQuiz = api.quizMaster.create.useMutation()
+  const updateQuizTitle = api.quizMaster.updateTitle.useMutation()
   const getAllQuiz = api.quizMaster.getAll.useQuery(undefined, {
     onSuccess: (res) => {
-      setQuizzes(res)
+      setQuizzes(sortBy(res.map((q) => ({ ...q, editing: false })), 'createdAt'))
     },
   })
   const deleteQuiz = api.quizMaster.delete.useMutation()
@@ -26,6 +28,22 @@ const Quiz: NextPage = () => {
 
   const handleDeleteQuiz = async (masterId: string) => {
     await deleteQuiz.mutateAsync({ masterId })
+    await getAllQuiz.refetch()
+  }
+
+  const handleUpdateQuizTitle = (masterId: string, title: string) => {
+    const newQuiz = {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      ...quizzes.find((q) => q.id === masterId)!,
+      title,
+      editing: true,
+    }
+    const otherQuizzes = quizzes.filter((q) => q.id !== masterId)
+    setQuizzes(sortBy([...otherQuizzes, newQuiz], 'createdAt'))
+  }
+
+  const handleSaveQuizTitle = async (masterId: string, title: string) => {
+    await updateQuizTitle.mutateAsync({ masterId, title })
     await getAllQuiz.refetch()
   }
 
@@ -45,7 +63,23 @@ const Quiz: NextPage = () => {
         <div key={q.id} className="card bg-base-100 shadow-xl">
           <div className="card-body">
             <h2 className="card-title flex justify-between">
-              {q.title}
+              <input
+                className="input-bordered input w-full"
+                value={q.title}
+                type="text"
+                onChange={(e) => {
+                  const title = e.target.value
+                  handleUpdateQuizTitle(q.id, title)
+                }}
+              />
+              <button
+                className="btn-primary btn"
+                type="button"
+                onClick={() => handleSaveQuizTitle(q.id, q.title)}
+                disabled={!q.editing}
+              >
+                保存
+              </button>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -70,7 +104,7 @@ const Quiz: NextPage = () => {
                   rel="noopener noreferrer"
                   className="link-primary  link"
                 >
-                  <button className="btn btn-primary">問題</button>
+                  <button className="btn-primary btn">問題</button>
                 </a>
               </Link>
               <Link href={`/quiz/session/${q.id}`} legacyBehavior passHref>
@@ -79,7 +113,7 @@ const Quiz: NextPage = () => {
                   rel="noopener noreferrer"
                   className="link-primary  link"
                 >
-                  <button className="btn btn-primary">セッション</button>
+                  <button className="btn-primary btn">セッション</button>
                 </a>
               </Link>
             </div>
@@ -87,7 +121,7 @@ const Quiz: NextPage = () => {
         </div>
       ))}
       <button
-        className="btn btn-secondary"
+        className="btn-secondary btn"
         onClick={() => {
           handleCreateQuiz().catch((e) => {
             console.error(e)

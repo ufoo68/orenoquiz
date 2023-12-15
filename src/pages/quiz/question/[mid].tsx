@@ -14,7 +14,7 @@ type Props = {
 
 const Question: NextPage<Props> = ({ masterId }) => {
   const [questions, setQuestions] = useState<QuizQuestion[]>([])
-  const [selectedQuestion, setSelectedQestion] = useState<QuizQuestion>()
+  const [selectedQuestion, setSelectedQuestion] = useState<QuizQuestion>()
   const getAllQuestion = api.quizQuestion.getAll.useQuery(
     { masterId },
     {
@@ -28,7 +28,7 @@ const Question: NextPage<Props> = ({ masterId }) => {
   const deleteQuestion = api.quizQuestion.delete.useMutation()
   const changeQuestionOrder = api.quizQuestion.changeOrder.useMutation()
   const handleChangeSelectedQuestion = (params: Partial<QuizQuestion>) => {
-    setSelectedQestion({
+    setSelectedQuestion({
       ...selectedQuestion,
       ...params,
     } as QuizQuestion)
@@ -80,7 +80,7 @@ const Question: NextPage<Props> = ({ masterId }) => {
       <div className="flex h-screen flex-col items-center justify-center space-y-5">
         <QuestionMenu
           questions={questions}
-          handleSelectQuestion={(question) => setSelectedQestion(question)}
+          handleSelectQuestion={(question) => setSelectedQuestion(question)}
           handleChangeOrder={handleChangeOrder}
         />
         <button className="btn" onClick={handleCreateQuestion}>

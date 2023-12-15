@@ -18,11 +18,11 @@ const Host: NextPage<Props> = ({ sessionId }) => {
         <div className="drawer-content">
           <label
             htmlFor="participant-drawer"
-            className="btn-primary drawer-button btn absolute bottom-10 right-10"
+            className="btn-primary btn drawer-button absolute bottom-10 right-10"
           >
             参加者画面
           </label>
-          <div className="flex h-full justify-center items-center">
+          <div className="flex h-full items-center justify-center">
             <Container sessionId={sessionId} />
           </div>
         </div>

@@ -16,7 +16,7 @@ export const AnswerCard: FC<Props> = ({
   questionId,
   sessionId,
   handleNextQuestion,
-  handleShowRank
+  handleShowRank,
 }) => {
   const [question, setQuestion] = useState<QuizQuestion | null>()
   const [entriesCount, setEntriesCount] = useState<number>(0)

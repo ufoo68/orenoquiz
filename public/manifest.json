@@ -1,17 +1,17 @@
 {
-	"name":				"orenoquiz",
-	"short_name":		"orenoquiz",
-	"description":		"quiz application for party",
-	"start_url":		"/",
-	"display":			"standalone",
-	"orientation":		"any",
-	"background_color":	"#fff",
-	"theme_color":		"#fff",
-	"icons": [
-		{
-			"src": "/image/logo.png",
-			"sizes": "384x384",
-			"type": "image/png"
-		}
-	]
+  "name": "orenoquiz",
+  "short_name": "orenoquiz",
+  "description": "quiz application for party",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fff",
+  "theme_color": "#fff",
+  "icons": [
+    {
+      "src": "/image/logo.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    }
+  ]
 }

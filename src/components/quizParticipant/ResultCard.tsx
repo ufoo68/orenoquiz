@@ -32,11 +32,14 @@ export const ResultCard: FC<Props> = ({
       },
     }
   )
-  api.quizParticipant.getIsWin.useQuery({participantId, sessionId, questionId}, {
-    onSuccess: (res) => {
-      setIsWin(res)
+  api.quizParticipant.getIsWin.useQuery(
+    { participantId, sessionId, questionId },
+    {
+      onSuccess: (res) => {
+        setIsWin(res)
+      },
     }
-  })
+  )
   return (
     <div className="card w-96 bg-base-100 shadow-xl">
       <div className="card-body flex flex-col items-center">
