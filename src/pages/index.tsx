@@ -28,22 +28,13 @@ const selectCards: SelectCard[] = [
 const Home: NextPage = () => {
   const [cardIndex, setCardIndex] = useState<number>(0)
   const { data: session } = useSession()
-  if (!session) {
-    return (
-      <div className="flex h-screen w-screen items-center justify-center bg-neutral-200">
-        <button className="btn" onClick={() => signIn('line')}>
-          ログイン
-        </button>
-      </div>
-    )
-  }
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center space-y-5 bg-neutral-200">
       <button
         className="btn absolute top-10 right-10"
-        onClick={() => signOut()}
+        onClick={() => (session ? signOut() : signIn('line'))}
       >
-        ログアウト
+        {session ? 'ログアウト' : 'ログイン'}
       </button>
       <div className="flex h-2/3 items-center">
         <div className="card w-80 bg-base-100 shadow-xl">
@@ -58,9 +49,18 @@ const Home: NextPage = () => {
             <h2 className="card-title">{selectCards[cardIndex]?.title}</h2>
             <p>{selectCards[cardIndex]?.description}</p>
             <div className="card-actions justify-end">
-              <Link href={selectCards[cardIndex]?.link ?? ''}>
-                <button className="btn-primary btn">このゲームを遊ぶ</button>
-              </Link>
+              {session ? (
+                <Link href={selectCards[cardIndex]?.link ?? ''}>
+                  <button className="btn btn-primary">このゲームを遊ぶ</button>
+                </Link>
+              ) : (
+                <button
+                  className="btn btn-primary"
+                  onClick={() => signIn('line')}
+                >
+                  ログインしてください
+                </button>
+              )}
             </div>
           </div>
         </div>
