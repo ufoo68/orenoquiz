@@ -59,6 +59,8 @@ const Host: NextPage<Props> = ({ sessionId }) => {
   const [version, setVersion] = useState<number>(1)
   const [state, setState] = useState<IshinDenshinSessionState>('WAIT')
   const [result, setResult] = useState<IshinDenshinSessionResult>('NONE')
+  const [networkError, setNetworkError] = useState<boolean>(false)
+  const [sending, setSending] = useState<boolean>(false)
   api.ishindenshin.getSubmited.useQuery(
     {
       sessionId,
@@ -68,6 +70,10 @@ const Host: NextPage<Props> = ({ sessionId }) => {
     {
       onSuccess: (res) => {
         setGroomSubmited(res.submited)
+        setNetworkError(false)
+      },
+      onError: () => {
+        setNetworkError(true)
       },
       refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
@@ -98,17 +104,23 @@ const Host: NextPage<Props> = ({ sessionId }) => {
   )
   const updateState = api.ishindenshin.updateState.useMutation()
   const handleDisplayAnswer = async () => {
+    setSending(true)
     await updateState.mutateAsync({ sessionId, state: 'SHOW' })
     await getStatus.refetch()
+    setSending(false)
   }
   const handleEvaluateAnswer = async (r: IshinDenshinSessionResult) => {
+    setSending(true)
     await updateState.mutateAsync({ sessionId, result: r })
     await getStatus.refetch()
+    setSending(false)
   }
   const incrementVersion = api.ishindenshin.incrementVersion.useMutation()
   const handleNextVersion = async () => {
+    setSending(true)
     await incrementVersion.mutateAsync({ sessionId })
     await getStatus.refetch()
+    setSending(false)
   }
 
   const DisplayButton: FC = () => {
@@ -120,6 +132,7 @@ const Host: NextPage<Props> = ({ sessionId }) => {
           handleDisplayAnswer().catch((e) => console.error(e))
         }}
       >
+        {sending && <Loding />}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -146,6 +159,7 @@ const Host: NextPage<Props> = ({ sessionId }) => {
           handleNextVersion().catch((e) => console.error(e))
         }}
       >
+        {sending && <Loding />}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -173,6 +187,7 @@ const Host: NextPage<Props> = ({ sessionId }) => {
             handleEvaluateAnswer('MATCH').catch((e) => console.error(e))
           }}
         >
+          {sending && <Loding />}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -192,6 +207,7 @@ const Host: NextPage<Props> = ({ sessionId }) => {
             handleEvaluateAnswer('NOT_MATCH').catch((e) => console.error(e))
           }}
         >
+          {sending && <Loding />}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -220,6 +236,24 @@ const Host: NextPage<Props> = ({ sessionId }) => {
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center space-y-20 bg-base-300">
+      {networkError && (
+        <div role="alert" className="alert alert-error">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span>ネットワークエラー</span>
+        </div>
+      )}
       <div className="tooltip" data-tip={groomSubmited ? '回答済み' : '回答中'}>
         <div className="card rounded-box flex h-20 w-80 flex-row items-center justify-center space-x-10 bg-white text-3xl">
           <div>新郎🤵🏻‍♂️</div>

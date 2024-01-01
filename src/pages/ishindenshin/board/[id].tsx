@@ -22,6 +22,7 @@ const Board: NextPage<Props> = ({ sessionId }) => {
   const [playSoundShow] = useSound('/sound/show.mp3')
   const [playSoundCorrect] = useSound('/sound/correct.mp3')
   const [playSoundIncorrect] = useSound('/sound/incorrect.mp3')
+  const [networkError, setNetworkError] = useState<boolean>(false)
   const groomAnswer = api.ishindenshin.getAnswer.useQuery({
     sessionId,
     version,
@@ -43,6 +44,11 @@ const Board: NextPage<Props> = ({ sessionId }) => {
           groomAnswer.refetch().catch((e) => console.error(e))
           brideAnswer.refetch().catch((e) => console.error(e))
         }
+        setNetworkError(false)
+      },
+      onError: (e) => {
+        console.error(e)
+        setNetworkError(true)
       },
       refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
@@ -59,6 +65,24 @@ const Board: NextPage<Props> = ({ sessionId }) => {
   const AnswerResult: FC = () => {
     return (
       <div className="absolute w-full">
+        {networkError && (
+          <div role="alert" className="alert alert-error">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 shrink-0 stroke-current"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>ネットワークエラー</span>
+          </div>
+        )}
         <div className="flex w-full justify-center">
           {(() => {
             switch (result) {
