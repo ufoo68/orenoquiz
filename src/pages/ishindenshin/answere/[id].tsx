@@ -17,7 +17,7 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
   const [version, setVersion] = useState<number>(1)
   const [submited, setSubmited] = useState<boolean>(false)
   const [state, setState] = useState<IshinDenshinSessionState>('WAIT')
-  const [networkError, setNetworkError] = useState<boolean>(true)
+  const [networkError, setNetworkError] = useState<boolean>(false)
   const [sending, setSending] = useState<boolean>(false)
   const disabled = submited || state === 'SHOW'
   const getSubmited = api.ishindenshin.getSubmited.useQuery(
