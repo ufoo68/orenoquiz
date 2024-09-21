@@ -1,29 +1,50 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextAuthOptions } from 'next-auth';
 import NextAuth from 'next-auth'
-import LineProvider from 'next-auth/providers/line'
+import CredentialsProvider from 'next-auth/providers/credentials'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
+  session: {
+    strategy: 'jwt',
+  },
   callbacks: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    session({ session, user }: any) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if (session.user) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        session.user.id = user.id
+    session: (params) => {
+      const { session, token, user } = params
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: user ? user.id : token.id,
+        },
       }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return session
+    },
+    jwt: (params) => {
+      const { token, user } = params
+      if (user) {
+        token.id = user.id
+      }
+      return token
     },
   },
   adapter: PrismaAdapter(prisma),
   providers: [
-    LineProvider({
-      clientId: process.env.LINE_CLIENT_ID ?? '',
-      clientSecret: process.env.LINE_CLIENT_SECRET ?? '',
+    CredentialsProvider({
+      name: 'quest',
+      credentials: {},
+      // eslint-disable-next-line @typescript-eslint/require-await
+      async authorize() {
+        return {
+          id: 'guest',
+          email: 'guest@example.com',
+          name: 'guest',
+          image: '',
+          provider: 'anonymous',
+        }
+      },
     }),
   ],
 }
