@@ -4,19 +4,20 @@
   "private": true,
   "scripts": {
     "build": "next build && prisma db push",
-    "dev": "next dev -H localhost.orenoquiz",
+    "dev": "next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "format": "prettier --write --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json,css}'",
-    "start": "next start"
+    "start": "next start",
+    "db:push": "prisma db push"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.0.8",
     "@dnd-kit/modifiers": "^6.0.1",
     "@dnd-kit/sortable": "^7.0.2",
     "@next-auth/prisma-adapter": "^1.0.5",
-    "@prisma/client": "^4.11.0",
+    "@prisma/client": "^5.19.1",
     "@tanstack/react-query": "^4.20.0",
     "@trpc/client": "^10.9.0",
     "@trpc/next": "^10.9.0",
@@ -24,7 +25,7 @@
     "@trpc/server": "^10.9.0",
     "daisyui": "^2.50.0",
     "lodash": "^4.17.21",
-    "next": "13.1.6",
+    "next": "^14.2.13",
     "next-auth": "^4.20.1",
     "next-qrcode": "^2.4.1",
     "next-s3-upload": "^0.3.0",
@@ -52,7 +53,7 @@
     "postcss": "^8.4.14",
     "prettier": "^2.8.1",
     "prettier-plugin-tailwindcss": "^0.2.1",
-    "prisma": "^4.11.0",
+    "prisma": "^5.19.1",
     "tailwindcss": "^3.2.0",
     "typescript": "^4.9.4"
   },
