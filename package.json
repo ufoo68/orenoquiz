@@ -10,7 +10,8 @@
     "lint:fix": "next lint --fix",
     "format": "prettier --write --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json,css}'",
     "start": "next start",
-    "db:push": "prisma db push"
+    "db:push": "prisma db push",
+    "db:start:local": "docker compose up -d"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.0.8",
