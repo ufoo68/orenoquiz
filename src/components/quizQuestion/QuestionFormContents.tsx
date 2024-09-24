@@ -14,7 +14,8 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
     const { url } = await uploadToS3(file)
     handleSave({
       ...contents,
-      thumbnailUrl: url,
+      // FIXME: Supabaseのための変換処理
+      thumbnailUrl: url.replace('/v1/s3', '/v1/object/public'),
     })
   }
   if (contents.type === 'select') {

@@ -31,10 +31,10 @@ export const QuestionMenu: FC<Props> = ({
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
     if (active.id !== over?.id && over) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const activeQuestion = questions.find((a) => a.id === active.id)!
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const orverQuestion = questions.find((a) => a.id === over.id)!
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
+            const activeQuestion = questions.find((a) => a.id === active.id)!
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
+            const orverQuestion = questions.find((a) => a.id === over.id)!
       handleChangeOrder(activeQuestion, orverQuestion)
     }
   }
