@@ -1,6 +1,6 @@
 services:
   db:
-    container_name: orenoquiz_db_local
+    container_name: postgres
     image: postgres:15
     environment:
       - TZ=Asia/Tokyo
@@ -11,6 +11,16 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - db-store:/var/lib/postgresql/data
-volumes:
-  db-store:
+      - ./docker/postgresql/data:/var/lib/postgresql/data
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: s3-minio
+    environment:
+      MINIO_ROOT_USER: admin123
+      MINIO_ROOT_PASSWORD: admin123
+    command: server --console-address ":9090" /data
+    volumes:
+      - ./docker/minio/data:/data
+    ports:
+      - 9000:9000
+      - 9090:9090
