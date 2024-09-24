@@ -1,3 +1,3 @@
 # orenoquiz
 
-![logo](./public/logo.jpg)
+![logo](./public/image/logo.png)
