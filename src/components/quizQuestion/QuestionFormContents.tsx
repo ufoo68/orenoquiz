@@ -1,7 +1,7 @@
-import type { ChangeEvent, FC } from 'react'
+import type { FC } from 'react'
 import { sortBy } from 'lodash'
 import type { QuestionContents } from '../../types/question'
-import { useS3Upload } from 'next-s3-upload'
+import { usePresignedUpload } from 'next-s3-upload'
 
 type Props = {
   contents: QuestionContents
@@ -9,12 +9,8 @@ type Props = {
 }
 
 export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
-  const { uploadToS3 } = useS3Upload()
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    if (!event?.target?.files?.length || !event.target.files[0]) {
-      return
-    }
-    const file = event.target.files[0]
+  const { uploadToS3, FileInput, openFileDialog } = usePresignedUpload()
+  const handleFileChange = async (file: File) => {
     const { url } = await uploadToS3(file)
     handleSave({
       ...contents,
@@ -29,11 +25,12 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
         ) : (
           <div>サムネイルをアップロードしてください</div>
         )}
-        <input
+        <FileInput
           type="file"
           onChange={handleFileChange}
           className="file-input w-full max-w-xs"
         />
+        <button type="button" onClick={openFileDialog}>ファイル選択</button>
         <ul className="menu rounded-box border bg-base-100 p-2">
           {sortBy(contents.questions, 'id').map((question) => (
             <li key={question.id}>
@@ -150,11 +147,12 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
         ) : (
           <div>サムネイルをアップロードしてください</div>
         )}
-        <input
+        <FileInput
           type="file"
           onChange={handleFileChange}
           className="file-input w-full max-w-xs"
         />
+        <button type="button" onClick={openFileDialog}>ファイル選択</button>
         <ul className="menu rounded-box border bg-base-100 p-2">
           {sortBy(contents.questions, 'id').map((question) => (
             <li key={question.id}>
