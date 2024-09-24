@@ -30,7 +30,9 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
           onChange={handleFileChange}
           className="file-input w-full max-w-xs"
         />
-        <button type="button" onClick={openFileDialog}>ファイル選択</button>
+        <button type="button" onClick={openFileDialog}>
+          ファイル選択
+        </button>
         <ul className="menu rounded-box border bg-base-100 p-2">
           {sortBy(contents.questions, 'id').map((question) => (
             <li key={question.id}>
@@ -152,7 +154,9 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
           onChange={handleFileChange}
           className="file-input w-full max-w-xs"
         />
-        <button type="button" onClick={openFileDialog}>ファイル選択</button>
+        <button type="button" onClick={openFileDialog}>
+          ファイル選択
+        </button>
         <ul className="menu rounded-box border bg-base-100 p-2">
           {sortBy(contents.questions, 'id').map((question) => (
             <li key={question.id}>
@@ -182,7 +186,7 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
                   onChange={(e) => {
                     const previousOrder = question.order
                     const currentOrder = Number(e.target.value)
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    // biome-ignore lint/style/noNonNullAssertion: <explanation>
                     const replaceQuestion = contents.questions.find(
                       (q) => q.order === currentOrder
                     )!

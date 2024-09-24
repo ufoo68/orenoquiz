@@ -8,7 +8,9 @@ import { useRouter } from 'next/navigation'
 import { sortBy } from 'lodash'
 
 const Quiz: NextPage = () => {
-  const [quizzes, setQuizzes] = useState<(QuizMaster & { editing: boolean })[]>([])
+  const [quizzes, setQuizzes] = useState<(QuizMaster & { editing: boolean })[]>(
+    []
+  )
   const { data: session } = useSession()
   const router = useRouter()
 
@@ -16,7 +18,12 @@ const Quiz: NextPage = () => {
   const updateQuizTitle = api.quizMaster.updateTitle.useMutation()
   const getAllQuiz = api.quizMaster.getAll.useQuery(undefined, {
     onSuccess: (res) => {
-      setQuizzes(sortBy(res.map((q) => ({ ...q, editing: false })), 'createdAt'))
+      setQuizzes(
+        sortBy(
+          res.map((q) => ({ ...q, editing: false })),
+          'createdAt'
+        )
+      )
     },
   })
   const deleteQuiz = api.quizMaster.delete.useMutation()
@@ -33,7 +40,7 @@ const Quiz: NextPage = () => {
 
   const handleUpdateQuizTitle = (masterId: string, title: string) => {
     const newQuiz = {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
       ...quizzes.find((q) => q.id === masterId)!,
       title,
       editing: true,

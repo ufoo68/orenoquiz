@@ -8,7 +8,7 @@
     "postinstall": "prisma generate",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "format": "prettier --write --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json,css}'",
+    "format": "biome format --write ./src",
     "start": "next start",
     "db:push": "prisma db push",
     "docker:start": "docker compose up -d"
@@ -39,6 +39,7 @@
     "zod": "^3.20.2"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.2",
     "@types/lodash": "^4.14.191",
     "@types/node": "^18.11.18",
     "@types/prettier": "^2.7.2",
