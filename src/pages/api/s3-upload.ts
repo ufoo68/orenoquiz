@@ -7,4 +7,4 @@ export default APIRoute.configure({
   region: process.env.S3_UPLOAD_REGION,
   endpoint: process.env.S3_UPLOAD_ENDPOINT,
   forcePathStyle: true,
-});
+})
