@@ -34,7 +34,7 @@ const Participant: NextPage<Props> = ({
         if (res) {
           setState(res)
         }
-        setNetworkError(false)
+        setNetworkError(true)
       },
       onError: () => {
         setNetworkError(true)
@@ -55,7 +55,7 @@ const Participant: NextPage<Props> = ({
   return (
     <div className="m-0 flex h-[99vh] w-screen items-center justify-center overflow-y-hidden bg-neutral-200">
       {networkError && (
-        <div role="alert" className="alert alert-error">
+        <div role="alert" className="alert alert-error fixed top-0">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6 shrink-0 stroke-current"
@@ -69,7 +69,7 @@ const Participant: NextPage<Props> = ({
               d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <span>ネットワークエラー</span>
+          <span>インターネットが接続されていません</span>
         </div>
       )}
       {(() => {

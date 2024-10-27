@@ -71,7 +71,7 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center space-y-5 bg-neutral-200">
       {networkError && (
-        <div role="alert" className="alert alert-error">
+        <div role="alert" className="alert alert-error fixed top-0">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6 shrink-0 stroke-current"
@@ -85,7 +85,7 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
               d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <span>ネットワークエラー</span>
+          <span>インターネットが接続されていません</span>
         </div>
       )}
       <SignatureCanvas
