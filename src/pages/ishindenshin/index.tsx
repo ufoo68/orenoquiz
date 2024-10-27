@@ -44,7 +44,6 @@ const Ishindenshin: NextPage = () => {
         <div key={session.id} className="card bg-base-100 shadow-xl">
           <div className="card-body">
             <h2 className="card-title">
-              {session.id}
               <div className="badge-secondary badge">{session.state}</div>
               <div className="badge">ver:{session.version}</div>
               <svg

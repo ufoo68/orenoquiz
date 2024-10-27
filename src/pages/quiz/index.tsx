@@ -103,7 +103,6 @@ const Quiz: NextPage = () => {
                 />
               </svg>
             </h2>
-            <p>{q.id}</p>
             <div className="card-actions justify-end">
               <Link href={`/quiz/question/${q.id}`} legacyBehavior passHref>
                 <a
@@ -111,7 +110,7 @@ const Quiz: NextPage = () => {
                   rel="noopener noreferrer"
                   className="link-primary  link"
                 >
-                  <button className="btn-primary btn">問題</button>
+                  <button className="btn-primary btn">設定画面</button>
                 </a>
               </Link>
               <Link href={`/quiz/session/${q.id}`} legacyBehavior passHref>
@@ -120,7 +119,7 @@ const Quiz: NextPage = () => {
                   rel="noopener noreferrer"
                   className="link-primary  link"
                 >
-                  <button className="btn-primary btn">セッション</button>
+                  <button className="btn-primary btn">ゲーム画面</button>
                 </a>
               </Link>
             </div>

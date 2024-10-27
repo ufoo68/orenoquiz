@@ -4,9 +4,18 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { api } from '../../../utils/api'
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
+import { QuizSessionState } from '../../../types/quizSession'
 
 type Props = {
   masterId: string
+}
+
+const stateDict: Record<QuizSessionState['type'], string> = {
+  entry: '受付中',
+  question: 'プレイ中',
+  answer: '回答中',
+  rank: '結果発表',
+  end: '終了',
 }
 
 const Session: NextPage<Props> = ({ masterId }) => {
@@ -49,7 +58,9 @@ const Session: NextPage<Props> = ({ masterId }) => {
         <div key={session.id} className="card bg-base-100 shadow-xl">
           <div className="card-body">
             <h2 className="card-title flex justify-between">
-              {session.id}
+              <div className="badge-secondary badge">
+                {stateDict[(session.state as QuizSessionState).type]}
+              </div>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -66,7 +77,6 @@ const Session: NextPage<Props> = ({ masterId }) => {
                 />
               </svg>
             </h2>
-            <p>{JSON.stringify(session.state)}</p>
             <div className="card-actions justify-end">
               <Link
                 href={`/quiz/participant/${session.id}`}
