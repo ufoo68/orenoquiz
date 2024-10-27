@@ -34,7 +34,7 @@ const Participant: NextPage<Props> = ({
         if (res) {
           setState(res)
         }
-        setNetworkError(true)
+        setNetworkError(false)
       },
       onError: () => {
         setNetworkError(true)
