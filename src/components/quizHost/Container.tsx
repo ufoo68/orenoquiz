@@ -21,6 +21,7 @@ export const Container: FC<Props> = ({ sessionId }) => {
   const [state, setState] = useState<QuizSessionState>(
     getQuizSessionStateEntry()
   )
+  const [networkError, setNetworkError] = useState<boolean>(false)
   const [playSoundQuestion] = useSound('/sound/question.mp3')
   const [playSoundAnswer] = useSound('/sound/show.mp3')
   const [playSoundRank] = useSound('/sound/rank.mp3')
@@ -29,6 +30,10 @@ export const Container: FC<Props> = ({ sessionId }) => {
     {
       onSuccess: (res) => {
         setState(res)
+        setNetworkError(false)
+      },
+      onError: () => {
+        setNetworkError(true)
       },
       refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
@@ -65,6 +70,24 @@ export const Container: FC<Props> = ({ sessionId }) => {
   }, [state, enableSoundPlay])
   return (
     <Fragment>
+      {networkError && (
+        <div role="alert" className="alert alert-error fixed top-0">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span>インターネットが接続されていません</span>
+        </div>
+      )}
       {(() => {
         if (state.type === 'entry') {
           return (
