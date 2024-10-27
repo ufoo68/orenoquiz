@@ -66,6 +66,12 @@ const Quiz: NextPage = () => {
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center space-y-5 bg-neutral-200">
+      <button
+        className="btn absolute top-10 right-10"
+        onClick={() => router.push('/')}
+      >
+        トップ画面
+      </button>
       {quizzes.map((q) => (
         <div key={q.id} className="card bg-base-100 shadow-xl">
           <div className="card-body">
