@@ -33,7 +33,7 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
-      name: 'quest',
+      name: 'guest',
       credentials: {},
       // eslint-disable-next-line @typescript-eslint/require-await
       async authorize() {

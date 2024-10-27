@@ -1,4 +1,4 @@
-import type { FC } from 'react'
+import type { ChangeEvent, FC } from 'react'
 import { sortBy } from 'lodash'
 import type { QuestionContents } from '../../types/question'
 import { usePresignedUpload } from 'next-s3-upload'
@@ -9,14 +9,16 @@ type Props = {
 }
 
 export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
-  const { uploadToS3, FileInput, openFileDialog } = usePresignedUpload()
-  const handleFileChange = async (file: File) => {
-    const { url } = await uploadToS3(file)
-    handleSave({
-      ...contents,
-      // FIXME: Supabaseのための変換処理
-      thumbnailUrl: url.replace('/v1/s3', '/v1/object/public'),
-    })
+  const { uploadToS3 } = usePresignedUpload()
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const { url } = await uploadToS3(event.target.files[0])
+      handleSave({
+        ...contents,
+        // FIXME: Supabaseのための変換処理
+        thumbnailUrl: url.replace('/v1/s3', '/v1/object/public'),
+      })
+    }
   }
   if (contents.type === 'select') {
     return (
@@ -26,14 +28,11 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
         ) : (
           <div>サムネイルをアップロードしてください</div>
         )}
-        <FileInput
+        <input
           type="file"
           onChange={handleFileChange}
           className="file-input w-full max-w-xs"
         />
-        <button type="button" onClick={openFileDialog}>
-          ファイル選択
-        </button>
         <ul className="menu rounded-box border bg-base-100 p-2">
           {sortBy(contents.questions, 'id').map((question) => (
             <li key={question.id}>
@@ -150,14 +149,11 @@ export const QuestionFormContents: FC<Props> = ({ contents, handleSave }) => {
         ) : (
           <div>サムネイルをアップロードしてください</div>
         )}
-        <FileInput
+        <input
           type="file"
           onChange={handleFileChange}
           className="file-input w-full max-w-xs"
         />
-        <button type="button" onClick={openFileDialog}>
-          ファイル選択
-        </button>
         <ul className="menu rounded-box border bg-base-100 p-2">
           {sortBy(contents.questions, 'id').map((question) => (
             <li key={question.id}>
