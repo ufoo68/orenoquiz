@@ -32,9 +32,9 @@ export const QuestionMenu: FC<Props> = ({
     const { active, over } = event
     if (active.id !== over?.id && over) {
       // biome-ignore lint/style/noNonNullAssertion: <explanation>
-            const activeQuestion = questions.find((a) => a.id === active.id)!
+      const activeQuestion = questions.find((a) => a.id === active.id)!
       // biome-ignore lint/style/noNonNullAssertion: <explanation>
-            const orverQuestion = questions.find((a) => a.id === over.id)!
+      const orverQuestion = questions.find((a) => a.id === over.id)!
       handleChangeOrder(activeQuestion, orverQuestion)
     }
   }

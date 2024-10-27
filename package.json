@@ -6,8 +6,6 @@
     "build": "next build && prisma db push",
     "dev": "next dev",
     "postinstall": "prisma generate",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix",
     "format": "biome format --write ./src",
     "start": "next start",
     "db:push": "prisma db push",
