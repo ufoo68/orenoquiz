@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { NextAuthOptions } from 'next-auth'
 import NextAuth from 'next-auth'
+import GitHub from 'next-auth/providers/github'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { PrismaClient } from '@prisma/client'
@@ -45,6 +46,10 @@ export const authOptions: NextAuthOptions = {
           provider: 'anonymous',
         }
       },
+    }),
+    GitHub({
+      clientId: process.env.AUTH_GITHUB_ID ?? '',
+      clientSecret: process.env.AUTH_GITHUB_SECRET ?? '',
     }),
   ],
 }
