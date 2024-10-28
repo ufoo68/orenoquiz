@@ -6,14 +6,14 @@ import { createTRPCRouter, protectedProcedure } from '../trpc'
 export const quizMasterRouter = createTRPCRouter({
   getAll: protectedProcedure.query(({ ctx }) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-    const userId = (ctx.session.user as any)?.id as string
+    const userId = ctx.session.user.id
     return ctx.prisma.quizMaster.findMany({
       where: { userId },
     })
   }),
   create: protectedProcedure.mutation(async ({ ctx }) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-    const userId = (ctx.session.user as any)?.id as string
+    const userId = ctx.session.user.id
     const { id } = await ctx.prisma.quizMaster.create({
       data: { title: '', userId },
     })

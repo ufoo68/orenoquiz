@@ -9,6 +9,7 @@ import type {
   IshinDenshinSessionResult,
 } from '@prisma/client'
 import useSound from 'use-sound'
+import { IshinDenshinConfig } from '../../../types/ishindenshin'
 
 type Props = {
   sessionId: string
@@ -52,6 +53,9 @@ const Board: NextPage<Props> = ({ sessionId }) => {
       },
       refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
+  )
+  const { data: config} = api.ishindenshin.getConfig.useQuery(
+    { sessionId }
   )
   useEffect(() => {
     if (enableSoundPlay && state === 'SHOW' && result === 'NONE') {
@@ -137,12 +141,12 @@ const Board: NextPage<Props> = ({ sessionId }) => {
         <Fragment>
           <div className="flex items-center justify-center">
             <div className="flex w-80 flex-row items-center justify-center text-5xl">
-              <div>新郎🤵🏻‍♂️</div>
+              <div>{config?.participants?.groomName}</div>
             </div>
           </div>
           <div className="flex items-center justify-center">
             <div className="flex w-80 flex-row items-center justify-center text-5xl">
-              <div>新婦👰🏻‍♀️</div>
+              <div>{config?.participants?.groomName}</div>
             </div>
           </div>
           <div className="flex h-full w-full items-center justify-center">
@@ -164,7 +168,7 @@ const Board: NextPage<Props> = ({ sessionId }) => {
         <div className="col-span-2 row-span-3 flex items-end justify-center">
           <img
             className="mb-20 h-2/3 animate-bounce"
-            src="/image/noru.png"
+            src={config?.standbyScreenUrl ?? '/images/noru.png'}
             alt="noru"
           />
         </div>

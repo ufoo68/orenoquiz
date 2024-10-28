@@ -87,6 +87,10 @@ const Host: NextPage<Props> = ({ sessionId }) => {
     {
       onSuccess: (res) => {
         setBrideSubmited(res.submited)
+        setNetworkError(false)
+      },
+      onError: () => {
+        setNetworkError(true)
       },
       refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
@@ -98,10 +102,15 @@ const Host: NextPage<Props> = ({ sessionId }) => {
         setVersion(res.version)
         setState(res.state)
         setResult(res.result)
+        setNetworkError(false)
+      },
+      onError: () => {
+        setNetworkError(true)
       },
       refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
   )
+  const { data: config } = api.ishindenshin.getConfig.useQuery({ sessionId })
   const updateState = api.ishindenshin.updateState.useMutation()
   const handleDisplayAnswer = async () => {
     setSending(true)
@@ -256,13 +265,13 @@ const Host: NextPage<Props> = ({ sessionId }) => {
       )}
       <div className="tooltip" data-tip={groomSubmited ? '回答済み' : '回答中'}>
         <div className="card rounded-box flex h-20 w-80 flex-row items-center justify-center space-x-10 bg-white text-3xl">
-          <div>新郎🤵🏻‍♂️</div>
+          <div>{config?.participants?.groomName}</div>
           {groomSubmited ? <Check /> : <Loding />}
         </div>
       </div>
       <div className="tooltip" data-tip={brideSubmited ? '回答済み' : '回答中'}>
         <div className="card rounded-box flex h-20 w-80 flex-row items-center justify-center space-x-10 bg-white text-3xl">
-          <div>新婦👰🏻‍♀️</div>
+          <div>{config?.participants?.brideName}</div>
           {brideSubmited ? <Check /> : <Loding />}
         </div>
       </div>
