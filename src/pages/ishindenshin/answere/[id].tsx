@@ -9,7 +9,7 @@ import type { IshinDenshinSessionState } from '@prisma/client'
 
 type Props = {
   sessionId: string
-  answereName: string
+  answereName: 'groom' | 'bride'
 }
 
 const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
@@ -46,6 +46,7 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
     }
   )
   const submitAnswer = api.ishindenshin.submitAnswer.useMutation()
+  const { data: config } = api.ishindenshin.getConfig.useQuery({ sessionId })
   useEffect(() => {
     if (state === 'WAIT') {
       ref.current?.clear()
@@ -88,6 +89,9 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
           <span>インターネットが接続されていません</span>
         </div>
       )}
+      <div className="card rounded-box flex h-20 w-80 flex-row items-center justify-center space-x-10 bg-white text-3xl">
+        <div>{config?.participants?.[answereName + 'Name' as 'groomName' | 'brideName']}</div>
+      </div>
       <SignatureCanvas
         penColor="rgb(0,0,0)"
         canvasProps={{
@@ -174,7 +178,7 @@ export const getServerSideProps = (
   if (typeof id !== 'string' || typeof name !== 'string') {
     return { notFound: true }
   }
-  return { props: { sessionId: id, answereName: name } }
+  return { props: { sessionId: id, answereName: name as 'groom' | 'bride' } }
 }
 
 export default Answere

@@ -5,18 +5,24 @@ import type {
 import { z } from 'zod'
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
+import { IshinDenshinConfig } from '../../../types/ishindenshin'
+import { getConfig } from 'next-s3-upload/utils/config'
 
 export const ishindenshinRouter = createTRPCRouter({
   create: protectedProcedure.mutation(async ({ ctx }) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-    const userId = (ctx.session.user as any)?.id as string
+    const userId = ctx.session.user.id
+    const config: IshinDenshinConfig = {
+      participants: {
+        groomName: '新郎🤵🏻‍♂️',
+        brideName: '新婦👰🏻‍♀️',
+      },
+    }
     await ctx.prisma.ishinDenshinSession.create({
-      data: { userId, state: 'WAIT', version: 1 },
+      data: { userId, state: 'WAIT', version: 1, config },
     })
   }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-    const userId = (ctx.session.user as any)?.id as string
+    const userId = ctx.session.user.id
     return ctx.prisma.ishinDenshinSession.findMany({
       where: { userId },
     })
@@ -51,6 +57,14 @@ export const ishindenshinRouter = createTRPCRouter({
         version,
         result,
       }
+    }),
+  getConfig: publicProcedure
+    .input(z.object({ sessionId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const session = await ctx.prisma.ishinDenshinSession.findUnique({
+        where: { id: input.sessionId },
+      })
+      return session?.config as IshinDenshinConfig
     }),
   submitAnswer: publicProcedure
     .input(
@@ -93,6 +107,23 @@ export const ishindenshinRouter = createTRPCRouter({
       const boardImageUrl = answer?.boardImageBuffer?.toString('utf8')
       return { boardImageUrl }
     }),
+  getAllAnswer: publicProcedure
+    .input(z.object({ sessionId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const { sessionId } = input
+      const answers = await ctx.prisma.ishinDenshinSubmit.findMany({
+        where: { sessionId },
+      })
+      return answers.map((answer) => {
+        const boardImageUrl = answer.boardImageBuffer?.toString('utf8')
+        return {
+          id: answer.id,
+          version: answer.version,
+          answereName: answer.answereName,
+          boardImageUrl,
+        }
+      })
+    }),
   getSubmited: publicProcedure
     .input(
       z.object({
@@ -116,7 +147,7 @@ export const ishindenshinRouter = createTRPCRouter({
     .input(
       z.object({
         sessionId: z.string(),
-        state: z.enum(['SHOW', 'WAIT']).optional(),
+        state: z.enum(['SHOW', 'WAIT', 'END']).optional(),
         result: z.enum(['MATCH', 'NOT_MATCH', 'NONE']).optional(),
       })
     )
@@ -125,6 +156,26 @@ export const ishindenshinRouter = createTRPCRouter({
       await ctx.prisma.ishinDenshinSession.update({
         where: { id: sessionId },
         data: { state, result },
+      })
+    }),
+  updateConfig: publicProcedure
+    .input(
+      z.object({
+        sessionId: z.string(),
+        config: z.object({
+          standbyScreenUrl: z.string().optional(),
+          participants: z.object({
+            groomName: z.string(),
+            brideName: z.string(),
+          }),
+        }),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { sessionId, config } = input
+      await ctx.prisma.ishinDenshinSession.update({
+        where: { id: sessionId },
+        data: { config },
       })
     }),
   incrementVersion: publicProcedure

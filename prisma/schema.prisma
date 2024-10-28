@@ -76,6 +76,7 @@ model ParticipantScore {
 enum IshinDenshinSessionState {
     WAIT
     SHOW
+    END
 }
 
 enum IshinDenshinSessionResult {
@@ -90,6 +91,7 @@ model IshinDenshinSession {
     state     IshinDenshinSessionState
     version   Int
     result    IshinDenshinSessionResult @default(NONE)
+    config    Json                      @default("{}")    
     createdAt DateTime                  @default(now())
     updatedAt DateTime                  @updatedAt
 }

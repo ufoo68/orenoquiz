@@ -2,13 +2,14 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
 import { type NextPage } from 'next'
 import { api } from '../../../utils/api'
 import type { FC } from 'react'
-import { useEffect } from 'react'
+import { use, useEffect } from 'react'
 import { Fragment, useState } from 'react'
 import type {
   IshinDenshinSessionState,
   IshinDenshinSessionResult,
 } from '@prisma/client'
 import useSound from 'use-sound'
+import { useRouter } from 'next/navigation'
 
 type Props = {
   sessionId: string
@@ -23,6 +24,7 @@ const Board: NextPage<Props> = ({ sessionId }) => {
   const [playSoundCorrect] = useSound('/sound/correct.mp3')
   const [playSoundIncorrect] = useSound('/sound/incorrect.mp3')
   const [networkError, setNetworkError] = useState<boolean>(false)
+  const router = useRouter()
   const groomAnswer = api.ishindenshin.getAnswer.useQuery({
     sessionId,
     version,
@@ -53,6 +55,9 @@ const Board: NextPage<Props> = ({ sessionId }) => {
       refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
   )
+  const { data: config} = api.ishindenshin.getConfig.useQuery(
+    { sessionId }
+  )
   useEffect(() => {
     if (enableSoundPlay && state === 'SHOW' && result === 'NONE') {
       playSoundShow()
@@ -62,6 +67,11 @@ const Board: NextPage<Props> = ({ sessionId }) => {
       playSoundIncorrect()
     }
   }, [state, enableSoundPlay, result])
+  useEffect(() => {
+    if (state === 'END') {
+      router.push(`/ishindenshin/result/${sessionId}`)
+    }
+  }, [state])
   const AnswerResult: FC = () => {
     return (
       <div className="absolute w-full">
@@ -137,12 +147,12 @@ const Board: NextPage<Props> = ({ sessionId }) => {
         <Fragment>
           <div className="flex items-center justify-center">
             <div className="flex w-80 flex-row items-center justify-center text-5xl">
-              <div>新郎🤵🏻‍♂️</div>
+              <div>{config?.participants?.groomName}</div>
             </div>
           </div>
           <div className="flex items-center justify-center">
             <div className="flex w-80 flex-row items-center justify-center text-5xl">
-              <div>新婦👰🏻‍♀️</div>
+              <div>{config?.participants?.brideName}</div>
             </div>
           </div>
           <div className="flex h-full w-full items-center justify-center">
@@ -164,7 +174,7 @@ const Board: NextPage<Props> = ({ sessionId }) => {
         <div className="col-span-2 row-span-3 flex items-end justify-center">
           <img
             className="mb-20 h-2/3 animate-bounce"
-            src="/image/noru.png"
+            src={config?.standbyScreenUrl ?? '/images/noru.png'}
             alt="noru"
           />
         </div>
