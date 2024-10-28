@@ -27,7 +27,7 @@ export const ConfigForm: React.FC<Props> = ({
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const { url } = await uploadToS3(event.target.files[0])
-      setStandbyScreenUrl(url)
+      setStandbyScreenUrl(url.replace('/v1/s3', '/v1/object/public'))
       setFilled(true)
     }
   }
