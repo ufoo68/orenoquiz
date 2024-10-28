@@ -251,13 +251,19 @@ const Host: NextPage<Props> = ({ sessionId }) => {
       return <DisplayButton />
     } else if (state === 'SHOW' && result === 'NONE') {
       return <EvaluateButton />
-    } else if (state === 'SHOW' && result !== 'NONE') {
-      return <NextButton />
-    } else {
-      return null
     }
+    return <NextButton />
   }
 
+  if (state === 'END') {
+    return (
+      <div className="flex h-screen w-screen flex-col items-center justify-center space-y-20 bg-base-300">
+        <div className="card rounded-box flex h-20 w-80 flex-row items-center justify-center space-x-10 bg-white text-3xl">
+          <div>終了しました</div>
+        </div>
+      </div>
+    )
+  }
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center space-y-20 bg-base-300">
       {networkError && (
@@ -292,15 +298,11 @@ const Host: NextPage<Props> = ({ sessionId }) => {
       </div>
       <div className="flex space-x-10">
         <ActionButton />
-        {state === 'END' ? (
-          <button className="btn" onClick={handleGameRestart}>
-            再開
-          </button>
-        ) : (
-          <button className="btn" onClick={handleGameEnd}>
-            終了
-          </button>
-        )}
+        <button className="btn" onClick={() => {
+          confirm('終了しますか？') && handleGameEnd().catch((e) => console.error(e))
+        }}>
+          終了
+        </button>
       </div>
     </div>
   )
