@@ -164,7 +164,6 @@ export const ishindenshinRouter = createTRPCRouter({
         sessionId: z.string(),
         config: z.object({
           standbyScreenUrl: z.string().optional(),
-          limit: z.number(),
           participants: z.object({
             groomName: z.string(),
             brideName: z.string(),
