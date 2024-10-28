@@ -131,6 +131,18 @@ const Host: NextPage<Props> = ({ sessionId }) => {
     await getStatus.refetch()
     setSending(false)
   }
+  const handleGameEnd = async () => {
+    setSending(true)
+    await updateState.mutateAsync({ sessionId, state: 'END' })
+    await getStatus.refetch()
+    setSending(false)
+  }
+  const handleGameRestart = async () => {
+    setSending(true)
+    await updateState.mutateAsync({ sessionId, state: 'WAIT' })
+    await getStatus.refetch()
+    setSending(false)
+  }
 
   const DisplayButton: FC = () => {
     return (
@@ -239,8 +251,11 @@ const Host: NextPage<Props> = ({ sessionId }) => {
       return <DisplayButton />
     } else if (state === 'SHOW' && result === 'NONE') {
       return <EvaluateButton />
+    } else if (state === 'SHOW' && result !== 'NONE') {
+      return <NextButton />
+    } else {
+      return null
     }
-    return <NextButton />
   }
 
   return (
@@ -277,6 +292,15 @@ const Host: NextPage<Props> = ({ sessionId }) => {
       </div>
       <div className="flex space-x-10">
         <ActionButton />
+        {state === 'END' ? (
+          <button className="btn" onClick={handleGameRestart}>
+            再開
+          </button>
+        ) : (
+          <button className="btn" onClick={handleGameEnd}>
+            終了
+          </button>
+        )}
       </div>
     </div>
   )

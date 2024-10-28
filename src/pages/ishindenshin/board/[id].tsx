@@ -2,14 +2,14 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
 import { type NextPage } from 'next'
 import { api } from '../../../utils/api'
 import type { FC } from 'react'
-import { useEffect } from 'react'
+import { use, useEffect } from 'react'
 import { Fragment, useState } from 'react'
 import type {
   IshinDenshinSessionState,
   IshinDenshinSessionResult,
 } from '@prisma/client'
 import useSound from 'use-sound'
-import { IshinDenshinConfig } from '../../../types/ishindenshin'
+import { useRouter } from 'next/navigation'
 
 type Props = {
   sessionId: string
@@ -24,6 +24,7 @@ const Board: NextPage<Props> = ({ sessionId }) => {
   const [playSoundCorrect] = useSound('/sound/correct.mp3')
   const [playSoundIncorrect] = useSound('/sound/incorrect.mp3')
   const [networkError, setNetworkError] = useState<boolean>(false)
+  const router = useRouter()
   const groomAnswer = api.ishindenshin.getAnswer.useQuery({
     sessionId,
     version,
@@ -66,6 +67,11 @@ const Board: NextPage<Props> = ({ sessionId }) => {
       playSoundIncorrect()
     }
   }, [state, enableSoundPlay, result])
+  useEffect(() => {
+    if (state === 'END') {
+      router.push(`/ishindenshin/result/${sessionId}`)
+    }
+  }, [state])
   const AnswerResult: FC = () => {
     return (
       <div className="absolute w-full">

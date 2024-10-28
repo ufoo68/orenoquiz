@@ -1,7 +1,6 @@
 import { ChangeEvent, useState } from 'react'
 import { IshinDenshinConfig } from '../../types/ishindenshin'
 import { usePresignedUpload } from 'next-s3-upload'
-import { set } from 'lodash'
 
 type Props = {
   sessionId: string
@@ -21,7 +20,6 @@ export const ConfigForm: React.FC<Props> = ({
   const [brideName, setBrideName] = useState<string>(
     config.participants.brideName
   )
-  const [limit, setLimit] = useState<number>(config.limit)
   const [standbyScreenUrl, setStandbyScreenUrl] = useState<string | undefined>(
     config.standbyScreenUrl
   )
@@ -64,24 +62,12 @@ export const ConfigForm: React.FC<Props> = ({
           setFilled(true)
         }}
       />
-      <label>ゲーム回数</label>
-      <input
-        className="input-bordered input w-full"
-        value={limit}
-        type="number"
-        min={1}
-        max={10}
-        onChange={(e) => {
-          setLimit(Number(e.target.value))
-          setFilled(true)
-        }}
-      />
       <button
         type="button"
         className="btn"
         disabled={!filled}
         onClick={() => {
-          onSubmit(sessionId, { participants: { groomName, brideName }, limit, standbyScreenUrl })
+          onSubmit(sessionId, { participants: { groomName, brideName }, standbyScreenUrl })
           setFilled(false)
         }}
       >

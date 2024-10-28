@@ -12,7 +12,6 @@ export const ishindenshinRouter = createTRPCRouter({
   create: protectedProcedure.mutation(async ({ ctx }) => {
     const userId = ctx.session.user.id
     const config: IshinDenshinConfig = {
-      limit: 3,
       participants: {
         groomName: '新郎🤵🏻‍♂️',
         brideName: '新婦👰🏻‍♀️',
@@ -108,6 +107,23 @@ export const ishindenshinRouter = createTRPCRouter({
       const boardImageUrl = answer?.boardImageBuffer?.toString('utf8')
       return { boardImageUrl }
     }),
+  getAllAnswer: publicProcedure
+    .input(z.object({ sessionId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const { sessionId } = input
+      const answers = await ctx.prisma.ishinDenshinSubmit.findMany({
+        where: { sessionId },
+      })
+      return answers.map((answer) => {
+        const boardImageUrl = answer.boardImageBuffer?.toString('utf8')
+        return {
+          id: answer.id,
+          version: answer.version,
+          answereName: answer.answereName,
+          boardImageUrl,
+        }
+      })
+    }),
   getSubmited: publicProcedure
     .input(
       z.object({
@@ -131,7 +147,7 @@ export const ishindenshinRouter = createTRPCRouter({
     .input(
       z.object({
         sessionId: z.string(),
-        state: z.enum(['SHOW', 'WAIT']).optional(),
+        state: z.enum(['SHOW', 'WAIT', 'END']).optional(),
         result: z.enum(['MATCH', 'NOT_MATCH', 'NONE']).optional(),
       })
     )
