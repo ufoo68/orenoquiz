@@ -146,7 +146,7 @@ const Board: NextPage<Props> = ({ sessionId }) => {
           </div>
           <div className="flex items-center justify-center">
             <div className="flex w-80 flex-row items-center justify-center text-5xl">
-              <div>{config?.participants?.groomName}</div>
+              <div>{config?.participants?.brideName}</div>
             </div>
           </div>
           <div className="flex h-full w-full items-center justify-center">
