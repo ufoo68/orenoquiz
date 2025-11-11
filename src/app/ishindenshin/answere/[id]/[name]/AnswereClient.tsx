@@ -2,11 +2,12 @@
 
 import type { FC } from 'react'
 import { useEffect, useRef, useState } from 'react'
-import SignatureCanvas from 'react-signature-canvas'
-import type ReactSignatureCanvas from 'react-signature-canvas'
 import type { IshinDenshinSessionState } from '@prisma/client'
 
 import { api } from '../../../../../utils/api'
+import SignaturePad, {
+  type SignaturePadHandle,
+} from '../../../../../components/common/SignaturePad'
 
 type AnswereClientProps = {
   sessionId: string
@@ -14,7 +15,7 @@ type AnswereClientProps = {
 }
 
 export const AnswereClient = ({ sessionId, answereName }: AnswereClientProps) => {
-  const ref = useRef<ReactSignatureCanvas>(null)
+  const padRef = useRef<SignaturePadHandle>(null)
   const [version, setVersion] = useState(1)
   const [submitted, setSubmitted] = useState(false)
   const [state, setState] = useState<IshinDenshinSessionState>('WAIT')
@@ -54,7 +55,7 @@ export const AnswereClient = ({ sessionId, answereName }: AnswereClientProps) =>
 
   useEffect(() => {
     if (state === 'WAIT') {
-      ref.current?.clear()
+      padRef.current?.clear()
     }
   }, [state])
 
@@ -64,7 +65,7 @@ export const AnswereClient = ({ sessionId, answereName }: AnswereClientProps) =>
       return
     }
     setSending(true)
-    const boardImageUrl = ref.current?.getCanvas().toDataURL() as string
+    const boardImageUrl = padRef.current?.toDataURL() ?? ''
     await submitAnswer.mutateAsync({
       sessionId,
       version,
@@ -100,15 +101,17 @@ export const AnswereClient = ({ sessionId, answereName }: AnswereClientProps) =>
       <div className="card rounded-box flex h-20 w-80 flex-row items-center justify-center space-x-10 bg-white text-3xl">
         <div>{config?.participants?.[nameKey]}</div>
       </div>
-      <SignatureCanvas
+      <SignaturePad
+        ref={padRef}
         penColor="rgb(0,0,0)"
-        canvasProps={{
-          className: `artboard artboard-demo h-2/3 w-3/4 ${disabled ? 'pointer-events-none' : 'pointer-events-auto'}`,
-        }}
-        ref={ref}
+        backgroundColor="#ffffff"
+        className={`artboard artboard-demo h-[60vh] max-h-[500px] w-full max-w-[700px] ${disabled ? 'pointer-events-none' : 'pointer-events-auto'}`}
+        disabled={disabled}
+        maxWidth={700}
+        maxHeight={500}
       />
       <div className="flex flex-row space-x-10">
-        <button className="btn btn-wide" onClick={() => ref.current?.clear()} disabled={disabled}>
+        <button className="btn btn-wide" onClick={() => padRef.current?.clear()} disabled={disabled}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
