@@ -22,12 +22,12 @@ const QuizParticipantPage = ({ params }: PageProps) => {
   const { sid: sessionId } = params
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [participantId, setParticipantId] = useState<string>(searchParams.get('pid') ?? '')
+  const [participantId, setParticipantId] = useState<string>(searchParams?.get('pid') ?? '')
   const [state, setState] = useState<QuizSessionState>(getQuizSessionStateEntry())
   const [networkError, setNetworkError] = useState(false)
 
   useEffect(() => {
-    setParticipantId(searchParams.get('pid') ?? '')
+    setParticipantId(searchParams?.get('pid') ?? '')
   }, [searchParams])
 
   api.quizSession.getState.useQuery(
