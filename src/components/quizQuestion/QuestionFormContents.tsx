@@ -1,3 +1,5 @@
+'use client'
+
 import type { ChangeEvent, FC } from 'react'
 import { sortBy } from 'lodash'
 import type {

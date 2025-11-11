@@ -1,4 +1,6 @@
 import type { QuizQuestion } from '@prisma/client'
+'use client'
+
 import type { FC } from 'react'
 import { useState } from 'react'
 import type { QuestionContents } from '../../types/question'

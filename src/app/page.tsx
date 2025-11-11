@@ -1,6 +1,7 @@
-import { type NextPage } from 'next'
-import { signIn, signOut, useSession } from 'next-auth/react'
+'use client'
+
 import Link from 'next/link'
+import { signIn, signOut, useSession } from 'next-auth/react'
 import { useState } from 'react'
 
 type SelectCard = {
@@ -25,9 +26,10 @@ const selectCards: SelectCard[] = [
   },
 ]
 
-const Home: NextPage = () => {
-  const [cardIndex, setCardIndex] = useState<number>(0)
+const HomePage = () => {
+  const [cardIndex, setCardIndex] = useState(0)
   const { data: session } = useSession()
+
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center space-y-5 bg-neutral-200">
       <button
@@ -50,14 +52,11 @@ const Home: NextPage = () => {
             <p>{selectCards[cardIndex]?.description}</p>
             <div className="card-actions justify-end">
               {session ? (
-                <Link href={selectCards[cardIndex]?.link ?? ''}>
-                  <button className="btn btn-primary">このゲームを遊ぶ</button>
+                <Link href={selectCards[cardIndex]?.link ?? ''} className="btn btn-primary">
+                  このゲームを遊ぶ
                 </Link>
               ) : (
-                <button
-                  className="btn btn-primary"
-                  onClick={() => signIn('line')}
-                >
+                <button className="btn btn-primary" onClick={() => signIn('line')}>
                   ログインしてください
                 </button>
               )}
@@ -70,7 +69,7 @@ const Home: NextPage = () => {
           className="btn"
           disabled={cardIndex === 0}
           onClick={() => {
-            setCardIndex(cardIndex - 1)
+            setCardIndex((prev) => prev - 1)
           }}
         >
           «
@@ -80,7 +79,7 @@ const Home: NextPage = () => {
           className="btn"
           disabled={cardIndex + 1 === selectCards.length}
           onClick={() => {
-            setCardIndex(cardIndex + 1)
+            setCardIndex((prev) => prev + 1)
           }}
         >
           »
@@ -90,4 +89,4 @@ const Home: NextPage = () => {
   )
 }
 
-export default Home
+export default HomePage

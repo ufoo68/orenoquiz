@@ -1,3 +1,5 @@
+'use client'
+
 import type { FC } from 'react'
 import { useState } from 'react'
 import { api } from '../../utils/api'
@@ -43,7 +45,7 @@ export const EntryForm: FC<Props> = ({ handleSubmitName, participantId }) => {
           onClick={() => {
             const isOk = window.confirm('この名前で参加しますか？')
             if (!isOk) return
-            handleSubmitName(name)
+            Promise.resolve(handleSubmitName(name)).catch((error) => console.error(error))
             setIsSubmitting(true)
           }}
           disabled={isSubmitting || !Boolean(name)}

@@ -2,6 +2,9 @@
   "name": "orenoquiz",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "build": "next build && prisma db push",
     "dev": "next dev",
@@ -31,7 +34,6 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-qr-code": "^2.0.11",
-    "react-signature-canvas": "^1.0.6",
     "superjson": "1.9.1",
     "use-sound": "^4.0.1",
     "zod": "^3.20.2"
@@ -39,23 +41,14 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.2",
     "@types/lodash": "^4.14.191",
-    "@types/node": "^18.11.18",
-    "@types/prettier": "^2.7.2",
-    "@types/react": "^18.0.26",
-    "@types/react-dom": "^18.0.10",
-    "@types/react-signature-canvas": "^1.0.2",
-    "@typescript-eslint/eslint-plugin": "^5.47.1",
-    "@typescript-eslint/parser": "^5.47.1",
+    "@types/node": "22.19.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.7",
-    "eslint": "^8.30.0",
-    "eslint-config-next": "13.1.6",
-    "eslint-config-prettier": "^8.6.0",
     "postcss": "^8.4.14",
-    "prettier": "^2.8.1",
-    "prettier-plugin-tailwindcss": "^0.2.1",
     "prisma": "^5.19.1",
     "tailwindcss": "^3.2.0",
-    "typescript": "^4.9.4"
+    "typescript": "^5.5.4"
   },
   "ct3aMetadata": {
     "initVersion": "7.4.0"

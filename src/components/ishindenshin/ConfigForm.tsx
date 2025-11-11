@@ -1,3 +1,5 @@
+'use client'
+
 import { ChangeEvent, useState } from 'react'
 import { IshinDenshinConfig } from '../../types/ishindenshin'
 import { usePresignedUpload } from 'next-s3-upload'
@@ -15,10 +17,10 @@ export const ConfigForm: React.FC<Props> = ({
 }) => {
   const [filled, setFilled] = useState<boolean>(false)
   const [groomName, setGroomName] = useState<string>(
-    config.participants.groomName
+    config.participants?.groomName
   )
   const [brideName, setBrideName] = useState<string>(
-    config.participants.brideName
+    config.participants?.brideName
   )
   const [standbyScreenUrl, setStandbyScreenUrl] = useState<string | undefined>(
     config.standbyScreenUrl
@@ -67,7 +69,12 @@ export const ConfigForm: React.FC<Props> = ({
         className="btn"
         disabled={!filled}
         onClick={() => {
-          onSubmit(sessionId, { participants: { groomName, brideName }, standbyScreenUrl })
+          Promise.resolve(
+            onSubmit(sessionId, {
+              participants: { groomName, brideName },
+              standbyScreenUrl,
+            })
+          ).catch((error) => console.error(error))
           setFilled(false)
         }}
       >
