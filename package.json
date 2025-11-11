@@ -2,6 +2,9 @@
   "name": "orenoquiz",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "build": "next build && prisma db push",
     "dev": "next dev",
@@ -39,7 +42,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.2",
     "@types/lodash": "^4.14.191",
-    "@types/node": "^20.14.2",
+    "@types/node": "22.19.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@types/react-signature-canvas": "^1.0.2",
