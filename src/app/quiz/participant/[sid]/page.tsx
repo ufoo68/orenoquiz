@@ -1,32 +1,35 @@
-import { type NextPage } from 'next'
-import { useState } from 'react'
-import { api } from '../../../utils/api'
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
-import { EntryForm } from '../../../components/quizParticipant/EntryForm'
-import { useRouter } from 'next/router'
-import type { QuizSessionState } from '../../../types/quizSession'
-import { getQuizSessionStateEntry } from '../../../types/quizSession'
-import { AnswerForm } from '../../../components/quizParticipant/AnswerForm'
-import { ResultCard } from '../../../components/quizParticipant/ResultCard'
-import { ScoreCard } from '../../../components/quizParticipant/ScoreCard'
-import { EndCard } from '../../../components/common/EndCard'
+'use client'
 
-type Props = {
-  sessionId: string
-  participantId: string
+import { useSearchParams, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+
+import { AnswerForm } from '../../../../components/quizParticipant/AnswerForm'
+import { EntryForm } from '../../../../components/quizParticipant/EntryForm'
+import { ResultCard } from '../../../../components/quizParticipant/ResultCard'
+import { ScoreCard } from '../../../../components/quizParticipant/ScoreCard'
+import { EndCard } from '../../../../components/common/EndCard'
+import type { QuizSessionState } from '../../../../types/quizSession'
+import { getQuizSessionStateEntry } from '../../../../types/quizSession'
+import { api } from '../../../../utils/api'
+
+type PageProps = {
+  params: {
+    sid: string
+  }
 }
 
-const Participant: NextPage<Props> = ({
-  sessionId,
-  participantId: initailParticipantId,
-}) => {
+const QuizParticipantPage = ({ params }: PageProps) => {
+  const { sid: sessionId } = params
+  const searchParams = useSearchParams()
   const router = useRouter()
-  const [participantId, setParticipantId] =
-    useState<string>(initailParticipantId)
-  const [state, setState] = useState<QuizSessionState>(
-    getQuizSessionStateEntry()
-  )
-  const [networkError, setNetworkError] = useState<boolean>(false)
+  const [participantId, setParticipantId] = useState<string>(searchParams.get('pid') ?? '')
+  const [state, setState] = useState<QuizSessionState>(getQuizSessionStateEntry())
+  const [networkError, setNetworkError] = useState(false)
+
+  useEffect(() => {
+    setParticipantId(searchParams.get('pid') ?? '')
+  }, [searchParams])
+
   api.quizSession.getState.useQuery(
     { sessionId },
     {
@@ -42,18 +45,20 @@ const Participant: NextPage<Props> = ({
       refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
   )
+
   const createParticipant = api.quizParticipant.create.useMutation()
+
   const handleSubmitName = async (name: string) => {
     if (!participantId) {
       const pid = await createParticipant.mutateAsync({ sessionId, name })
-      await router.push(`/quiz/participant/${sessionId}?pid=${pid}`)
+      await router.replace(`/quiz/participant/${sessionId}?pid=${pid}`)
       setParticipantId(pid)
       window.alert('参加しました。クイズ開始までお待ち下さい。')
     }
   }
 
   return (
-    <div className="m-0 flex h-[99vh] w-screen items-center justify-center overflow-y-hidden bg-neutral-200">
+    <div className="m-0 flex h-[99vh] w-screen items-center justify-center overflow-y-hidden bg-neutral-200 p-4">
       {networkError && (
         <div role="alert" className="alert alert-error fixed top-0">
           <svg
@@ -75,10 +80,7 @@ const Participant: NextPage<Props> = ({
       {(() => {
         if (state.type === 'entry' || !participantId) {
           return (
-            <EntryForm
-              participantId={participantId}
-              handleSubmitName={handleSubmitName}
-            />
+            <EntryForm participantId={participantId} handleSubmitName={handleSubmitName} />
           )
         } else if (state.type === 'question') {
           return (
@@ -97,9 +99,7 @@ const Participant: NextPage<Props> = ({
             />
           )
         } else if (state.type === 'rank') {
-          return (
-            <ScoreCard sessionId={sessionId} participantId={participantId} />
-          )
+          return <ScoreCard sessionId={sessionId} participantId={participantId} />
         } else if (state.type === 'end') {
           return <EndCard />
         }
@@ -109,20 +109,4 @@ const Participant: NextPage<Props> = ({
   )
 }
 
-export const getServerSideProps = (
-  context: GetServerSidePropsContext
-): GetServerSidePropsResult<Props> => {
-  const { sid, pid } = context.query
-
-  if (typeof sid !== 'string') {
-    return { notFound: true }
-  }
-  return {
-    props: {
-      sessionId: sid,
-      participantId: (pid as string) ?? '',
-    },
-  }
-}
-
-export default Participant
+export default QuizParticipantPage

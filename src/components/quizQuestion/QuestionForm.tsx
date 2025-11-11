@@ -1,3 +1,5 @@
+'use client'
+
 import type { QuizQuestion } from '@prisma/client'
 
 import type { FC } from 'react'
@@ -74,14 +76,18 @@ export const QuestionForm: FC<Props> = ({
         <button
           className="btn-primary btn"
           type="button"
-          onClick={handleSaveSelectedQuestion}
+          onClick={() => {
+            Promise.resolve(handleSaveSelectedQuestion()).catch((error) => console.error(error))
+          }}
         >
           保存
         </button>
         <button
           className="btn-secondary btn"
           type="button"
-          onClick={handleDeleteQuestion}
+          onClick={() => {
+            Promise.resolve(handleDeleteQuestion()).catch((error) => console.error(error))
+          }}
         >
           削除
         </button>

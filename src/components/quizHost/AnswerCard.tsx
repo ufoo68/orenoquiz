@@ -1,3 +1,5 @@
+'use client'
+
 import type { QuizQuestion } from '@prisma/client'
 import { sortBy } from 'lodash'
 import type { FC } from 'react'

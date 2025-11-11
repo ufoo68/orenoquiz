@@ -1,33 +1,36 @@
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
-import { type NextPage } from 'next'
+'use client'
+
 import type { FC } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import SignatureCanvas from 'react-signature-canvas'
 import type ReactSignatureCanvas from 'react-signature-canvas'
-import { api } from '../../../utils/api'
 import type { IshinDenshinSessionState } from '@prisma/client'
 
-type Props = {
+import { api } from '../../../../../utils/api'
+
+type AnswereClientProps = {
   sessionId: string
   answereName: 'groom' | 'bride'
 }
 
-const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
+export const AnswereClient = ({ sessionId, answereName }: AnswereClientProps) => {
   const ref = useRef<ReactSignatureCanvas>(null)
-  const [version, setVersion] = useState<number>(1)
-  const [submited, setSubmited] = useState<boolean>(false)
+  const [version, setVersion] = useState(1)
+  const [submitted, setSubmitted] = useState(false)
   const [state, setState] = useState<IshinDenshinSessionState>('WAIT')
-  const [networkError, setNetworkError] = useState<boolean>(false)
-  const [sending, setSending] = useState<boolean>(false)
-  const disabled = submited || state === 'SHOW'
-  const getSubmited = api.ishindenshin.getSubmited.useQuery(
+  const [networkError, setNetworkError] = useState(false)
+  const [sending, setSending] = useState(false)
+  const disabled = submitted || state === 'SHOW'
+
+  const getSubmitted = api.ishindenshin.getSubmited.useQuery(
     { sessionId, answereName, version },
     {
       onSuccess: (res) => {
-        setSubmited(res.submited)
+        setSubmitted(res.submited)
       },
     }
   )
+
   const getStatus = api.ishindenshin.getStatus.useQuery(
     { sessionId },
     {
@@ -35,7 +38,7 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
         setVersion(res.version)
         setState(res.state)
         if (res.state === 'WAIT') {
-          getSubmited.refetch().catch((e) => console.error(e))
+          getSubmitted.refetch().catch((error) => console.error(error))
         }
         setNetworkError(false)
       },
@@ -45,15 +48,17 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
       refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
   )
+
   const submitAnswer = api.ishindenshin.submitAnswer.useMutation()
   const { data: config } = api.ishindenshin.getConfig.useQuery({ sessionId })
+
   useEffect(() => {
     if (state === 'WAIT') {
       ref.current?.clear()
     }
   }, [state])
 
-  const handleSubmitAnser = async () => {
+  const handleSubmitAnswer = async () => {
     const isOk = window.confirm('回答を送信しますか？')
     if (!isOk) {
       return
@@ -69,8 +74,11 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
     await getStatus.refetch()
     setSending(false)
   }
+
+  const nameKey = (answereName + 'Name') as 'groomName' | 'brideName'
+
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-center space-y-5 bg-neutral-200">
+    <div className="flex h-screen w-screen flex-col items-center justify-center space-y-5 bg-neutral-200 p-4">
       {networkError && (
         <div role="alert" className="alert alert-error fixed top-0">
           <svg
@@ -90,23 +98,17 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
         </div>
       )}
       <div className="card rounded-box flex h-20 w-80 flex-row items-center justify-center space-x-10 bg-white text-3xl">
-        <div>{config?.participants?.[answereName + 'Name' as 'groomName' | 'brideName']}</div>
+        <div>{config?.participants?.[nameKey]}</div>
       </div>
       <SignatureCanvas
         penColor="rgb(0,0,0)"
         canvasProps={{
-          className: `artboard artboard-demo w-3/4 h-2/3 ${
-            disabled ? 'pointer-events-none' : 'pointer-events-auto'
-          }`,
+          className: `artboard artboard-demo h-2/3 w-3/4 ${disabled ? 'pointer-events-none' : 'pointer-events-auto'}`,
         }}
         ref={ref}
       />
-      <div className="flex flex-row space-x-52">
-        <button
-          className="btn btn-wide"
-          onClick={() => ref.current?.clear()}
-          disabled={disabled}
-        >
+      <div className="flex flex-row space-x-10">
+        <button className="btn btn-wide" onClick={() => ref.current?.clear()} disabled={disabled}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -115,21 +117,17 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
             stroke="currentColor"
             className="h-6 w-6"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
           </svg>
         </button>
         <button
           className="btn btn-wide"
           onClick={() => {
-            handleSubmitAnser().catch((e) => console.error(e))
+            handleSubmitAnswer().catch((error) => console.error(error))
           }}
           disabled={disabled}
         >
-          {sending && <Loding />}
+          {sending && <LoadingSpinner />}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -150,11 +148,11 @@ const Answere: NextPage<Props> = ({ sessionId, answereName }) => {
   )
 }
 
-const Loding: FC = () => {
+const LoadingSpinner: FC = () => {
   return (
     <svg
       aria-hidden="true"
-      className="mr-2 h-8 w-8 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
+      className="mr-2 h-8 w-8 animate-spin fill-blue-600 text-gray-200"
       viewBox="0 0 100 101"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -171,14 +169,4 @@ const Loding: FC = () => {
   )
 }
 
-export const getServerSideProps = (
-  context: GetServerSidePropsContext
-): GetServerSidePropsResult<Props> => {
-  const { id, name } = context.query
-  if (typeof id !== 'string' || typeof name !== 'string') {
-    return { notFound: true }
-  }
-  return { props: { sessionId: id, answereName: name as 'groom' | 'bride' } }
-}
-
-export default Answere
+export default AnswereClient

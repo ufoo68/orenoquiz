@@ -1,40 +1,43 @@
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
-import { type NextPage } from 'next'
-import { api } from '../../../utils/api'
-import type { FC } from 'react'
-import { use, useEffect } from 'react'
-import { Fragment, useState } from 'react'
-import type {
-  IshinDenshinSessionState,
-  IshinDenshinSessionResult,
-} from '@prisma/client'
-import useSound from 'use-sound'
-import { useRouter } from 'next/navigation'
+'use client'
 
-type Props = {
-  sessionId: string
+import type { FC } from 'react'
+import { Fragment, useEffect, useState } from 'react'
+import type { IshinDenshinSessionResult, IshinDenshinSessionState } from '@prisma/client'
+import { useRouter } from 'next/navigation'
+import useSound from 'use-sound'
+
+import { api } from '../../../../utils/api'
+
+type PageProps = {
+  params: {
+    id: string
+  }
 }
 
-const Board: NextPage<Props> = ({ sessionId }) => {
-  const [enableSoundPlay, setEnableSoundPlay] = useState<boolean>(false)
-  const [version, setVersion] = useState<number>(1)
+const IshindenshinBoardPage = ({ params }: PageProps) => {
+  const { id: sessionId } = params
+  const [enableSoundPlay, setEnableSoundPlay] = useState(false)
+  const [version, setVersion] = useState(1)
   const [state, setState] = useState<IshinDenshinSessionState>('WAIT')
   const [result, setResult] = useState<IshinDenshinSessionResult>('NONE')
+  const [networkError, setNetworkError] = useState(false)
+  const router = useRouter()
   const [playSoundShow] = useSound('/sound/show.mp3')
   const [playSoundCorrect] = useSound('/sound/correct.mp3')
   const [playSoundIncorrect] = useSound('/sound/incorrect.mp3')
-  const [networkError, setNetworkError] = useState<boolean>(false)
-  const router = useRouter()
+
   const groomAnswer = api.ishindenshin.getAnswer.useQuery({
     sessionId,
     version,
     answereName: 'groom',
   })
+
   const brideAnswer = api.ishindenshin.getAnswer.useQuery({
     sessionId,
     version,
     answereName: 'bride',
   })
+
   api.ishindenshin.getStatus.useQuery(
     { sessionId },
     {
@@ -43,35 +46,38 @@ const Board: NextPage<Props> = ({ sessionId }) => {
         setState(res.state)
         setResult(res.result)
         if (res.state === 'SHOW' && res.result === 'NONE') {
-          groomAnswer.refetch().catch((e) => console.error(e))
-          brideAnswer.refetch().catch((e) => console.error(e))
+          groomAnswer.refetch().catch((error) => console.error(error))
+          brideAnswer.refetch().catch((error) => console.error(error))
         }
         setNetworkError(false)
       },
-      onError: (e) => {
-        console.error(e)
+      onError: (error) => {
+        console.error(error)
         setNetworkError(true)
       },
       refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
     }
   )
-  const { data: config} = api.ishindenshin.getConfig.useQuery(
-    { sessionId }
-  )
+
+  const { data: config } = api.ishindenshin.getConfig.useQuery({ sessionId })
+
   useEffect(() => {
-    if (enableSoundPlay && state === 'SHOW' && result === 'NONE') {
+    if (!enableSoundPlay) return
+    if (state === 'SHOW' && result === 'NONE') {
       playSoundShow()
-    } else if (enableSoundPlay && state === 'SHOW' && result === 'MATCH') {
+    } else if (state === 'SHOW' && result === 'MATCH') {
       playSoundCorrect()
-    } else if (enableSoundPlay && state === 'SHOW' && result === 'NOT_MATCH') {
+    } else if (state === 'SHOW' && result === 'NOT_MATCH') {
       playSoundIncorrect()
     }
-  }, [state, enableSoundPlay, result])
+  }, [enableSoundPlay, state, result, playSoundCorrect, playSoundIncorrect, playSoundShow])
+
   useEffect(() => {
     if (state === 'END') {
       router.push(`/ishindenshin/result/${sessionId}`)
     }
-  }, [state])
+  }, [router, sessionId, state])
+
   const AnswerResult: FC = () => {
     return (
       <div className="absolute w-full">
@@ -98,39 +104,17 @@ const Board: NextPage<Props> = ({ sessionId }) => {
             switch (result) {
               case 'MATCH':
                 return (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="green"
-                    className="h-80 w-80"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4.5 12.75l6 6 9-13.5"
-                    />
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="green" className="h-80 w-80">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                   </svg>
                 )
               case 'NOT_MATCH':
                 return (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="red"
-                    className="h-80 w-80"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="red" className="h-80 w-80">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 )
-              case 'NONE':
+              default:
                 return null
             }
           })()}
@@ -138,12 +122,11 @@ const Board: NextPage<Props> = ({ sessionId }) => {
       </div>
     )
   }
+
   return (
     <div className="grid h-screen w-screen grid-cols-2 grid-rows-3 bg-neutral-200">
       <AnswerResult />
-      {groomAnswer.data?.boardImageUrl &&
-      brideAnswer.data?.boardImageUrl &&
-      state === 'SHOW' ? (
+      {groomAnswer.data?.boardImageUrl && brideAnswer.data?.boardImageUrl && state === 'SHOW' ? (
         <Fragment>
           <div className="flex items-center justify-center">
             <div className="flex w-80 flex-row items-center justify-center text-5xl">
@@ -174,32 +157,20 @@ const Board: NextPage<Props> = ({ sessionId }) => {
         <div className="col-span-2 row-span-3 flex items-end justify-center">
           <img
             className="mb-20 h-2/3 animate-bounce"
-            src={config?.standbyScreenUrl ?? '/images/noru.png'}
+            src={config?.standbyScreenUrl ?? '/image/noru.png'}
             alt="noru"
           />
         </div>
       )}
-      <div
-        className={`absolute bottom-0 flex h-20 w-full items-center justify-center ${
-          enableSoundPlay ? 'hidden' : ''
-        }`}
-      >
-        <button className="btn" onClick={() => setEnableSoundPlay(true)}>
-          効果音の再生を許可
-        </button>
-      </div>
+      {!enableSoundPlay && (
+        <div className="absolute bottom-0 flex h-20 w-full items-center justify-center bg-gradient-to-t from-base-200">
+          <button className="btn" onClick={() => setEnableSoundPlay(true)}>
+            効果音の再生を許可
+          </button>
+        </div>
+      )}
     </div>
   )
 }
 
-export const getServerSideProps = (
-  context: GetServerSidePropsContext
-): GetServerSidePropsResult<Props> => {
-  const { id } = context.query
-  if (typeof id !== 'string') {
-    return { notFound: true }
-  }
-  return { props: { sessionId: id } }
-}
-
-export default Board
+export default IshindenshinBoardPage
