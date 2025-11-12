@@ -17,13 +17,13 @@ const selectCards: SelectCard[] = [
   {
     title: 'シンプルクイズ',
     description: '早押し・並べ替えに対応したシンプルなクイズモードです。',
-    imageUrl: '/image/quiz.jpg',
+    imageUrl: '/image/quiz.png',
     link: '/quiz',
   },
   {
     title: '以心伝心ゲーム',
     description: 'ホワイトボード風の回答で、二人の息を合わせる演出に。',
-    imageUrl: '/image/ishindenshin.jpg',
+    imageUrl: '/image/ishindenshin.png',
     link: '/ishindenshin',
   },
 ]
@@ -70,13 +70,17 @@ const HomePage = () => {
                   <p className="text-sm text-slate-300">{card.description}</p>
                 </div>
                 <div className="mt-4 flex items-center justify-between text-sm text-slate-500">
-                  <Link
-                    href={card.link}
-                    target="_blank"
-                    className="btn border-white/20 bg-white/5 text-white"
-                  >
-                    このゲームを選択
-                  </Link>
+                  {session ? (
+                    <Link
+                      href={card.link}
+                      target="_blank"
+                      className="btn border-white/20 bg-white/5 text-white"
+                    >
+                      このゲームを選択
+                    </Link>
+                  ) : (
+                    <span className="italic">ログインして利用可能</span>
+                  )}
                 </div>
               </div>
             ))}
