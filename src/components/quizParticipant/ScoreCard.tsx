@@ -38,14 +38,21 @@ export const ScoreCard: FC<Props> = ({ sessionId, participantId }) => {
     }
   )
   return (
-    <div className="card w-96 bg-base-100 shadow-xl">
-      <div className="card-body flex flex-col items-center">
-        <h2 className="card-title">
-          {name}さんの順位は、{rank}位でした。
-        </h2>
-        <div className="stat text-center">
-          <div className="stat-title">これまでの正解数</div>
-          <div className="stat-value">{winCount}</div>
+    <div className="glass-panel w-full max-w-lg space-y-6 p-8 text-white">
+      <div>
+        <p className="text-xs uppercase tracking-[0.4em] text-slate-300">Final Rank</p>
+        <p className="mt-2 text-2xl font-bold text-white">
+          {name}さんの順位は <span className="text-amber-300">{rank}位</span>
+        </p>
+      </div>
+      <div className="grid grid-cols-2 gap-4 text-center">
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Rank</p>
+          <p className="text-4xl font-black text-white">{rank}</p>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Wins</p>
+          <p className="text-4xl font-black text-white">{winCount}</p>
         </div>
       </div>
     </div>

@@ -14,7 +14,10 @@ type AnswereClientProps = {
   answereName: 'groom' | 'bride'
 }
 
-export const AnswereClient = ({ sessionId, answereName }: AnswereClientProps) => {
+export const AnswereClient = ({
+  sessionId,
+  answereName,
+}: AnswereClientProps) => {
   const padRef = useRef<SignaturePadHandle>(null)
   const [version, setVersion] = useState(1)
   const [submitted, setSubmitted] = useState(false)
@@ -46,7 +49,7 @@ export const AnswereClient = ({ sessionId, answereName }: AnswereClientProps) =>
       onError: () => {
         setNetworkError(true)
       },
-      refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
+      refetchInterval: 1000,
     }
   )
 
@@ -111,7 +114,11 @@ export const AnswereClient = ({ sessionId, answereName }: AnswereClientProps) =>
         maxHeight={500}
       />
       <div className="flex flex-row space-x-10">
-        <button className="btn btn-wide" onClick={() => padRef.current?.clear()} disabled={disabled}>
+        <button
+          className="btn btn-wide"
+          onClick={() => padRef.current?.clear()}
+          disabled={disabled}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -120,7 +127,11 @@ export const AnswereClient = ({ sessionId, answereName }: AnswereClientProps) =>
             stroke="currentColor"
             className="h-6 w-6"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+            />
           </svg>
         </button>
         <button

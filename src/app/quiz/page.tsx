@@ -3,9 +3,10 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { QuizMaster } from '@prisma/client'
 
+import { NeonBackground } from '../../components/common/NeonBackground'
 import { api } from '../../utils/api'
 
 const QuizDashboardPage = () => {
@@ -44,9 +45,10 @@ const QuizDashboardPage = () => {
   }
 
   const handleUpdateQuizTitle = (masterId: string, title: string) => {
+    const base = quizzes.find((q) => q.id === masterId)
+    if (!base) return
     const newQuiz = {
-      // biome-ignore lint/style/noNonNullAssertion: existing quiz is required
-      ...quizzes.find((q) => q.id === masterId)!,
+      ...base,
       title,
       editing: true,
     }
@@ -59,85 +61,114 @@ const QuizDashboardPage = () => {
     await getAllQuiz.refetch()
   }
 
-  if (status === 'loading' || getAllQuiz.isLoading) {
-    return <progress className="progress" />
-  }
+  const loading = status === 'loading' || getAllQuiz.isLoading
+
+  const stats = useMemo(
+    () => [
+      { label: '登録クイズ数', value: quizzes.length },
+      { label: '最終更新', value: quizzes.length ? '最新順に表示中' : '---' },
+    ],
+    [quizzes.length]
+  )
 
   return (
-    <div className="flex min-h-screen w-screen flex-col items-center justify-center space-y-5 bg-neutral-200 p-4">
-      <button className="btn absolute top-10 right-10" onClick={() => router.push('/')}>
-        トップ画面
-      </button>
-      {quizzes.map((quiz) => (
-        <div key={quiz.id} className="card w-full max-w-3xl bg-base-100 shadow-xl">
-          <div className="card-body">
-            <h2 className="card-title flex flex-col gap-3 lg:flex-row">
-              <input
-                className="input-bordered input w-full"
-                value={quiz.title}
-                type="text"
-                onChange={(event) => {
-                  handleUpdateQuizTitle(quiz.id, event.target.value)
-                }}
-              />
-              <div className="flex gap-3">
-                <button
-                  className="btn-primary btn"
-                  type="button"
-                  onClick={() => {
-                    handleSaveQuizTitle(quiz.id, quiz.title).catch((error) => console.error(error))
-                  }}
-                  disabled={!quiz.editing}
-                >
-                  保存
-                </button>
-                <button
-                  className="btn-error btn"
-                  type="button"
-                  onClick={() => {
-                    handleDeleteQuiz(quiz.id).catch((error) => console.error(error))
-                  }}
-                >
-                  削除
-                </button>
-              </div>
-            </h2>
-            <div className="card-actions justify-end gap-3">
-              <Link
-                href={`/quiz/question/${quiz.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary btn"
-              >
-                設定画面
-              </Link>
-              <Link
-                href={`/quiz/session/${quiz.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary btn"
-              >
-                ゲーム画面
-              </Link>
-            </div>
-          </div>
+    <NeonBackground>
+      {loading ? (
+        <div className="flex min-h-screen items-center justify-center">
+          <progress className="progress progress-primary w-64" />
         </div>
-      ))}
-      <button
-        className="btn-secondary btn"
-        onClick={() => {
-          handleCreateQuiz().catch((error) => console.error(error))
-        }}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
-          <path
-            fillRule="evenodd"
-            d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z"
-            clipRule="evenodd"
-          />
-        </svg>
-      </button>
-    </div>
+      ) : (
+        <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-10 px-5 py-10 text-white">
+          <header className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.5em] text-slate-300">Quiz Control</p>
+              <h1 className="mt-2 text-4xl font-black">クイズ管理ダッシュボード</h1>
+              <p className="text-sm text-slate-200">ゲームの作成・編集・セッション管理をここから実施します。</p>
+            </div>
+            <button className="btn border-white/20 bg-white/5 text-white" onClick={() => router.push('/')}>トップへ戻る</button>
+          </header>
+
+          <section className="grid gap-4 sm:grid-cols-2">
+            {stats.map((stat) => (
+              <div key={stat.label} className="glass-panel space-y-2 px-6 py-5">
+                <p className="text-xs uppercase tracking-[0.4em] text-slate-400">{stat.label}</p>
+                <p className="text-3xl font-bold">{stat.value}</p>
+              </div>
+            ))}
+          </section>
+
+          <section className="space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <h2 className="text-2xl font-semibold">クイズ一覧</h2>
+              <button
+                className="btn border-0 bg-gradient-to-r from-amber-400 to-pink-500 text-slate-900"
+                onClick={() => {
+                  handleCreateQuiz().catch((error) => console.error(error))
+                }}
+              >
+                新しいクイズを作成
+              </button>
+            </div>
+            {quizzes.length === 0 ? (
+              <div className="glass-panel p-10 text-center text-slate-200">
+                まだクイズがありません。上の「新しいクイズを作成」から登録してください。
+              </div>
+            ) : (
+              <div className="space-y-5">
+                {quizzes
+                  .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+                  .map((quiz) => (
+                    <article key={quiz.id} className="glass-panel space-y-6 p-6">
+                      <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
+                        <input
+                          className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-lg text-white focus:border-amber-300 focus:outline-none"
+                          value={quiz.title}
+                          type="text"
+                          onChange={(event) => {
+                            handleUpdateQuizTitle(quiz.id, event.target.value)
+                          }}
+                        />
+                        <div className="flex gap-3">
+                          <button
+                            className="btn border-0 bg-emerald-400/80 text-slate-900"
+                            type="button"
+                            onClick={() => {
+                              handleSaveQuizTitle(quiz.id, quiz.title).catch((error) => console.error(error))
+                            }}
+                            disabled={!quiz.editing}
+                          >
+                            保存
+                          </button>
+                          <button
+                            className="btn border-0 bg-rose-500/80 text-white"
+                            type="button"
+                            onClick={() => {
+                              handleDeleteQuiz(quiz.id).catch((error) => console.error(error))
+                            }}
+                          >
+                            削除
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-slate-300">
+                        <span>作成日：{quiz.createdAt.toLocaleString()}</span>
+                        <div className="flex flex-wrap gap-3">
+                          <Link href={`/quiz/question/${quiz.id}`} target="_blank" className="btn border-white/20 bg-white/5 text-white">
+                            設定画面
+                          </Link>
+                          <Link href={`/quiz/session/${quiz.id}`} target="_blank" className="btn border-white/20 bg-white/5 text-white">
+                            セッション一覧
+                          </Link>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+              </div>
+            )}
+          </section>
+        </div>
+      )}
+    </NeonBackground>
   )
 }
 

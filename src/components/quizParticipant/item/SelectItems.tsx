@@ -16,35 +16,38 @@ export const SelectItems: FC<Props> = ({
   answer,
 }) => {
   return (
-    <ul className="mb-2 w-full rounded-lg border">
-      {contents.questions.map((q) => (
-        <li
-          key={q.id}
-          className="w-full cursor-pointer rounded-t-lg border-b border-gray-200"
-          onClick={() => {
-            if (!isSubmit) {
-              setAnswer({
-                type: 'select',
-                answerId: q.id,
-              })
-            }
-          }}
-        >
-          <div className="flex items-center p-3">
-            <input
-              type="radio"
-              name="radio-1"
-              className="radio"
-              checked={q.id === answer.answerId}
+    <ul className="space-y-3">
+      {contents.questions.map((q) => {
+        const active = q.id === answer.answerId
+        return (
+          <li key={q.id}>
+            <button
+              type="button"
+              className={`flex w-full items-center justify-between rounded-2xl border px-4 py-4 text-left text-white transition ${
+                active
+                  ? 'border-amber-400/70 bg-amber-400/10 shadow-lg shadow-amber-500/20'
+                  : 'border-white/10 bg-white/5 hover:border-white/30'
+              } ${isSubmit ? 'opacity-60' : ''}`}
+              onClick={() => {
+                if (!isSubmit) {
+                  setAnswer({
+                    type: 'select',
+                    answerId: q.id,
+                  })
+                }
+              }}
               disabled={isSubmit}
-              readOnly
-            />
-            <label className="ml-2 w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-              {q.label}
-            </label>
-          </div>
-        </li>
-      ))}
+            >
+              <span>{q.label}</span>
+              <span
+                className={`h-4 w-4 rounded-full border ${
+                  active ? 'border-amber-300 bg-amber-400' : 'border-white/40'
+                }`}
+              />
+            </button>
+          </li>
+        )
+      })}
     </ul>
   )
 }

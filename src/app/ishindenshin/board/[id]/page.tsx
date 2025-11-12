@@ -2,7 +2,10 @@
 
 import type { FC } from 'react'
 import { Fragment, useEffect, useState } from 'react'
-import type { IshinDenshinSessionResult, IshinDenshinSessionState } from '@prisma/client'
+import type {
+  IshinDenshinSessionResult,
+  IshinDenshinSessionState,
+} from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import useSound from 'use-sound'
 
@@ -55,7 +58,7 @@ const IshindenshinBoardPage = ({ params }: PageProps) => {
         console.error(error)
         setNetworkError(true)
       },
-      refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
+      refetchInterval: 1000,
     }
   )
 
@@ -70,7 +73,14 @@ const IshindenshinBoardPage = ({ params }: PageProps) => {
     } else if (state === 'SHOW' && result === 'NOT_MATCH') {
       playSoundIncorrect()
     }
-  }, [enableSoundPlay, state, result, playSoundCorrect, playSoundIncorrect, playSoundShow])
+  }, [
+    enableSoundPlay,
+    state,
+    result,
+    playSoundCorrect,
+    playSoundIncorrect,
+    playSoundShow,
+  ])
 
   useEffect(() => {
     if (state === 'END') {
@@ -104,14 +114,36 @@ const IshindenshinBoardPage = ({ params }: PageProps) => {
             switch (result) {
               case 'MATCH':
                 return (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="green" className="h-80 w-80">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="green"
+                    className="h-80 w-80"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4.5 12.75l6 6 9-13.5"
+                    />
                   </svg>
                 )
               case 'NOT_MATCH':
                 return (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="red" className="h-80 w-80">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="red"
+                    className="h-80 w-80"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 )
               default:
@@ -126,7 +158,9 @@ const IshindenshinBoardPage = ({ params }: PageProps) => {
   return (
     <div className="grid h-screen w-screen grid-cols-2 grid-rows-3 bg-neutral-200">
       <AnswerResult />
-      {groomAnswer.data?.boardImageUrl && brideAnswer.data?.boardImageUrl && state === 'SHOW' ? (
+      {groomAnswer.data?.boardImageUrl &&
+      brideAnswer.data?.boardImageUrl &&
+      state === 'SHOW' ? (
         <Fragment>
           <div className="flex items-center justify-center">
             <div className="flex w-80 flex-row items-center justify-center text-5xl">

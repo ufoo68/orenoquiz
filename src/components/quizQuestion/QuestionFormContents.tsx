@@ -41,9 +41,9 @@ const QuestionSelect: FC<QuestionSelectProps> = ({
       <input
         type="file"
         onChange={handleFileChange}
-        className="file-input w-full max-w-xs"
+        className="file-input w-full max-w-xs text-black"
       />
-      <ul className="menu rounded-box border bg-base-100 p-2">
+      <ul className="menu rounded-box border p-2 text-black">
         {sortBy(contents.questions, 'id').map((question) => (
           <li key={question.id}>
             <div className="cursor-default">
@@ -168,9 +168,9 @@ const QuestionSort: FC<QuestionSortProps> = ({
       <input
         type="file"
         onChange={handleFileChange}
-        className="file-input w-full max-w-xs"
+        className="file-input w-full max-w-xs text-black"
       />
-      <ul className="menu rounded-box border bg-base-100 p-2">
+      <ul className="menu rounded-box border p-2 text-black">
         {sortBy(contents.questions, 'id').map((question) => (
           <li key={question.id}>
             <div className="cursor-default">

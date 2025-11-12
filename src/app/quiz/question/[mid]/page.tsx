@@ -2,8 +2,9 @@
 
 import type { QuizQuestion } from '@prisma/client'
 import { sortBy } from 'lodash'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
+import { NeonBackground } from '../../../../components/common/NeonBackground'
 import { QuestionForm } from '../../../../components/quizQuestion/QuestionForm'
 import { QuestionMenu } from '../../../../components/quizQuestion/QuestionMenu'
 import type { QuestionContents } from '../../../../types/question'
@@ -25,6 +26,9 @@ const QuizQuestionPage = ({ params }: PageProps) => {
     {
       onSuccess: (res) => {
         setQuestions(res)
+        if (!selectedQuestion && res.length > 0) {
+          setSelectedQuestion(res[0])
+        }
       },
     }
   )
@@ -41,8 +45,9 @@ const QuizQuestionPage = ({ params }: PageProps) => {
   }
 
   const handleSaveSelectedQuestion = async () => {
-    const { id, title, order } = selectedQuestion as QuizQuestion
-    const contents = selectedQuestion?.contents as QuestionContents
+    if (!selectedQuestion) return
+    const { id, title, order } = selectedQuestion
+    const contents = selectedQuestion.contents as QuestionContents
     await updateQuestion.mutateAsync({
       id,
       title,
@@ -61,10 +66,12 @@ const QuizQuestionPage = ({ params }: PageProps) => {
   }
 
   const handleDeleteQuestion = async () => {
+    if (!selectedQuestion) return
     await deleteQuestion.mutateAsync({
-      questionId: selectedQuestion?.id ?? '',
+      questionId: selectedQuestion.id,
     })
     await getAllQuestion.refetch()
+    setSelectedQuestion(undefined)
   }
 
   const handleChangeOrder = async (active: QuizQuestion, over: QuizQuestion) => {
@@ -73,42 +80,49 @@ const QuizQuestionPage = ({ params }: PageProps) => {
     await getAllQuestion.refetch()
   }
 
-  if (getAllQuestion.isLoading) {
-    return <progress className="progress" />
-  }
+  const loading = getAllQuestion.isLoading
+
+  const questionCount = useMemo(() => questions.length, [questions.length])
 
   return (
-    <div className="grid min-h-screen w-screen grid-flow-col grid-cols-3 bg-neutral-200">
-      <div className="flex h-full flex-col items-center justify-center space-y-5 p-5">
-        <QuestionMenu
-          questions={questions}
-          handleSelectQuestion={(question) => setSelectedQuestion(question)}
-          handleChangeOrder={handleChangeOrder}
-        />
-        <button
-          className="btn"
-          onClick={() => {
-            handleCreateQuestion().catch((error) => console.error(error))
-          }}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
-            <path
-              fillRule="evenodd"
-              d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z"
-              clipRule="evenodd"
+    <NeonBackground>
+      {loading ? (
+        <div className="flex min-h-screen items-center justify-center">
+          <progress className="progress progress-primary w-64" />
+        </div>
+      ) : (
+        <div className="mx-auto grid min-h-screen w-full max-w-7xl grid-cols-1 gap-8 px-5 py-10 text-white lg:grid-cols-[320px_1fr]">
+          <aside className="flex flex-col gap-6">
+            <div className="glass-panel space-y-2 px-6 py-5">
+              <p className="text-xs uppercase tracking-[0.4em] text-slate-300">Questions</p>
+              <p className="text-3xl font-bold">{questionCount}</p>
+              <button
+                className="btn mt-4 w-full border-0 bg-gradient-to-r from-emerald-400 to-sky-500 text-slate-900"
+                onClick={() => {
+                  handleCreateQuestion().catch((error) => console.error(error))
+                }}
+              >
+                問題を追加
+              </button>
+            </div>
+            <QuestionMenu
+              questions={questions}
+              handleSelectQuestion={(question) => setSelectedQuestion(question)}
+              handleChangeOrder={handleChangeOrder}
+              selectedId={selectedQuestion?.id}
             />
-          </svg>
-        </button>
-      </div>
-      <div className="col-span-2 flex h-full items-center justify-center">
-        <QuestionForm
-          question={selectedQuestion}
-          handleChangeSelectedQuestion={handleChangeSelectedQuestion}
-          handleSaveSelectedQuestion={handleSaveSelectedQuestion}
-          handleDeleteQuestion={handleDeleteQuestion}
-        />
-      </div>
-    </div>
+          </aside>
+          <section className="glass-panel flex flex-col overflow-hidden p-6">
+            <QuestionForm
+              question={selectedQuestion}
+              handleChangeSelectedQuestion={handleChangeSelectedQuestion}
+              handleSaveSelectedQuestion={handleSaveSelectedQuestion}
+              handleDeleteQuestion={handleDeleteQuestion}
+            />
+          </section>
+        </div>
+      )}
+    </NeonBackground>
   )
 }
 

@@ -23,24 +23,28 @@ export const EntryForm: FC<Props> = ({ handleSubmitName, participantId }) => {
     }
   )
   return (
-    <form className="w-96 rounded bg-white p-8 shadow-md">
-      <div className="mb-4">
-        <label className="mb-2 block text-sm font-bold text-gray-700">
-          参加者名
+    <form className="glass-panel relative w-full max-w-md space-y-6 p-8 text-white shadow-2xl">
+      <div>
+        <label className="mb-2 block text-sm font-semibold uppercase tracking-widest text-slate-200/80">
+          コードネーム
         </label>
         <input
-          className="input-bordered input w-full"
+          className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-lg text-white placeholder:text-slate-400 focus:border-amber-300 focus:outline-none"
           type="text"
           value={name}
           onChange={(e) => {
             setName(e.target.value)
           }}
+          placeholder="例) NORU_01"
           disabled={isSubmitting}
         />
+        <p className="mt-2 text-xs text-slate-300/80">
+          画面に表示されるあだ名を入力してください。
+        </p>
       </div>
-      <div className="flex justify-end space-x-5">
+      <div className="flex justify-end">
         <button
-          className="btn-primary btn"
+          className="btn border-0 bg-gradient-to-r from-amber-400 to-pink-500 text-slate-900 shadow-xl shadow-amber-500/30"
           type="button"
           onClick={() => {
             const isOk = window.confirm('この名前で参加しますか？')
@@ -50,7 +54,7 @@ export const EntryForm: FC<Props> = ({ handleSubmitName, participantId }) => {
           }}
           disabled={isSubmitting || !Boolean(name)}
         >
-          参加する
+          {isSubmitting ? '待機中...' : 'エントリーする'}
         </button>
       </div>
     </form>
