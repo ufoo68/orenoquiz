@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react'
 import { useEffect } from 'react'
 
 import { ConfigForm } from '../../components/ishindenshin/ConfigForm'
+import { NeonBackground } from '../../components/common/NeonBackground'
 import { api } from '../../utils/api'
 import { type IshinDenshinConfig } from '../../types/ishindenshin'
 
@@ -44,102 +45,129 @@ const IshindenshinPage = () => {
     await allIshindenshin.refetch()
   }
 
-  if (status === 'loading' || !allIshindenshin.data) {
-    return <progress className="progress" />
-  }
+  const isLoading = status === 'loading' || allIshindenshin.isLoading
+  const sessions = allIshindenshin.data ?? []
 
   return (
-    <div className="flex min-h-screen w-screen flex-col items-center justify-center space-y-5 overflow-y-auto bg-neutral-200 p-4">
-      <button className="btn absolute top-10 right-10" onClick={() => router.push('/')}>
-        トップ画面
-      </button>
-      {allIshindenshin.data.map((session) => {
-        const config = session.config as IshinDenshinConfig
-        return (
-          <div key={session.id} className="card w-full max-w-4xl bg-base-100 shadow-xl">
-            <div className="card-body">
-              <h2 className="card-title">
-                <div className="badge badge-secondary">{session.state}</div>
-                <div className="badge">ver:{session.version}</div>
-                <button
-                  className="btn btn-ghost"
-                  onClick={() => {
-                    handleDeleteIshindenshin(session.id).catch((error) => console.error(error))
-                  }}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
-                    <path
-                      fillRule="evenodd"
-                      d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-              </h2>
-              <ConfigForm sessionId={session.id} config={config} onSubmit={handleSaveConfig} />
-              <div className="card-actions flex-wrap justify-end gap-3">
-                <Link
-                  href={`/ishindenshin/answere/${session.id}/groom`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-primary"
-                >
-                  {config.participants?.groomName}
-                </Link>
-                <Link
-                  href={`/ishindenshin/answere/${session.id}/bride`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-primary"
-                >
-                  {config.participants?.brideName}
-                </Link>
-                <Link
-                  href={`/ishindenshin/host/${session.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-primary"
-                >
-                  司会
-                </Link>
-                <Link
-                  href={`/ishindenshin/board/${session.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-primary"
-                >
-                  会場
-                </Link>
-                <button
-                  className="btn btn-primary"
-                  onClick={() => {
-                    handleResetSession(session.id).catch((error) => console.error(error))
-                  }}
-                >
-                  リセット
-                </button>
-              </div>
+    <NeonBackground>
+      {isLoading ? (
+        <div className="flex min-h-screen items-center justify-center">
+          <progress className="progress progress-primary w-64" />
+        </div>
+      ) : (
+        <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-8 px-5 py-10">
+          <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-sm text-slate-300">Ishin Denshin Control</p>
+              <h1 className="text-3xl font-bold text-white">以心伝心ゲームのセッション管理</h1>
+              <p className="text-sm text-slate-400">参加者端末・司会・会場ビューのリンクをここから発行します。</p>
             </div>
+            <button
+              className="rounded-full border border-white/30 px-5 py-2 text-sm text-white"
+              onClick={() => router.push('/')}
+            >
+              トップへ戻る
+            </button>
+          </header>
+
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-slate-400">登録済みセッション: {sessions.length}</p>
+            <button
+              className="rounded-full border border-emerald-400 px-5 py-2 text-sm text-emerald-200"
+              onClick={() => {
+                handleCreateIshindenshin().catch((error) => console.error(error))
+              }}
+            >
+              新しくセッションを作成
+            </button>
           </div>
-        )
-      })}
-      {allIshindenshin.data.length === 0 && (
-        <button
-          className="btn btn-secondary"
-          onClick={() => {
-            handleCreateIshindenshin().catch((error) => console.error(error))
-          }}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
-            <path
-              fillRule="evenodd"
-              d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
+
+          <div className="space-y-6">
+            {sessions.length === 0 ? (
+              <div className="glass-panel p-10 text-center text-white">
+                まだセッションがありません。「新しくセッションを作成」を押してセットアップを開始してください。
+              </div>
+            ) : (
+              sessions.map((session) => {
+                const config = session.config as IshinDenshinConfig
+                return (
+                  <article key={session.id} className="glass-panel space-y-5 p-6 text-white">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.4em] text-slate-300">Session ID</p>
+                        <p className="text-2xl font-bold">{session.id}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-full border border-white/20 px-3 py-1 text-xs text-slate-200">
+                          {session.state}
+                        </span>
+                        <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-200">
+                          ver.{session.version}
+                        </span>
+                        <button
+                          className="rounded-full border border-rose-400 px-3 py-1 text-xs text-rose-200"
+                          onClick={() => {
+                            handleDeleteIshindenshin(session.id).catch((error) => console.error(error))
+                          }}
+                        >
+                          削除
+                        </button>
+                      </div>
+                    </div>
+                    <ConfigForm sessionId={session.id} config={config} onSubmit={handleSaveConfig} />
+                    <div className="flex flex-wrap gap-3 text-sm">
+                      <Link
+                        href={`/ishindenshin/answere/${session.id}/groom`}
+                        target="_blank"
+                        className="rounded-full border border-white/20 px-4 py-2"
+                      >
+                        {config.participants?.groomName}
+                      </Link>
+                      <Link
+                        href={`/ishindenshin/answere/${session.id}/bride`}
+                        target="_blank"
+                        className="rounded-full border border-white/20 px-4 py-2"
+                      >
+                        {config.participants?.brideName}
+                      </Link>
+                      <Link
+                        href={`/ishindenshin/host/${session.id}`}
+                        target="_blank"
+                        className="rounded-full border border-white/20 px-4 py-2"
+                      >
+                        司会画面
+                      </Link>
+                      <Link
+                        href={`/ishindenshin/board/${session.id}`}
+                        target="_blank"
+                        className="rounded-full border border-white/20 px-4 py-2"
+                      >
+                        会場表示
+                      </Link>
+                      <Link
+                        href={`/ishindenshin/result/${session.id}`}
+                        target="_blank"
+                        className="rounded-full border border-white/20 px-4 py-2"
+                      >
+                        結果一覧
+                      </Link>
+                      <button
+                        className="rounded-full border border-white/20 px-4 py-2"
+                        onClick={() => {
+                          handleResetSession(session.id).catch((error) => console.error(error))
+                        }}
+                      >
+                        リセット
+                      </button>
+                    </div>
+                  </article>
+                )
+              })
+            )}
+          </div>
+        </div>
       )}
-    </div>
+    </NeonBackground>
   )
 }
 

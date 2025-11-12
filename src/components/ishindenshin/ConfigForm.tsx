@@ -44,9 +44,9 @@ export const ConfigForm: React.FC<Props> = ({
         onChange={handleFileChange}
         className="file-input w-full max-w-xs"
       />
-      <label>新郎</label>
+      <label>一人目</label>
       <input
-        className="input-bordered input w-full"
+        className="input-bordered input w-full text-black"
         value={groomName}
         type="text"
         onChange={(e) => {
@@ -54,9 +54,9 @@ export const ConfigForm: React.FC<Props> = ({
           setFilled(true)
         }}
       />
-      <label>新婦</label>
+      <label>二人目</label>
       <input
-        className="input-bordered input w-full"
+        className="input-bordered input w-full text-black"
         value={brideName}
         type="text"
         onChange={(e) => {

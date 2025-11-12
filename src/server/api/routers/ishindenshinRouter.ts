@@ -6,15 +6,14 @@ import { z } from 'zod'
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
 import { IshinDenshinConfig } from '../../../types/ishindenshin'
-import { getConfig } from 'next-s3-upload/utils/config'
 
 export const ishindenshinRouter = createTRPCRouter({
   create: protectedProcedure.mutation(async ({ ctx }) => {
     const userId = ctx.session.user.id
     const config: IshinDenshinConfig = {
       participants: {
-        groomName: '新郎🤵🏻‍♂️',
-        brideName: '新婦👰🏻‍♀️',
+        groomName: '一人目',
+        brideName: '二人目',
       },
     }
     await ctx.prisma.ishinDenshinSession.create({
