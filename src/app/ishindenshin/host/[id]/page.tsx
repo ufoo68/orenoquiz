@@ -2,7 +2,10 @@
 
 import type { FC } from 'react'
 import { Fragment, useState } from 'react'
-import type { IshinDenshinSessionResult, IshinDenshinSessionState } from '@prisma/client'
+import type {
+  IshinDenshinSessionResult,
+  IshinDenshinSessionState,
+} from '@prisma/client'
 
 import { api } from '../../../../utils/api'
 
@@ -35,8 +38,19 @@ const LoadingIcon: FC = () => {
 
 const CheckIcon: FC = () => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="green" className="h-8 w-8">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="green"
+      className="h-8 w-8"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4.5 12.75l6 6 9-13.5"
+      />
     </svg>
   )
 }
@@ -59,7 +73,7 @@ const IshindenshinHostPage = ({ params }: PageProps) => {
         setNetworkError(false)
       },
       onError: () => setNetworkError(true),
-      refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
+      refetchInterval: 1000,
     }
   )
 
@@ -71,7 +85,7 @@ const IshindenshinHostPage = ({ params }: PageProps) => {
         setNetworkError(false)
       },
       onError: () => setNetworkError(true),
-      refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
+      refetchInterval: 1000,
     }
   )
 
@@ -85,7 +99,7 @@ const IshindenshinHostPage = ({ params }: PageProps) => {
         setNetworkError(false)
       },
       onError: () => setNetworkError(true),
-      refetchInterval: process.env.NODE_ENV === 'development' ? false : 1000,
+      refetchInterval: 1000,
     }
   )
 
@@ -151,7 +165,12 @@ const IshindenshinHostPage = ({ params }: PageProps) => {
         }}
       >
         {sending && <LoadingIcon />}
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green" className="h-6 w-6">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="green"
+          className="h-6 w-6"
+        >
           <path
             fillRule="evenodd"
             d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
@@ -162,11 +181,18 @@ const IshindenshinHostPage = ({ params }: PageProps) => {
       <button
         className="btn"
         onClick={() => {
-          handleEvaluateAnswer('NOT_MATCH').catch((error) => console.error(error))
+          handleEvaluateAnswer('NOT_MATCH').catch((error) =>
+            console.error(error)
+          )
         }}
       >
         {sending && <LoadingIcon />}
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red" className="h-6 w-6">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="red"
+          className="h-6 w-6"
+        >
           <path
             fillRule="evenodd"
             d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z"
@@ -212,14 +238,14 @@ const IshindenshinHostPage = ({ params }: PageProps) => {
       <div className="flex h-screen w-screen flex-col items-center justify-center space-y-20 bg-base-300">
         <div className="card rounded-box flex h-20 w-80 flex-row items-center justify-center space-x-10 bg-white text-3xl">
           <div>終了しました</div>
-        <button
-          className="btn"
-          onClick={() => {
-            handleGameRestart().catch((error) => console.error(error))
-          }}
-        >
-          再開
-        </button>
+          <button
+            className="btn"
+            onClick={() => {
+              handleGameRestart().catch((error) => console.error(error))
+            }}
+          >
+            再開
+          </button>
         </div>
       </div>
     )
@@ -235,18 +261,29 @@ const IshindenshinHostPage = ({ params }: PageProps) => {
             fill="none"
             viewBox="0 0 24 24"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
           <span>インターネットが接続されていません</span>
         </div>
       )}
-      <div className="tooltip" data-tip={groomSubmitted ? '回答済み' : '回答中'}>
+      <div
+        className="tooltip"
+        data-tip={groomSubmitted ? '回答済み' : '回答中'}
+      >
         <div className="card rounded-box flex h-20 w-80 flex-row items-center justify-center space-x-10 bg-white text-3xl">
           <div>{config?.participants?.groomName}</div>
           {groomSubmitted ? <CheckIcon /> : <LoadingIcon />}
         </div>
       </div>
-      <div className="tooltip" data-tip={brideSubmitted ? '回答済み' : '回答中'}>
+      <div
+        className="tooltip"
+        data-tip={brideSubmitted ? '回答済み' : '回答中'}
+      >
         <div className="card rounded-box flex h-20 w-80 flex-row items-center justify-center space-x-10 bg-white text-3xl">
           <div>{config?.participants?.brideName}</div>
           {brideSubmitted ? <CheckIcon /> : <LoadingIcon />}

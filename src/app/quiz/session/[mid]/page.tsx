@@ -1,9 +1,10 @@
 'use client'
 
-import type { QuizSession } from '@prisma/client'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import type { QuizSession } from '@prisma/client'
 
+import { NeonBackground } from '../../../../components/common/NeonBackground'
 import { QuizSessionState } from '../../../../types/quizSession'
 import { api } from '../../../../utils/api'
 
@@ -13,12 +14,12 @@ type PageProps = {
   }
 }
 
-const stateDict: Record<QuizSessionState['type'], string> = {
-  entry: '受付中',
-  question: 'プレイ中',
-  answer: '回答中',
-  rank: '結果発表',
-  end: '終了',
+const stateDict: Record<QuizSessionState['type'], { label: string; color: string }> = {
+  entry: { label: '受付中', color: 'bg-sky-400/20 text-sky-200' },
+  question: { label: 'プレイ中', color: 'bg-amber-400/20 text-amber-200' },
+  answer: { label: '回答中', color: 'bg-emerald-400/20 text-emerald-200' },
+  rank: { label: '結果発表', color: 'bg-indigo-400/20 text-indigo-200' },
+  end: { label: '終了', color: 'bg-slate-500/30 text-slate-200' },
 }
 
 const QuizSessionPage = ({ params }: PageProps) => {
@@ -34,7 +35,7 @@ const QuizSessionPage = ({ params }: PageProps) => {
       },
     }
   )
-  const deleteQuiz = api.quizSession.delete.useMutation()
+  const deleteSession = api.quizSession.delete.useMutation()
   const resetSession = api.quizSession.updateStateReset.useMutation()
 
   const handleCreateSession = async () => {
@@ -43,7 +44,7 @@ const QuizSessionPage = ({ params }: PageProps) => {
   }
 
   const handleDeleteSession = async (sessionId: string) => {
-    await deleteQuiz.mutateAsync({ sessionId })
+    await deleteSession.mutateAsync({ sessionId })
     await getAllSession.refetch()
   }
 
@@ -52,78 +53,104 @@ const QuizSessionPage = ({ params }: PageProps) => {
     await getAllSession.refetch()
   }
 
-  if (getAllSession.isLoading) {
-    return <progress className="progress" />
-  }
+  const loading = getAllSession.isLoading
+
+  const stats = useMemo(
+    () => [
+      { label: '総セッション', value: sessions.length },
+      { label: '進行中', value: sessions.filter((s) => (s.state as QuizSessionState).type !== 'end').length },
+    ],
+    [sessions]
+  )
 
   return (
-    <div className="flex min-h-screen w-screen flex-col items-center justify-center space-y-5 bg-neutral-200 p-4">
-      {sessions.map((session) => (
-        <div key={session.id} className="card w-full max-w-3xl bg-base-100 shadow-xl">
-          <div className="card-body">
-            <h2 className="card-title flex items-center justify-between">
-              <div className="badge badge-secondary">
-                {stateDict[(session.state as QuizSessionState).type]}
+    <NeonBackground>
+      {loading ? (
+        <div className="flex min-h-screen items-center justify-center">
+          <progress className="progress progress-primary w-64" />
+        </div>
+      ) : (
+        <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-10 px-5 py-10 text-white">
+          <header className="flex flex-col gap-6">
+            <p className="text-xs uppercase tracking-[0.5em] text-slate-300">Session Control</p>
+            <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+              <div>
+                <h1 className="text-4xl font-black">セッション管理</h1>
+                <p className="text-sm text-slate-200">URL共有やリセット、司会／参加者ビューへ素早くアクセスできます。</p>
               </div>
               <button
-                className="btn btn-ghost"
+                className="btn border-0 bg-gradient-to-r from-emerald-400 to-sky-500 text-slate-900"
                 onClick={() => {
-                  handleDeleteSession(session.id).catch((error) => console.error(error))
+                  handleCreateSession().catch((error) => console.error(error))
                 }}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
-                  <path
-                    fillRule="evenodd"
-                    d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-            </h2>
-            <div className="card-actions justify-end gap-3">
-              <Link
-                href={`/quiz/participant/${session.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary btn"
-              >
-                参加者
-              </Link>
-              <Link
-                href={`/quiz/host/${session.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary btn"
-              >
-                司会
-              </Link>
-              <button
-                className="btn-primary btn"
-                onClick={() => {
-                  handleResetSession(session.id).catch((error) => console.error(error))
-                }}
-              >
-                リセット
+                新規セッションを発行
               </button>
             </div>
-          </div>
+          </header>
+
+          <section className="grid gap-4 sm:grid-cols-2">
+            {stats.map((stat) => (
+              <div key={stat.label} className="glass-panel space-y-2 px-6 py-5">
+                <p className="text-xs uppercase tracking-[0.4em] text-slate-400">{stat.label}</p>
+                <p className="text-3xl font-bold">{stat.value}</p>
+              </div>
+            ))}
+          </section>
+
+          <section className="space-y-5">
+            {sessions.length === 0 ? (
+              <div className="glass-panel p-10 text-center text-slate-200">まだセッションがありません。新規発行してください。</div>
+            ) : (
+              sessions.map((session) => {
+                const state = session.state as QuizSessionState
+                const badge = stateDict[state.type]
+                return (
+                  <article key={session.id} className="glass-panel space-y-6 p-6">
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.4em] text-slate-400">Session ID</p>
+                        <h2 className="text-2xl font-bold">{session.id}</h2>
+                      </div>
+                      <span className={`rounded-full px-4 py-1 text-sm ${badge.color}`}>{badge.label}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-3 text-sm">
+                      <Link
+                        href={`/quiz/participant/${session.id}`}
+                        target="_blank"
+                        className="btn border-white/20 bg-white/5 text-white"
+                      >
+                        参加者画面
+                      </Link>
+                      <Link
+                        href={`/quiz/host/${session.id}`}
+                        target="_blank"
+                        className="btn border-white/20 bg-white/5 text-white"
+                      >
+                        司会画面
+                      </Link>
+                      <Link
+                        href={`/quiz/board/${session.id}`}
+                        target="_blank"
+                        className="btn border-white/20 bg-white/5 text-white"
+                      >
+                        会場ディスプレイ
+                      </Link>
+                      <button className="btn border-white/20 bg-white/5 text-white" onClick={() => handleResetSession(session.id).catch((error) => console.error(error))}>
+                        リセット
+                      </button>
+                      <button className="btn border-0 bg-rose-500/80 text-white" onClick={() => handleDeleteSession(session.id).catch((error) => console.error(error))}>
+                        削除
+                      </button>
+                    </div>
+                  </article>
+                )
+              })
+            )}
+          </section>
         </div>
-      ))}
-      <button
-        className="btn-secondary btn"
-        onClick={() => {
-          handleCreateSession().catch((error) => console.error(error))
-        }}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
-          <path
-            fillRule="evenodd"
-            d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z"
-            clipRule="evenodd"
-          />
-        </svg>
-      </button>
-    </div>
+      )}
+    </NeonBackground>
   )
 }
 

@@ -54,8 +54,8 @@ export const SortItems: FC<Props> = ({ answer, setAnswer, isSubmit }) => {
   return (
     <div
       className={`${
-        isSubmit ? 'pointer-events-none' : ''
-      } mb-2 w-full rounded-lg border`}
+        isSubmit ? 'pointer-events-none opacity-60' : ''
+      } rounded-2xl border border-white/10 bg-white/5 p-1`}
     >
       <DndContext
         sensors={sensors}
@@ -92,7 +92,7 @@ const SortableItem: FC<ItemProps> = ({ id, label }) => {
   return (
     <div
       ref={setNodeRef}
-      className="flex touch-none space-x-2 border p-3"
+      className="mb-2 flex touch-none items-center gap-3 rounded-2xl border border-white/10 bg-slate-900/40 p-3 text-white"
       style={style}
       {...attributes}
       {...listeners}
@@ -102,7 +102,7 @@ const SortableItem: FC<ItemProps> = ({ id, label }) => {
         fill="none"
         viewBox="0 0 24 24"
         strokeWidth={1.5}
-        stroke="gray"
+        stroke="rgba(248,250,252,0.7)"
         className="h-6 w-6"
       >
         <path
@@ -111,7 +111,7 @@ const SortableItem: FC<ItemProps> = ({ id, label }) => {
           d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
         />
       </svg>
-      <div>{label}</div>
+      <div className="text-base">{label}</div>
     </div>
   )
 }

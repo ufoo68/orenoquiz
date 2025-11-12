@@ -82,51 +82,54 @@ export const AnswerForm: FC<Props> = ({
     window.alert('回答を送信しました。')
   }
   if (!question) {
-    return <progress className="progress" />
+    return (
+      <div className="glass-panel w-full max-w-lg p-10 text-white">
+        <progress className="progress progress-primary w-full" />
+      </div>
+    )
   }
   const contents = question.contents as QuestionContents
   return (
-    <div className="fixed w-96">
-      <div className="card rounded-box m-5 flex items-center bg-white text-2xl">
-        {name}
-      </div>
-      <form className="mx-5 rounded bg-white p-8 shadow-md">
-        <label className="mb-2 block text-sm font-bold text-gray-700">
-          問題
-        </label>
-        <p className="mb-2">{question.title}</p>
-        <label className="mb-2 block text-sm font-bold text-gray-700">
-          回答
-        </label>
-        {(() => {
-          if (contents.type === 'select' && answer?.type === 'select') {
-            return (
-              <SelectItems
-                answer={answer}
-                contents={contents}
-                setAnswer={setAnswer}
-                isSubmit={isSubmit}
-              />
-            )
-          } else if (contents.type === 'sort' && answer?.type === 'sort') {
-            return (
-              <SortItems
-                answer={answer}
-                contents={contents}
-                setAnswer={setAnswer}
-                isSubmit={isSubmit}
-              />
-            )
-          }
-        })()}
-        <div className="flex justify-end space-x-5">
+    <div className="w-full max-w-lg space-y-4">
+      <form className="glass-panel space-y-6 p-8 text-white">
+        <div>
+          <p className="text-xs uppercase tracking-[0.4em] text-slate-400">Question</p>
+          <p className="mt-2 text-xl font-semibold text-white">{question.title}</p>
+        </div>
+        <div>
+          <p className="text-xs uppercase tracking-[0.4em] text-slate-400">Answer</p>
+          <div className="mt-3">
+            {(() => {
+              if (contents.type === 'select' && answer?.type === 'select') {
+                return (
+                  <SelectItems
+                    answer={answer}
+                    contents={contents}
+                    setAnswer={setAnswer}
+                    isSubmit={isSubmit}
+                  />
+                )
+              } else if (contents.type === 'sort' && answer?.type === 'sort') {
+                return (
+                  <SortItems
+                    answer={answer}
+                    contents={contents}
+                    setAnswer={setAnswer}
+                    isSubmit={isSubmit}
+                  />
+                )
+              }
+            })()}
+          </div>
+        </div>
+        <div className="flex justify-end">
           <button
-            className="btn-primary btn"
+            className="btn border-0 bg-gradient-to-r from-sky-500 to-indigo-500 text-white shadow-lg shadow-sky-500/30"
             type="button"
             disabled={isSubmit}
             onClick={handleSubmitAnswer}
           >
-            回答する
+            回答を送信
           </button>
         </div>
       </form>

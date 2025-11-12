@@ -16,18 +16,21 @@ type Props = {
   questions: QuizQuestion[]
   handleSelectQuestion: (question: QuizQuestion) => void
   handleChangeOrder: (active: QuizQuestion, over: QuizQuestion) => void
+  selectedId?: string
 }
 
 type ItemProps = {
   id: string
   question: QuizQuestion
   handleSelectQuestion: (question: QuizQuestion) => void
+  active: boolean
 }
 
 export const QuestionMenu: FC<Props> = ({
   questions,
   handleSelectQuestion,
   handleChangeOrder,
+  selectedId,
 }) => {
   const sensors = useSensors(useSensor(PointerSensor))
   const handleDragEnd = (event: DragEndEvent) => {
@@ -41,7 +44,7 @@ export const QuestionMenu: FC<Props> = ({
     }
   }
   return (
-    <ul className="menu rounded-box w-11/12 bg-base-100 p-2">
+    <ul className="glass-panel flex-1 space-y-3 overflow-y-auto px-4 py-5">
       <DndContext
         sensors={sensors}
         onDragEnd={handleDragEnd}
@@ -57,6 +60,7 @@ export const QuestionMenu: FC<Props> = ({
               id={question.id}
               question={question}
               handleSelectQuestion={handleSelectQuestion}
+              active={question.id === selectedId}
             />
           ))}
         </SortableContext>
@@ -69,6 +73,7 @@ const SortableItem: FC<ItemProps> = ({
   id,
   question,
   handleSelectQuestion,
+  active,
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id })
@@ -80,13 +85,19 @@ const SortableItem: FC<ItemProps> = ({
 
   return (
     <li style={style} ref={setNodeRef}>
-      <a onClick={() => handleSelectQuestion(question)}>
+      <button
+        type="button"
+        className={`flex w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left text-white ${
+          active ? 'border-amber-400/60 bg-amber-400/10' : 'border-white/10 bg-white/5'
+        }`}
+        onClick={() => handleSelectQuestion(question)}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={1.5}
-          stroke="gray"
+          stroke="currentColor"
           className="h-6 w-6 cursor-grab touch-none"
           {...attributes}
           {...listeners}
@@ -97,8 +108,11 @@ const SortableItem: FC<ItemProps> = ({
             d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
           />
         </svg>
-        {question.title}
-      </a>
+        <div className="flex flex-col">
+          <span className="text-sm uppercase tracking-[0.3em] text-slate-300">Q{question.order}</span>
+          <span className="text-lg">{question.title || 'タイトル未設定'}</span>
+        </div>
+      </button>
     </li>
   )
 }

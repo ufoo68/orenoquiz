@@ -59,85 +59,75 @@ export const AnswerCard: FC<Props> = ({
     }
   )
   if (!question) {
-    return <progress className="progress" />
+    return (
+      <div className="glass-panel p-8 text-white">
+        <progress className="progress progress-primary w-full" />
+      </div>
+    )
   }
   const contents = question.contents as QuestionContents
   return (
-    <div className="card w-[70vw] flex-row bg-base-100 p-5 shadow-xl">
+    <div className="glass-panel flex flex-col gap-6 p-8 text-white lg:flex-row">
       {contents.thumbnailUrl ? (
-        <figure className="max-w-[30vw]">
-          <img src={contents.thumbnailUrl} alt="thumbnail" />
+        <figure className="w-full max-w-md overflow-hidden rounded-2xl border border-white/10">
+          <img src={contents.thumbnailUrl} alt="thumbnail" className="h-full w-full object-cover" />
         </figure>
       ) : null}
-      <div className="card-body">
-        <h2 className="card-title">答え.</h2>
+      <div className="flex-1 space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-[0.4em] text-slate-400">Answer</p>
+            <h2 className="text-3xl font-bold">解答と結果</h2>
+          </div>
+          <div className="text-right">
+            <p className="text-xs uppercase tracking-[0.4em] text-slate-400">Win</p>
+            <p className="text-3xl font-black text-emerald-300">
+              {winCount}/{entriesCount}
+            </p>
+          </div>
+        </div>
         {(() => {
           if (contents.type === 'select') {
             return (
-              <ul className="menu rounded-box border bg-base-100 p-2">
-                {contents.questions.map((q) => (
-                  <li key={q.id}>
-                    <div className="text-2xl">
-                      {q.id === contents.answerId ? (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="green"
-                          className="h-6 w-6"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 011.04-.208z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      ) : (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="red"
-                          className="h-6 w-6 cursor-pointer"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      )}
+              <ul className="space-y-3">
+                {contents.questions.map((q) => {
+                  const correct = q.id === contents.answerId
+                  return (
+                    <li
+                      key={q.id}
+                      className={`rounded-2xl border px-4 py-3 text-lg ${
+                        correct
+                          ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-200'
+                          : 'border-white/10 bg-white/5 text-white'
+                      }`}
+                    >
                       {q.label}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )
-          } else if (contents.type === 'sort') {
-            return (
-              <ul
-                tabIndex={0}
-                className="rounded-box divide-y bg-base-100 p-2 shadow"
-              >
-                {sortBy(contents.questions, 'order').map((q) => (
-                  <li key={q.id} className="p-3 text-2xl">
-                    {`${q.order}. ${q.label}`}
-                  </li>
-                ))}
+                    </li>
+                  )
+                })}
               </ul>
             )
           }
+          if (contents.type === 'sort') {
+            return (
+              <ol className="space-y-3">
+                {sortBy(contents.questions, 'order').map((q) => (
+                  <li
+                    key={q.id}
+                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-lg"
+                  >
+                    {`${q.order}. ${q.label}`}
+                  </li>
+                ))}
+              </ol>
+            )
+          }
         })()}
-        <div className="text-2xl">
-          正解数({winCount}/{entriesCount})
-        </div>
-        <progress
-          className="progress progress-primary w-full"
-          value={winCount}
-          max={entriesCount}
-        ></progress>
-        <div className="card-actions justify-end">
+        <progress className="progress progress-primary w-full" value={winCount} max={entriesCount}></progress>
+        <div className="flex justify-end gap-3">
           {nextQuestionId ? (
             <button
-              className="btn-primary btn"
+              className="btn border-0 bg-gradient-to-r from-emerald-400 to-sky-500 text-slate-900"
               onClick={() => {
                 handleNextQuestion(nextQuestionId)
               }}
@@ -145,7 +135,7 @@ export const AnswerCard: FC<Props> = ({
               次の問題へ
             </button>
           ) : (
-            <button className="btn-primary btn" onClick={handleShowRank}>
+            <button className="btn border-0 bg-gradient-to-r from-amber-300 to-pink-500 text-slate-900" onClick={handleShowRank}>
               結果発表へ
             </button>
           )}
