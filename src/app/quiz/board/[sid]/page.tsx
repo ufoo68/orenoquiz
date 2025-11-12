@@ -306,9 +306,6 @@ const QuizBoardPage = ({ params }: PageProps) => {
           <p className="text-xs uppercase tracking-[0.7em] text-slate-300">
             Oreno Quiz Board
           </p>
-          <h1 className="mt-2 text-4xl font-black">
-            セッションID：{sessionId}
-          </h1>
           <span className="mt-4 inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/5 px-6 py-2 text-sm uppercase tracking-[0.4em] text-amber-200">
             <span className="h-2 w-2 animate-pulse rounded-full bg-amber-400" />
             {stageLabel}

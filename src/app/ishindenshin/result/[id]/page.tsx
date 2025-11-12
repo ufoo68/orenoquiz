@@ -38,8 +38,7 @@ const IshindenshinResultPage = ({ params }: PageProps) => {
         <header className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.6em] text-slate-400">Final Gallery</p>
-            <h1 className="text-3xl font-black">以心伝心ゲームの作品集</h1>
-            <p className="text-sm text-slate-300">セッションID：{sessionId}</p>
+            <h1 className="text-3xl font-black">結果一覧</h1>
           </div>
           <div className="flex flex-wrap gap-2 text-sm text-slate-200">
             <span className="rounded-full border border-white/20 px-4 py-1">

@@ -18,7 +18,6 @@ const QuizHostPage = ({ params }: PageProps) => {
         <header className="flex flex-col gap-4 text-white md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.5em] text-slate-300/70">Host Console</p>
-            <h1 className="text-3xl font-black">セッションID：{sessionId}</h1>
             <p className="text-sm text-slate-300">司会者用の操作画面です。音量とネットワークをご確認ください。</p>
           </div>
           <div className="flex flex-wrap gap-2 text-sm text-slate-200">
